@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>edu.sdsc</groupId>
+	<artifactId>mmtf-analysis-java</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+
+	<properties>
+		<jdk.version>1.8</jdk.version>
+		<maven.enforcer.jdk-version>1.8</maven.enforcer.jdk-version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.build.targetEncoding>UTF-8</project.build.targetEncoding>
+		<maxmem>512M</maxmem>
+		<slf4j.version>1.7.20</slf4j.version>
+		<log4j.version>2.5</log4j.version>
+		<junit.version>4.12</junit.version>
+		<mmtf.version>1.0.5</mmtf.version>
+		<spark.version>2.1.0</spark.version>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${junit.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.rcsb</groupId>
+			<artifactId>mmtf-codec</artifactId>
+			<version>${mmtf.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.rcsb</groupId>
+			<artifactId>mmtf-api</artifactId>
+			<version>${mmtf.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.spark</groupId>
+			<artifactId>spark-core_2.11</artifactId>
+			<version>${spark.version}</version>
+		</dependency>
+	</dependencies>
+
+
+</project>
