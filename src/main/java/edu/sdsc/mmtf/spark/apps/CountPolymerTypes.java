@@ -47,6 +47,7 @@ public class CountPolymerTypes {
 	    
 	    long end = System.nanoTime();
 	    
+	    
 	    System.out.println("Time: " + (end-start)/1E9 + "sec.");
 	    
 	    sc.close();

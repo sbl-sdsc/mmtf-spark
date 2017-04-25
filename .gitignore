@@ -1,0 +1,14 @@
+*.class
+*.settings
+*.classpath
+*.project
+*.checkstyle
+*.iml
+target
+# Package Files #
+*.jar
+*.war
+*.ear
+/bin
+.idea/*
+/target
