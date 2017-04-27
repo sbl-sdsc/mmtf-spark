@@ -19,7 +19,7 @@ public class SecondaryStructureFilter implements Function<Tuple2<String, Structu
 	double helixFractionMin = 0;
 	double helixFractionMax = 1.0;
 	double sheetFractionMin = 0;
-	double sheetFractionMax = 0;
+	double sheetFractionMax = 1.0;
 	double coilFractionMin = 0;
 	double coilFractionMax = 1.0;
 
@@ -48,6 +48,7 @@ public class SecondaryStructureFilter implements Function<Tuple2<String, Structu
 	public Boolean call(Tuple2<String, StructureDataInterface> t) throws Exception {
 		StructureDataInterface structure = t._2;
 
+		// this filter only works for a single chain (entity)
 		if (structure.getNumEntities() == 1) {
 			if (structure.getSecStructList().length == 0) {
 				return false;
@@ -78,10 +79,6 @@ public class SecondaryStructureFilter implements Function<Tuple2<String, Structu
 			helix /= len;
 			sheet /= len;
 			coil /= len;
-			
-//			System.out.println("helix: " + helix);
-//			System.out.println("sheet: " + sheet);
-//			System.out.println("coil: " + coil);
 
 			return helix >= helixFractionMin && helix <= helixFractionMax && sheet >= sheetFractionMin
 					&& sheet <= sheetFractionMax && coil >= coilFractionMin && coil <= coilFractionMax;

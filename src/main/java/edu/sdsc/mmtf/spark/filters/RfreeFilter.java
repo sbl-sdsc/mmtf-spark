@@ -11,7 +11,7 @@ import scala.Tuple2;
  *
  */
 public class RfreeFilter implements Function<Tuple2<String, StructureDataInterface>, Boolean> {
-	private static final long serialVersionUID = -4794067375376198086L;
+	private static final long serialVersionUID = 2881046310099057240L;
 	private double minRfree;
 	private double maxRfree;
 	
@@ -24,10 +24,6 @@ public class RfreeFilter implements Function<Tuple2<String, StructureDataInterfa
 	public Boolean call(Tuple2<String, StructureDataInterface> t) throws Exception {
 		StructureDataInterface structure = t._2;
 	
-		if (structure.getRfree() >= minRfree && structure.getRfree() <= maxRfree) {
-			return true;
-		} else {
-			return false;		
-		}
+		return structure.getRfree() >= minRfree && structure.getRfree() <= maxRfree;
 	}
 }

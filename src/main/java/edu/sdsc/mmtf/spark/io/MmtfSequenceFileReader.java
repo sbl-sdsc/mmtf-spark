@@ -17,7 +17,7 @@ import scala.Tuple2;
 
 /**
  * Reads and decodes an MMTF Hadoop Sequence file. It returns a JavaPairRDD with the structure id
- * (e.g. PDB ID) as the key and the MMTF StructureDataInterfaces as the value.
+ * (e.g. PDB ID) as the key and the MMTF StructureDataInterface as the value.
  * @author Peter Rose
  *
  */

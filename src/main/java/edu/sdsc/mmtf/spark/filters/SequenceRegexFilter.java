@@ -8,10 +8,18 @@ import org.rcsb.mmtf.api.StructureDataInterface;
 import scala.Tuple2;
 
 /**
- * This filter return true if the polymer sequence matches the specified regular expression.
+ * This filter returns true if the polymer sequence motif matches the specified regular expression.
+ * Sequence motifs support the following one-letter codes:
+ * 20 standard amino acids,
+ * O for Pyrrolysine,
+ * U for Selenocysteine,
+ * X for non-standard amino acid
+ * TODO list nucleic acid codes here ...
+ * 
+ * @see <a href="https://en.wikipedia.org/wiki/Sequence_motif">Sequence Motifs</a>
  *
  * Examples
- * The sequence motif search, unlike BLAST or FASTA, allows searching for arbitrarily short sequence fragments, for example:
+ * Short sequence fragment
  *   NPPTP
  *
  * The motif search supports wildcard queries by placing a '.' at the variable residue position. A query for an SH3 domains using the consequence sequence -X-P-P-X-P (where X is a variable residue and P is Proline) can be expressed as:
@@ -35,7 +43,8 @@ import scala.Tuple2;
  *
  */
 public class SequenceRegexFilter implements Function<Tuple2<String, StructureDataInterface>, Boolean> {
-	private static final long serialVersionUID = -4794067375376198086L;
+
+	private static final long serialVersionUID = -180347064409550961L;
 	private Pattern pattern;
 	
 	public SequenceRegexFilter(String regularExpression) {
@@ -46,6 +55,7 @@ public class SequenceRegexFilter implements Function<Tuple2<String, StructureDat
 	public Boolean call(Tuple2<String, StructureDataInterface> t) throws Exception {
 		StructureDataInterface structure = t._2;
 
+		// this filter only works for a single chain (entity)
 		if (structure.getNumEntities() == 1) {
 			// non-polymers have no sequence
 			if (structure.getEntitySequence(0).isEmpty()) {

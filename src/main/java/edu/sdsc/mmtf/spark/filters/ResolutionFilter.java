@@ -11,7 +11,7 @@ import scala.Tuple2;
  *
  */
 public class ResolutionFilter implements Function<Tuple2<String, StructureDataInterface>, Boolean> {
-	private static final long serialVersionUID = -4794067375376198086L;
+	private static final long serialVersionUID = 4324989127434984652L;
 	private double minResolution;
 	private double maxResolution;
 	
@@ -24,10 +24,6 @@ public class ResolutionFilter implements Function<Tuple2<String, StructureDataIn
 	public Boolean call(Tuple2<String, StructureDataInterface> t) throws Exception {
 		StructureDataInterface structure = t._2;
 	
-		if (structure.getResolution() >= minResolution && structure.getResolution() <= maxResolution) {
-			return true;
-		} else {
-			return false;		
-		}
+		return structure.getResolution() >= minResolution && structure.getResolution() <= maxResolution;
 	}
 }

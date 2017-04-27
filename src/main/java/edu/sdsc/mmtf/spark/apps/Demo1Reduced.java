@@ -15,6 +15,7 @@ import edu.sdsc.mmtf.spark.filters.IsLProteinChainNonStrict;
 import edu.sdsc.mmtf.spark.filters.IsLRnaChain;
 import edu.sdsc.mmtf.spark.io.MmtfSequenceFileReader;
 import edu.sdsc.mmtf.spark.mappers.ReducedEncoder;
+import edu.sdsc.mmtf.spark.mappers.ReducedEncoderNew;
 import edu.sdsc.mmtf.spark.mappers.StructureToPolymerChains;
 import scala.Tuple2;
 
@@ -50,27 +51,27 @@ public class Demo1Reduced {
 	    
 	    // create reduced version
 //	    full = full.mapToPair(t -> new Tuple2<String,StructureDataInterface>(t._1, ReducedEncoder.getReduced(t._2)));
-        full = full.mapToPair(t -> new Tuple2<String,StructureDataInterface>(t._1, ReducedEncoder.getReduced(t._2)));
+        full = full.mapToPair(t -> new Tuple2<String,StructureDataInterface>(t._1, ReducedEncoderNew.getReduced(t._2)));
 	    
 	    full = full.flatMapToPair(new StructureToPolymerChains());
 	    
 	   
 	    
 //	    long results = full.filter(new IsLProteinChain()).filter(new SequenceRegexFilter(".PP.P")).count();
-	    long polymer = full.count();
+//	    long polymer = full.count();
 //	    long results = full.filter(new IsLProteinChain()).filter(new SecondaryStructureFilter().coil(0.9, 1.0)).count();
 //	    long lProtein = full.filter(new IsLProteinChain()).count();
 	    
-//	    long lProteinNS = full.filter(new IsLProteinChainNonStrict()).count();
+	    long lProteinNS = full.filter(new IsLProteinChainNonStrict()).count();
 //	    long dProtein = full.filter(new IsDProteinChain()).count();
 //	    long lDna = full.filter(new IsLDnaChain()).count();
 //	    long lRna =  full.filter(new IsLRnaChain()).count();
 //	    long dSaccharide = full.filter(new IsDSaccharide()).count();
 //	    long sum = lProteinNS + dProtein + lDna + lRna + dSaccharide;
 //	    long bonds = full.map(t -> t._2.getNumBonds()).reduce((a,b) -> a+b);
-	    long interBonds = full.map(t -> t._2.getInterGroupBondOrders().length).reduce((a,b) -> a+b);
+//	    long interBonds = full.map(t -> t._2.getInterGroupBondOrders().length).reduce((a,b) -> a+b);
  
-//	    System.out.println("L-PeptideNS: " + lProteinNS);
+	    System.out.println("L-PeptideNS: " + lProteinNS);
 //	    System.out.println("D-Peptide: " + dProtein);
 //	    System.out.println("L-RNA: " + lDna);
 //	    System.out.println("L-DNA: " + lRna);
@@ -78,7 +79,7 @@ public class Demo1Reduced {
 //	    System.out.println("Polymer: " + polymer);
 //	    System.out.println("Sum: " + sum);
 //	    System.out.println("Bonds: " + bonds);
-	    System.out.println("Interbonds: " + interBonds);
+//	    System.out.println("Interbonds: " + interBonds);
 
 	    
 //	    full.mapToPair(t -> new Tuple2<String, Integer>(t._1, t._2.getNumAtoms())).foreach(t -> System.out.println("full atoms: " + t));
