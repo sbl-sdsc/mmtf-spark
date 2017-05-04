@@ -48,7 +48,7 @@ public class Demo2 {
 	    // read PDB in MMTF format
 	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfSequenceFileReader.read(args[0],  sc);
 
-	    pdb = pdb.filter(new ExperimentalMethodsFilter("X-RAY DIFFRACTION"));
+	    pdb = pdb.filter(new ExperimentalMethodsFilter("X-RAY DIFFRACTION","SOLUTION NMR"));
 	    pdb = pdb.filter(new ResolutionFilter(0.0, 2.0));
 	    pdb = pdb.filter(new RfreeFilter(0.0, 0.25));
 	    pdb = pdb.flatMapToPair(new StructureToPolymerChains());
