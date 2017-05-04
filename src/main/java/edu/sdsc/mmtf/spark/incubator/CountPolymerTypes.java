@@ -1,7 +1,7 @@
 /**
  * 
  */
-package edu.sdsc.mmtf.spark.apps;
+package edu.sdsc.mmtf.spark.incubator;
 
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
@@ -9,8 +9,6 @@ import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.storage.StorageLevel;
 import org.rcsb.mmtf.api.StructureDataInterface;
 
-import edu.sdsc.mmtf.spark.filters.IsDSaccharide;
-import edu.sdsc.mmtf.spark.filters.IsLProteinChain;
 import edu.sdsc.mmtf.spark.filters.SequenceRegexFilter;
 import edu.sdsc.mmtf.spark.io.MmtfSequenceFileReader;
 import edu.sdsc.mmtf.spark.mappers.StructureToChains;

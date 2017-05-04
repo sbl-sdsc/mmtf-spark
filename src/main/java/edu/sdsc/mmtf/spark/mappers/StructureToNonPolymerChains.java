@@ -22,7 +22,7 @@ import scala.Tuple2;
  * @author Anthony Bradley
  *
  */
-public class StructureToPolymerChains implements PairFlatMapFunction<Tuple2<String,StructureDataInterface>,String, StructureDataInterface> {
+public class StructureToNonPolymerChains implements PairFlatMapFunction<Tuple2<String,StructureDataInterface>,String, StructureDataInterface> {
 	private static final long serialVersionUID = -3348372120358649240L;
 
 	@Override
@@ -79,11 +79,11 @@ public class StructureToPolymerChains implements PairFlatMapFunction<Tuple2<Stri
 
 			Entity entity = getEntityInfo(structureDataInterface, j);
 //			System.out.println("Entity info: " + entity.getType() + ", " + entity.getDescription());
-			boolean polymer = entity.getType().equals("polymer");
+			boolean nonPolymer = entity.getType().equals("non-polymer") && ! entity.getType().equals("water");
 
 			AdapterToStructureData adapterToStructureData = new AdapterToStructureData();
 
-			if (polymer) {
+			if (nonPolymer) {
 				
 				SummaryData dataSummary = summaries[j];
 
@@ -106,7 +106,7 @@ public class StructureToPolymerChains implements PairFlatMapFunction<Tuple2<Stri
 				groupCounter++;
 				int groupIndex = structureDataInterface.getGroupTypeIndices()[groupCounter];
 
-				if (polymer) {
+				if (nonPolymer) {
 					currGroupCounter++;
 					adapterToStructureData.setGroupInfo(structureDataInterface.getGroupName(groupIndex), structureDataInterface.getGroupIds()[groupCounter], 
 							structureDataInterface.getInsCodes()[groupCounter], structureDataInterface.getGroupChemCompType(groupIndex), structureDataInterface.getNumAtomsInGroup(groupIndex),
@@ -142,7 +142,7 @@ public class StructureToPolymerChains implements PairFlatMapFunction<Tuple2<Stri
 //						System.out.println("group name " + structureDataInterface.getGroupName(groupIndex));
 //						System.out.println("Entity info: " + entity.getType() + ", " + entity.getDescription());
 //					}
-					if (polymer) {
+					if (nonPolymer) {
 						currAtomCounter++;
 						atomMap.put(atomCounter,  currAtomCounter);
 						try {
@@ -157,7 +157,7 @@ public class StructureToPolymerChains implements PairFlatMapFunction<Tuple2<Stri
 					}
 				}
 
-				if (polymer) {
+				if (nonPolymer) {
 					for(int l=0; l<structureDataInterface.getGroupBondOrders(groupIndex).length; l++){
 						int bondOrder = structureDataInterface.getGroupBondOrders(groupIndex)[l];
 						int bondIndOne = structureDataInterface.getGroupBondIndices(groupIndex)[l*2];
@@ -167,7 +167,7 @@ public class StructureToPolymerChains implements PairFlatMapFunction<Tuple2<Stri
 				}
 			}
 
-			if (polymer) {
+			if (nonPolymer) {
 				adapterToStructureData.setChainInfo(structureDataInterface.getChainIds()[chainCounter],
 						structureDataInterface.getChainNames()[chainCounter], currGroupCounter);
 				

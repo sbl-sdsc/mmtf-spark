@@ -1,7 +1,7 @@
 /**
  * 
  */
-package edu.sdsc.mmtf.spark.apps;
+package edu.sdsc.mmtf.spark.incubator;
 
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
@@ -10,8 +10,6 @@ import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.storage.StorageLevel;
 import org.rcsb.mmtf.api.StructureDataInterface;
 
-import edu.sdsc.mmtf.spark.filters.IsDSaccharide;
-import edu.sdsc.mmtf.spark.filters.IsLProteinChain;
 import edu.sdsc.mmtf.spark.filters.SequenceRegexFilter;
 import edu.sdsc.mmtf.spark.io.MmtfSequenceFileReader;
 import edu.sdsc.mmtf.spark.mappers.ReducedEncoder;
@@ -26,7 +24,7 @@ import scala.Tuple2;
  * @author peter
  *
  */
-public class FullVsReducedComparer {
+public class FullVsReducedTester {
 
 	/**
 	 * @param args
@@ -34,13 +32,13 @@ public class FullVsReducedComparer {
 	public static void main(String[] args) {
 
 	    if (args.length != 2) {
-	        System.err.println("Usage: " + FullVsReducedComparer.class.getSimpleName() + " <hadoop sequence files>");
+	        System.err.println("Usage: " + FullVsReducedTester.class.getSimpleName() + " <hadoop sequence files>");
 	        System.exit(1);
 	    }
 	    
 	    long start = System.nanoTime();
 	    
-	    SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(FullVsReducedComparer.class.getSimpleName());
+	    SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(FullVsReducedTester.class.getSimpleName());
 	    JavaSparkContext sc = new JavaSparkContext(conf);
 		 
 	    // first Hadoop sequence file
@@ -49,12 +47,12 @@ public class FullVsReducedComparer {
 	    System.out.println(args[0] + " #polymers: " + fChains.count());   
 	    System.out.println("groups: " + fChains.map(t -> t._2).reduce((a,b) -> a+b));
 	    
-	    JavaPairRDD<String, StructureDataInterface> second = first.mapToPair(t -> new Tuple2<String,StructureDataInterface>(t._1, ReducedEncoder.getReduced(t._2)));
+//	    JavaPairRDD<String, StructureDataInterface> second = first.mapToPair(t -> new Tuple2<String,StructureDataInterface>(t._1, ReducedEncoder.getReduced(t._2)));
 	    
 //	    JavaPairRDD<String, StructureDataInterface> second = MmtfSequenceFileReader.read(args[1],  sc);
-	    JavaPairRDD<String, Integer> sChains = second.flatMapToPair(new StructureToChainInfo2());
-	    System.out.println(args[1] + " #polymers: " + sChains.count()); 
-	    System.out.println("groups: " + sChains.map(t -> t._2).reduce((a,b) -> a+b));
+//	    JavaPairRDD<String, Integer> sChains = second.flatMapToPair(new StructureToChainInfo2());
+//	    System.out.println(args[1] + " #polymers: " + sChains.count()); 
+//	    System.out.println("groups: " + sChains.map(t -> t._2).reduce((a,b) -> a+b));
 	  	   
 
 	    long end = System.nanoTime();

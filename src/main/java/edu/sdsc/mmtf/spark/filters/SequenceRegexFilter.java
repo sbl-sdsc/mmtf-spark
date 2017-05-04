@@ -55,15 +55,16 @@ public class SequenceRegexFilter implements Function<Tuple2<String, StructureDat
 	public Boolean call(Tuple2<String, StructureDataInterface> t) throws Exception {
 		StructureDataInterface structure = t._2;
 
-		// this filter only works for a single chain (entity)
-		if (structure.getNumEntities() == 1) {
-			// non-polymers have no sequence
-			if (structure.getEntitySequence(0).isEmpty()) {
-				return false;
-			}
-			return pattern.matcher(structure.getEntitySequence(0)).find();
+		if (structure.getGroupSequenceIndices().length != structure.getEntitySequence(0).length()) {
+			System.out.println("# seq indices: " + structure.getGroupSequenceIndices().length);
+			System.out.println("# entity seq.: " + structure.getEntitySequence(0).length());
+		}
+
+		// this filter passes only single chains and the sequence cannot be empty
+		if (structure.getNumEntities() != 1 || structure.getEntitySequence(0).isEmpty()) {
+			return false;			
 		} 
-		
-		return false;
+
+		return pattern.matcher(structure.getEntitySequence(0)).find();
 	}
 }

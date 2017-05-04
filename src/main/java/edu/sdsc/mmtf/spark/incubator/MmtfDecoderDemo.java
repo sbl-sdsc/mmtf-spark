@@ -1,7 +1,7 @@
 /**
  * 
  */
-package edu.sdsc.mmtf.spark.apps;
+package edu.sdsc.mmtf.spark.incubator;
 
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;

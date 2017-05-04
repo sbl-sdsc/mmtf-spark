@@ -1,4 +1,4 @@
-package edu.sdsc.mmtf.spark.filters;
+package edu.sdsc.mmtf.spark.incubator;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -9,15 +9,13 @@ import org.rcsb.mmtf.api.StructureDataInterface;
 import scala.Tuple2;
 
 /**
- * This filter return true if the StructureDataInterface contains a single protein chain. A single chains that contains one of the standard 20 amino acids,
- * Pyrrolysine, Selenocysteine, and unknown amino acids.
+ * This filter return true if the StructureDataInterface contains a single DNA.
  * @author Peter Rose
  *
  */
-public class IsDProteinChain implements Function<Tuple2<String, StructureDataInterface>, Boolean> {
+public class IsLRnaChain implements Function<Tuple2<String, StructureDataInterface>, Boolean> {
 	private static final long serialVersionUID = -4794067375376198086L;
-	// 20 standard amino acids, 21st amino acid: Pyrrolysine (O), 22nd amino acid: Selenocysteine (U), unknown or modified amino acid (X)
-	private static Set<Character> oneLetterCode = new HashSet<>(Arrays.asList(new Character[]{'A','R','N','D','C','Q','E','G','H','I','L','K','M','F','P','S','T','W','Y','V','O','U','X'}));
+	private static Set<Character> oneLetterCode = new HashSet<>(Arrays.asList(new Character[]{'A','C','G','U','X'}));
 
 	@Override
 	public Boolean call(Tuple2<String, StructureDataInterface> t) throws Exception {
@@ -34,7 +32,7 @@ public class IsDProteinChain implements Function<Tuple2<String, StructureDataInt
 			}
 			for (int index: structure.getGroupTypeIndices()) {
 		     	String type = structure.getGroupChemCompType(index);
-		     	if ( !(type.equals("D-PEPTIDE LINKING") || type.equals("PEPTIDE LINKING")) ) {
+		     	if ( !(type.equals("L-RNA LINKING") || type.equals("RNA LINKING")) ) {
 		     		return false;
 		     	}
 			}

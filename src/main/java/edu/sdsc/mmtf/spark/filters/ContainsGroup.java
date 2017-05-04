@@ -10,8 +10,9 @@ import org.rcsb.mmtf.api.StructureDataInterface;
 import scala.Tuple2;
 
 /**
- * This filter returns true if structure contains specified groups.
- * Groups are specified by their one, two, and three-letter codes, e.g. "F", "MG", "ATP".
+ * This filter returns entries that contain specified groups (residues).
+ * Groups are specified by their one, two, or three-letter codes, e.g. "F", "MG", "ATP", as defined
+ * in the wwPDB Chemical Component Dictionary (https://www.wwpdb.org/data/ccd).
  * @author Peter Rose
  *
  */
@@ -19,6 +20,10 @@ public class ContainsGroup implements Function<Tuple2<String, StructureDataInter
 	private static final long serialVersionUID = -2195111374872792219L;
 	private Set<String> groupQuery = null;
 
+	/**
+	 * This constructor accepts a comma separated list of group names, e.g., "ATP","ADP"
+	 * @param groups
+	 */
 	public ContainsGroup(String...groups) {
 		this.groupQuery = new HashSet<>(Arrays.asList(groups));
 	}
@@ -28,13 +33,15 @@ public class ContainsGroup implements Function<Tuple2<String, StructureDataInter
 		StructureDataInterface structure = t._2;
 	
 		// find number of unique groups
-		int[] groupIndices = structure.getGroupTypeIndices();
 		int uniqueGroups = 0;
-		for (int i = 0; i < structure.getGroupTypeIndices().length; i++) {
-    		uniqueGroups = Math.max(uniqueGroups, groupIndices[i]);
+		for (int index: structure.getGroupTypeIndices()) {
+    		uniqueGroups = Math.max(uniqueGroups, index);
     	}
 		
-		// add all groups into a set
+		// need to add 1 since the group indices array is zero-based
+		uniqueGroups++;
+		
+		// add all groups to the set
 		Set<String> groupNames = new HashSet<String>(uniqueGroups);
 		for (int i = 0; i < uniqueGroups; i++) {
 			groupNames.add(structure.getGroupName(i));

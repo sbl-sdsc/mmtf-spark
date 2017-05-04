@@ -1,4 +1,4 @@
-package edu.sdsc.mmtf.spark.filters;
+package edu.sdsc.mmtf.spark.incubator;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -14,7 +14,7 @@ import scala.Tuple2;
  * @author Peter Rose
  *
  */
-public class IsLProteinChainNonStrict implements Function<Tuple2<String, StructureDataInterface>, Boolean> {
+public class IsDProteinChain implements Function<Tuple2<String, StructureDataInterface>, Boolean> {
 	private static final long serialVersionUID = -4794067375376198086L;
 	// 20 standard amino acids, 21st amino acid: Pyrrolysine (O), 22nd amino acid: Selenocysteine (U), unknown or modified amino acid (X)
 	private static Set<Character> oneLetterCode = new HashSet<>(Arrays.asList(new Character[]{'A','R','N','D','C','Q','E','G','H','I','L','K','M','F','P','S','T','W','Y','V','O','U','X'}));
@@ -34,16 +34,16 @@ public class IsLProteinChainNonStrict implements Function<Tuple2<String, Structu
 			}
 			for (int index: structure.getGroupTypeIndices()) {
 		     	String type = structure.getGroupChemCompType(index);
-		     	if ( !(type.startsWith("L-PEPTIDE") || type.equals("PEPTIDE LINKING")) ) {
+		     	if ( !(type.equals("D-PEPTIDE LINKING") || type.equals("PEPTIDE LINKING")) ) {
 		     		return false;
 		     	}
 			}
 			// check against the amino acid alphabet
-//			for (Character c: structure.getEntitySequence(0).toCharArray()) {
-//				if (!oneLetterCode.contains(c)) {
-//					return false;
-//				}
-//			}
+			for (Character c: structure.getEntitySequence(0).toCharArray()) {
+				if (!oneLetterCode.contains(c)) {
+					return false;
+				}
+			}
 			
 		} else if (structure.getNumEntities() == 0) {
             // entity info is optional. If entity information is not available, check the one-letter code for each group instead

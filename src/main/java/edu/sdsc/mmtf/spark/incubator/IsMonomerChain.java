@@ -1,4 +1,4 @@
-package edu.sdsc.mmtf.spark.filters;
+package edu.sdsc.mmtf.spark.incubator;
 
 import org.apache.spark.api.java.function.Function;
 import org.rcsb.mmtf.api.StructureDataInterface;
@@ -11,7 +11,7 @@ import scala.Tuple2;
  * @author Peter Rose
  *
  */
-public class IsDSaccharide implements Function<Tuple2<String, StructureDataInterface>, Boolean> {
+public class IsMonomerChain implements Function<Tuple2<String, StructureDataInterface>, Boolean> {
 	private static final long serialVersionUID = -4794067375376198086L;
 
 	@Override
@@ -24,16 +24,10 @@ public class IsDSaccharide implements Function<Tuple2<String, StructureDataInter
 			
 		} else if (structure.getNumEntities() == 1) {
 			// non-polymers have no sequence
-			if (structure.getEntitySequence(0).length() == 0) {
+			if (structure.getEntitySequence(0).length() > 0) {
 				return false;
-			}
-			for (int index: structure.getGroupTypeIndices()) {
-		     	String type = structure.getGroupChemCompType(index);
-		     	if ( !(type.startsWith("D-SACCHARIDE")) ) {
-		     		return false;
-		     	}
-			}
-		}
+			}	
+		} 
 
 		return true;
 	}
