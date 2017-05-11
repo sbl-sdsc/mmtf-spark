@@ -10,12 +10,12 @@ import scala.Tuple2;
  * @author Peter Rose
  *
  */
-public class ResolutionFilter implements Function<Tuple2<String, StructureDataInterface>, Boolean> {
+public class Resolution implements Function<Tuple2<String, StructureDataInterface>, Boolean> {
 	private static final long serialVersionUID = 4324989127434984652L;
 	private double minResolution;
 	private double maxResolution;
 	
-	public ResolutionFilter(double minResolution, double maxResolution) {
+	public Resolution(double minResolution, double maxResolution) {
 		this.minResolution = minResolution;
 		this.maxResolution = maxResolution;
 	}

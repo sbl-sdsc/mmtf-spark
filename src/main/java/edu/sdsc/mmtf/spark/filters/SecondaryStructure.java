@@ -14,7 +14,7 @@ import scala.Tuple2;
  * @author Peter Rose
  *
  */
-public class SecondaryStructureFilter implements Function<Tuple2<String, StructureDataInterface>, Boolean> {
+public class SecondaryStructure implements Function<Tuple2<String, StructureDataInterface>, Boolean> {
 	private static final long serialVersionUID = -4794067375376198086L;
 	double helixFractionMin = 0;
 	double helixFractionMax = 1.0;
@@ -23,22 +23,22 @@ public class SecondaryStructureFilter implements Function<Tuple2<String, Structu
 	double coilFractionMin = 0;
 	double coilFractionMax = 1.0;
 
-	public SecondaryStructureFilter() {
+	public SecondaryStructure() {
 	}
 
-	public SecondaryStructureFilter helix(double helixFractionMin, double helixFractionMax) {
+	public SecondaryStructure helix(double helixFractionMin, double helixFractionMax) {
 		this.helixFractionMin = helixFractionMin;
 		this.helixFractionMax = helixFractionMax;
 		return this;
 	}
 
-	public SecondaryStructureFilter sheet(double sheetFractionMin, double sheetFractionMax) {
+	public SecondaryStructure sheet(double sheetFractionMin, double sheetFractionMax) {
 		this.sheetFractionMin = sheetFractionMin;
 		this.sheetFractionMax = sheetFractionMax;
 		return this;
 	}
 
-	public SecondaryStructureFilter coil(double coilFractionMin, double coilFractionMax) {
+	public SecondaryStructure coil(double coilFractionMin, double coilFractionMax) {
 		this.coilFractionMin = coilFractionMin;
 		this.coilFractionMax = coilFractionMax;
 		return this;

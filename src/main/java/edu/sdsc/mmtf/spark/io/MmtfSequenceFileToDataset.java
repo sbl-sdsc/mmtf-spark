@@ -1,17 +1,24 @@
 package edu.sdsc.mmtf.spark.io;
 
 import java.io.ByteArrayInputStream;
-import java.util.Set;
+import java.util.List;
 
 import org.apache.hadoop.io.BytesWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.spark.api.java.JavaPairRDD;
+import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.PairFunction;
+import org.apache.spark.sql.Dataset;
+import org.apache.spark.sql.Encoder;
+import org.apache.spark.sql.Encoders;
+import org.apache.spark.sql.Row;
+import org.apache.spark.sql.SparkSession;
 import org.rcsb.mmtf.api.StructureDataInterface;
 import org.rcsb.mmtf.dataholders.MmtfStructure;
 import org.rcsb.mmtf.decoder.GenericDecoder;
 import org.rcsb.mmtf.decoder.ReaderUtils;
+import org.rcsb.mmtf.encoder.AdapterToStructureData;
 import org.rcsb.mmtf.serialization.MessagePackSerialization;
 
 import scala.Tuple2;
@@ -22,23 +29,31 @@ import scala.Tuple2;
  * @author Peter Rose
  *
  */
-public class MmtfSequenceFileReader {
+public class MmtfSequenceFileToDataset {
 
-	public static JavaPairRDD<String, StructureDataInterface>  read(String path, JavaSparkContext sc) {
+	public static JavaPairRDD<String, GenericDecoder>  read(String path, JavaSparkContext sc) {
 		return sc
 				.sequenceFile(path, Text.class, BytesWritable.class)
-				.mapToPair(new PairFunction<Tuple2<Text, BytesWritable>,String, StructureDataInterface>() {
+				.mapToPair(new PairFunction<Tuple2<Text, BytesWritable>,String, GenericDecoder>() {
 					private static final long serialVersionUID = 3512575873287789314L;
 
-					public Tuple2<String, StructureDataInterface> call(Tuple2<Text, BytesWritable> t) throws Exception {
+					public Tuple2<String, GenericDecoder> call(Tuple2<Text, BytesWritable> t) throws Exception {
 						byte[] values = ReaderUtils.deflateGzip(t._2.copyBytes()); // unzip binary MessagePack data
 						MmtfStructure mmtf = new MessagePackSerialization().deserialize(new ByteArrayInputStream(values)); // deserialize message pack
-						return new Tuple2<String, StructureDataInterface>(t._1.toString(), new GenericDecoder(mmtf)); // decode message pack
+						return new Tuple2<String, GenericDecoder>(t._1.toString(), new GenericDecoder(mmtf)); // decode message pack
 					}
 				});
 	}
 	
-	public static JavaPairRDD<String, StructureDataInterface>  read(String path, Set<String> pdbIds, JavaSparkContext sc) {
+//	public static Dataset<GenericDecoder> toDataset() {
+//		Encoder<AdapterToStructureData> encoder = Encoders.bean(AdapterToStructureData.class);
+//	    Dataset<StructureDataInterface> ds = spark.createDataset(data, encoder);		
+//	}
+	public static <T> Dataset<Row> convertToDataFrame(JavaRDD<T> javaRDD, Class<T> clazz, SparkSession spark) {
+		return spark.createDataFrame(javaRDD, clazz);
+	}
+	
+	public static JavaPairRDD<String, StructureDataInterface>  read(String path, List<String> pdbIds, JavaSparkContext sc) {
 		return sc
 				.sequenceFile(path, Text.class, BytesWritable.class)
 				.filter(t -> pdbIds.contains(t._1.toString()))

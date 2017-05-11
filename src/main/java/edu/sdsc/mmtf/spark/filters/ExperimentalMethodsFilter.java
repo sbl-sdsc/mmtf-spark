@@ -40,6 +40,19 @@ public class ExperimentalMethodsFilter implements Function<Tuple2<String, Struct
 	/**
 	 * Constructor to define the list of experimental methods to filter by.
 	 * @param experimentalMethods comma separate list of experimental method types
+	 * "ELECTRON CRYSTALLOGRAPHY"
+	 * "ELECTRON MICROSCOPY"
+	 * "EPR"
+	 * "FIBER DIFFRACTION"
+	 * "FLUORESCENCE TRANSFER"
+	 * "INFRARED SPECTROSCOPY"
+	 * "NEUTRON DIFFRACTION"
+	 * "POWDER DIFFRACTION"
+	 * "SOLID-STATE NMR"
+	 * "SOLUTION NMR"
+	 * "SOLUTION SCATTERING"
+	 * "THEORETICAL MODEL" (note, the PDB does not contain theoretical models)
+	 * "X-RAY DIFFRACTION"
 	 */
 	public ExperimentalMethodsFilter(String... experimentalMethods) {
 		// order the input experimental method types alphabetically
@@ -54,7 +67,7 @@ public class ExperimentalMethodsFilter implements Function<Tuple2<String, Struct
 			return false;
 		}
 
-		// if there is more than one experimental method type, order them alphabetically
+		// order experimental methods alphabetically to enable equals comparison of sets
 		Set<String> methods = new TreeSet<>(Arrays.asList(structure.getExperimentalMethods()));
 		return methods.equals(experimentalMethods);
 	}

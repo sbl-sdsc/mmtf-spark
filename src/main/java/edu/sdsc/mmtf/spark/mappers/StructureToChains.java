@@ -78,7 +78,7 @@ public class StructureToChains implements PairFlatMapFunction<Tuple2<String,Stru
 				DecoderUtils.addHeaderInfo(structureDataInterface, adapterToStructureData);	
 				
 				// set model info (only one model: 0)
-				adapterToStructureData.setModelInfo(0, numChains);
+				adapterToStructureData.setModelInfo(0, dataSummary.numChains);
 				
 				// set entity info for chain
 				Entity entity = getEntityInfo(structureDataInterface, chainCounter);

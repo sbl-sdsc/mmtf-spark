@@ -33,51 +33,27 @@ public class StructureToPolymerChains implements PairFlatMapFunction<Tuple2<Stri
 
 	/**
 	 * Get the reduced form of the input {@link StructureDataInterface}.
-	 * @param structureDataInterface the input {@link StructureDataInterface} 
+	 * @param structure the input {@link StructureDataInterface} 
 	 * @return the reduced form of the {@link StructureDataInterface} as another {@link StructureDataInterface}
 	 */
-	public static List<Tuple2<String, StructureDataInterface>> getReduced(StructureDataInterface structureDataInterface) {
-		// The transmission of the data goes through this
-
-		// Loop through the Structure data interface this with the appropriate data
-		int atomCounter= - 1;
-		int groupCounter= - 1;
-		int chainCounter= - 1;
-
-		int iBond = 0;
-
+	public static List<Tuple2<String, StructureDataInterface>> getReduced(StructureDataInterface structure) {
 		// check what other data are missing: e.g., index: seq. -> atom records
-		if (structureDataInterface.getxCoords().length != structureDataInterface.getNumAtoms() && structureDataInterface.getNumModels() == 1) {
-			System.out.println("Size mismatch: " + structureDataInterface.getNumAtoms() + " vs " + structureDataInterface.getxCoords().length);
+		if (structure.getxCoords().length != structure.getNumAtoms() && structure.getNumModels() == 1) {
+			System.out.println("Size mismatch: " + structure.getNumAtoms() + " vs " + structure.getxCoords().length);
 		}
 
-		int numChains = structureDataInterface.getChainsPerModel()[0];
+		int numChains = structure.getChainsPerModel()[0];
 		List<Tuple2<String, StructureDataInterface>> chainList = new ArrayList<>();
 
-		int natom = 0;
-		SummaryData[] summaries = getChainSummary(structureDataInterface);
-		for (int t = 0; t < summaries.length; t++) {
-//			System.out.println(summaries[t]);
-			natom += summaries[t].numAtoms;
-		}
+		SummaryData[] summaries = getChainSummary(structure);
 
-		//       System.out.println(structureDataInterface.getStructureId() + " Inter bonds: " + structureDataInterface.getInterGroupBondIndices().length);
-//		if (natom > structureDataInterface.getNumAtoms() && structureDataInterface.getNumModels() == 1) {
-//			System.err.println("WARNING: skipping entry: " + structureDataInterface.getStructureId() + " inconsistency in data structure");
-//					System.err.println("Total atoms: " + structureDataInterface.getNumAtoms());
-//					System.err.println("Total atoms in groups: " + natom);
-//			return chainList;
-//		}
-
-		for (int j=0; j<numChains; j++){	
-			chainCounter++;
+		for (int i = 0, atomCounter = 0, groupCounter = 0; i < numChains; i++){	
 			int currGroupCounter = -1;
 			int currAtomCounter = -1;
-			boolean inconsistency = false;
 
 			Map<Integer, Integer> atomMap = new HashMap<>();
 
-			Entity entity = getEntityInfo(structureDataInterface, j);
+			Entity entity = getEntityInfo(structure, i);
 //			System.out.println("Entity info: " + entity.getType() + ", " + entity.getDescription());
 			boolean polymer = entity.getType().equals("polymer");
 
@@ -85,72 +61,46 @@ public class StructureToPolymerChains implements PairFlatMapFunction<Tuple2<Stri
 
 			if (polymer) {
 				
-				SummaryData dataSummary = summaries[j];
+				SummaryData dataSummary = summaries[i];
 
-				//				System.out.println("Chain: " + structureDataInterface.getChainIds()[j] + ": " + dataSummary);
+//				System.out.println("Chain symmary : " + structure.getChainIds()[i] + ": " + dataSummary);
 				adapterToStructureData.initStructure(dataSummary.numBonds, dataSummary.numAtoms, dataSummary.numGroups, 
-						dataSummary.numChains, dataSummary.numModels, structureDataInterface.getStructureId());
+						1, 1, structure.getStructureId());
 
-				DecoderUtils.addXtalographicInfo(structureDataInterface, adapterToStructureData);
-				DecoderUtils.addHeaderInfo(structureDataInterface, adapterToStructureData);	
+				DecoderUtils.addXtalographicInfo(structure, adapterToStructureData);
+				DecoderUtils.addHeaderInfo(structure, adapterToStructureData);	
 
 				// set model info (only one model: 0)
-				adapterToStructureData.setModelInfo(0, numChains);
+				adapterToStructureData.setModelInfo(0, 1);
 //			    System.out.println("entity sequence: " + Arrays.toString(entity.getChainIndexList()) + "," + entity.getSequence() + "," + entity.getDescription() + "," + entity.getType());
 				// new to update chainIndexList
 				adapterToStructureData.setEntityInfo(entity.getChainIndexList(), entity.getSequence(), entity.getDescription(), entity.getType());
+			    adapterToStructureData.setChainInfo(structure.getChainIds()[i], structure.getChainNames()[i], dataSummary.numGroups);
 			}
+			
+//			System.out.println("groups per chain " + i + ": " + structure.getGroupsPerChain()[i]);
 
-
-			for(int k=0; k<structureDataInterface.getGroupsPerChain()[chainCounter]; k++){
-				groupCounter++;
-				int groupIndex = structureDataInterface.getGroupTypeIndices()[groupCounter];
-
+			for (int j = 0; j < structure.getGroupsPerChain()[i]; j++, groupCounter++){
+				int groupIndex = structure.getGroupTypeIndices()[groupCounter];
 				if (polymer) {
 					currGroupCounter++;
-					adapterToStructureData.setGroupInfo(structureDataInterface.getGroupName(groupIndex), structureDataInterface.getGroupIds()[groupCounter], 
-							structureDataInterface.getInsCodes()[groupCounter], structureDataInterface.getGroupChemCompType(groupIndex), structureDataInterface.getNumAtomsInGroup(groupIndex),
-							structureDataInterface.getGroupBondOrders(groupIndex).length, structureDataInterface.getGroupSingleLetterCode(groupIndex), structureDataInterface.getGroupSequenceIndices()[groupCounter], 
-							structureDataInterface.getSecStructList()[groupCounter]);
+//					System.out.println("StructureToPolymerChain: " + structure.getGroupChemCompType(groupIndex));
+					adapterToStructureData.setGroupInfo(structure.getGroupName(groupIndex), structure.getGroupIds()[groupCounter], 
+							structure.getInsCodes()[groupCounter], structure.getGroupChemCompType(groupIndex), structure.getNumAtomsInGroup(groupIndex),
+							structure.getGroupBondOrders(groupIndex).length, structure.getGroupSingleLetterCode(groupIndex), structure.getGroupSequenceIndices()[groupCounter], 
+							structure.getSecStructList()[groupCounter]);
 				}
 
-				for (int l=0; l<structureDataInterface.getNumAtomsInGroup(groupIndex); l++){
-					atomCounter++;
-//					if (currAtomCounter+1 > adapterToStructureData.getNumAtoms()) {
-//						System.out.println(structureDataInterface.getStructureId() + " skipping entry wiht atom inconsistency ");
-//						chainList.clear();
-//						return chainList;
-//					}
-
-//					// 1A04: A: 5-216 = 212, b: 5-216: 212, 1GIZ: 43 atoms proble: ORP in DNA seq.type: SACCHARIDE?
-//					if (structureDataInterface.getxCoords().length <= atomCounter) {
-//						System.out.println("PDB ID: " + structureDataInterface.getStructureId());
-//						System.out.println("MMTF V: " + structureDataInterface.getMmtfVersion());
-//						System.out.println("Chain: " + structureDataInterface.getChainIds()[j] + ": " + summaries[j]);
-//						System.out.println("Num atoms in group: " + structureDataInterface.getNumAtomsInGroup(groupIndex));
-//
-//						System.out.println(structureDataInterface.getGroupName(groupIndex));
-//						System.out.println("atom counter: " + atomCounter);
-//						System.out.println("group counter: " + groupCounter);
-//						System.out.println("Atom counter too high" + atomCounter + " -> " + structureDataInterface.getAltLocIds().length);
-//					}
-					// this condition is only true for reduced version, how to determine this?
-//					if (polymer && l == 1) {
-//						inconsistency = true;
-//						System.out.println("Polymer with more than 1 reduced atom");
-//						System.out.println("Num atoms in group: " + structureDataInterface.getNumAtomsInGroup(groupIndex));
-//						System.out.println("group name " + structureDataInterface.getGroupName(groupIndex));
-//						System.out.println("Entity info: " + entity.getType() + ", " + entity.getDescription());
-//					}
+				for (int k = 0; k < structure.getNumAtomsInGroup(groupIndex); k++, atomCounter++){
 					if (polymer) {
 						currAtomCounter++;
 						atomMap.put(atomCounter,  currAtomCounter);
 						try {
-							adapterToStructureData.setAtomInfo(structureDataInterface.getGroupAtomNames(groupIndex)[l], structureDataInterface.getAtomIds()[atomCounter], structureDataInterface.getAltLocIds()[atomCounter], 
-									structureDataInterface.getxCoords()[atomCounter], structureDataInterface.getyCoords()[atomCounter], structureDataInterface.getzCoords()[atomCounter], 
-									structureDataInterface.getOccupancies()[atomCounter], structureDataInterface.getbFactors()[atomCounter], structureDataInterface.getGroupElementNames(groupIndex)[l], structureDataInterface.getGroupAtomCharges(groupIndex)[l]);
+							adapterToStructureData.setAtomInfo(structure.getGroupAtomNames(groupIndex)[k], structure.getAtomIds()[atomCounter], structure.getAltLocIds()[atomCounter], 
+									structure.getxCoords()[atomCounter], structure.getyCoords()[atomCounter], structure.getzCoords()[atomCounter], 
+									structure.getOccupancies()[atomCounter], structure.getbFactors()[atomCounter], structure.getGroupElementNames(groupIndex)[k], structure.getGroupAtomCharges(groupIndex)[k]);
 						} catch (Exception e) {
-							System.err.println(structureDataInterface.getStructureId() + ": skipping entry with inconsistent data");
+							System.err.println(structure.getStructureId() + ": skipping entry with inconsistent data");
 							chainList.clear();
 							return chainList;
 						}
@@ -158,29 +108,26 @@ public class StructureToPolymerChains implements PairFlatMapFunction<Tuple2<Stri
 				}
 
 				if (polymer) {
-					for(int l=0; l<structureDataInterface.getGroupBondOrders(groupIndex).length; l++){
-						int bondOrder = structureDataInterface.getGroupBondOrders(groupIndex)[l];
-						int bondIndOne = structureDataInterface.getGroupBondIndices(groupIndex)[l*2];
-						int bondIndTwo = structureDataInterface.getGroupBondIndices(groupIndex)[l*2+1];
+					for(int l=0; l<structure.getGroupBondOrders(groupIndex).length; l++){
+						int bondOrder = structure.getGroupBondOrders(groupIndex)[l];
+						int bondIndOne = structure.getGroupBondIndices(groupIndex)[l*2];
+						int bondIndTwo = structure.getGroupBondIndices(groupIndex)[l*2+1];
 						adapterToStructureData.setGroupBond(bondIndOne, bondIndTwo, bondOrder);
 					}
 				}
 			}
 
 			if (polymer) {
-				adapterToStructureData.setChainInfo(structureDataInterface.getChainIds()[chainCounter],
-						structureDataInterface.getChainNames()[chainCounter], currGroupCounter);
 				
 				// Add the inter group bonds
-				for(int ii=0; ii<structureDataInterface.getInterGroupBondOrders().length;ii++){
-					int bondIndOne = structureDataInterface.getInterGroupBondIndices()[ii*2];
-					int bondIndTwo = structureDataInterface.getInterGroupBondIndices()[ii*2+1];
-					int bondOrder = structureDataInterface.getInterGroupBondOrders()[ii];
+				for(int ii=0; ii<structure.getInterGroupBondOrders().length;ii++){
+					int bondIndOne = structure.getInterGroupBondIndices()[ii*2];
+					int bondIndTwo = structure.getInterGroupBondIndices()[ii*2+1];
+					int bondOrder = structure.getInterGroupBondOrders()[ii];
 					Integer indexOne = atomMap.get(bondIndOne);
 					if (indexOne != null) {
 						Integer indexTwo = atomMap.get(bondIndTwo);
 						if (indexTwo != null) {
-							iBond++;
 							adapterToStructureData.setInterGroupBond(indexOne, indexTwo, bondOrder);
 						}
 					}
@@ -189,13 +136,16 @@ public class StructureToPolymerChains implements PairFlatMapFunction<Tuple2<Stri
 //					System.out.println("Intrabond added: " + iBond);
 //				}
 				adapterToStructureData.finalizeStructure();
+//				System.out.println("finalizing chain: polymer");
 				if (currGroupCounter+1 != adapterToStructureData.getNumGroups()) {
 					System.out.println("Group inconsistency: " + currGroupCounter + " -> " + adapterToStructureData.getNumGroups());
 				}
 				if (currAtomCounter+1 != adapterToStructureData.getNumAtoms()) {
 					System.out.println("Atom inconsistency: " + currAtomCounter + " -> " + adapterToStructureData.getNumAtoms());
 				}
-				chainList.add(new Tuple2<String, StructureDataInterface>(structureDataInterface.getStructureId() + "." + structureDataInterface.getChainIds()[chainCounter], adapterToStructureData));
+//				System.out.println("# groups: " + adapterToStructureData.getNumGroups());
+//				System.out.println("# groups: " + adapterToStructureData.getGroupsPerChain()[0]);
+				chainList.add(new Tuple2<String, StructureDataInterface>(structure.getStructureId() + "." + structure.getChainIds()[i], adapterToStructureData));
 			}
 		}
 
@@ -203,45 +153,38 @@ public class StructureToPolymerChains implements PairFlatMapFunction<Tuple2<Stri
 //			System.out.println("intrabond missmatch: " + iBond + " out of " + structureDataInterface.getInterGroupBondOrders().length);
 //		}
 
+//		System.out.println("chainList:  " + chainList.size());
 		return chainList;
 	}
 
 	/**
 	 * Get the number of bonds, atoms and groups as a map.
-	 * @param structureDataInterface the input {@link StructureDataInterface}
+	 * @param structure the input {@link StructureDataInterface}
 	 * @return the {@link SummaryData} object describing the data
 	 */
-	private static SummaryData[] getChainSummary(StructureDataInterface structureDataInterface) {
-		int groupCounter = -1;
-		int chainCounter=-1;
-
-		int numChains = structureDataInterface.getChainsPerModel()[0];
+	private static SummaryData[] getChainSummary(StructureDataInterface structure) {
+		int numChains = structure.getChainsPerModel()[0];
 		SummaryData[] summaries = new SummaryData[numChains];
 
-		for(int j=0; j<numChains; j++){	
+		for (int i = 0, groupCounter = 0; i < numChains; i++){	
 			SummaryData summaryData = new SummaryData();
-			summaries[j] = summaryData;
+			summaries[i] = summaryData;
 			
-			summaryData.numChains = 0;
-			summaryData.numGroups = 0;
+			summaryData.numChains = 1;
+			summaryData.numGroups = structure.getGroupsPerChain()[i];
 			summaryData.numAtoms = 0;
 			summaryData.numBonds = 0;
 			summaryData.numModels = 1;
-
-			chainCounter++;
-			Entity entity = getEntityInfo(structureDataInterface, chainCounter);
+		
+			Entity entity = getEntityInfo(structure, i);
 			boolean polymer = entity.getType().equals("polymer");
-			
-			summaryData.numChains++;
+//			System.out.println("Chain: " + i + " polymer: " + polymer);
 
-			for(int k=0; k<structureDataInterface.getGroupsPerChain()[chainCounter]; k++){
-				groupCounter++;
-				int groupIndex = structureDataInterface.getGroupTypeIndices()[groupCounter];
-
+			for (int j = 0; j < structure.getGroupsPerChain()[i]; j++, groupCounter++){
 				if (polymer) {
-					summaryData.numGroups++;
-					summaryData.numAtoms += structureDataInterface.getNumAtomsInGroup(groupIndex);
-				    summaryData.numBonds += structureDataInterface.getGroupBondOrders(groupIndex).length;
+					int groupIndex = structure.getGroupTypeIndices()[groupCounter];
+					summaryData.numAtoms += structure.getNumAtomsInGroup(groupIndex);
+				    summaryData.numBonds += structure.getGroupBondOrders(groupIndex).length;
 				}
 			}
 		}

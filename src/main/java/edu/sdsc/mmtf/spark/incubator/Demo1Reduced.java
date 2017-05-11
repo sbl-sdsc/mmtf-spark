@@ -1,20 +1,14 @@
 /**
  * 
  */
-package edu.sdsc.mmtf.spark.apps;
+package edu.sdsc.mmtf.spark.incubator;
 
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.rcsb.mmtf.api.StructureDataInterface;
 
-import edu.sdsc.mmtf.spark.incubator.IsDProteinChain;
-import edu.sdsc.mmtf.spark.incubator.IsDSaccharide;
-import edu.sdsc.mmtf.spark.incubator.IsLDnaChain;
-import edu.sdsc.mmtf.spark.incubator.IsLProteinChainNonStrict;
-import edu.sdsc.mmtf.spark.incubator.IsLRnaChain;
 import edu.sdsc.mmtf.spark.io.MmtfSequenceFileReader;
-import edu.sdsc.mmtf.spark.mappers.ReducedEncoder;
 import edu.sdsc.mmtf.spark.mappers.ReducedEncoderNew;
 import edu.sdsc.mmtf.spark.mappers.StructureToPolymerChains;
 import scala.Tuple2;

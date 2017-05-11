@@ -42,12 +42,12 @@ import scala.Tuple2;
  * @author Peter Rose
  *
  */
-public class SequenceRegexFilter implements Function<Tuple2<String, StructureDataInterface>, Boolean> {
+public class ContainsSequenceRegex implements Function<Tuple2<String, StructureDataInterface>, Boolean> {
 
 	private static final long serialVersionUID = -180347064409550961L;
 	private Pattern pattern;
 	
-	public SequenceRegexFilter(String regularExpression) {
+	public ContainsSequenceRegex(String regularExpression) {
 		pattern = Pattern.compile(regularExpression);
 	}
 
@@ -55,16 +55,14 @@ public class SequenceRegexFilter implements Function<Tuple2<String, StructureDat
 	public Boolean call(Tuple2<String, StructureDataInterface> t) throws Exception {
 		StructureDataInterface structure = t._2;
 
-		if (structure.getGroupSequenceIndices().length != structure.getEntitySequence(0).length()) {
-			System.out.println("# seq indices: " + structure.getGroupSequenceIndices().length);
-			System.out.println("# entity seq.: " + structure.getEntitySequence(0).length());
+		for (int i = 0; i < structure.getNumEntities(); i++) {
+			if (! structure.getEntitySequence(i).isEmpty()) {
+				if (pattern.matcher(structure.getEntitySequence(i)).find()) {
+					return true;
+				}
+			}
 		}
 
-		// this filter passes only single chains and the sequence cannot be empty
-		if (structure.getNumEntities() != 1 || structure.getEntitySequence(0).isEmpty()) {
-			return false;			
-		} 
-
-		return pattern.matcher(structure.getEntitySequence(0)).find();
+		return false;
 	}
 }

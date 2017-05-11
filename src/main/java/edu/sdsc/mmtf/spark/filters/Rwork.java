@@ -10,12 +10,12 @@ import scala.Tuple2;
  * @author Peter Rose
  *
  */
-public class RworkFilter implements Function<Tuple2<String, StructureDataInterface>, Boolean> {
+public class Rwork implements Function<Tuple2<String, StructureDataInterface>, Boolean> {
 	private static final long serialVersionUID = -5470014873227534021L;
 	private double minRwork;
 	private double maxRwork;
 	
-	public RworkFilter(double minRwork, double maxRwork) {
+	public Rwork(double minRwork, double maxRwork) {
 		this.minRwork = minRwork;
 		this.maxRwork = maxRwork;
 	}

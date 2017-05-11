@@ -10,12 +10,12 @@ import scala.Tuple2;
  * @author Peter Rose
  *
  */
-public class RfreeFilter implements Function<Tuple2<String, StructureDataInterface>, Boolean> {
+public class Rfree implements Function<Tuple2<String, StructureDataInterface>, Boolean> {
 	private static final long serialVersionUID = 2881046310099057240L;
 	private double minRfree;
 	private double maxRfree;
 	
-	public RfreeFilter(double minRfree, double maxRfree) {
+	public Rfree(double minRfree, double maxRfree) {
 		this.minRfree = minRfree;
 		this.maxRfree = maxRfree;
 	}

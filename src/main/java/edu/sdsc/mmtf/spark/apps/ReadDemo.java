@@ -3,17 +3,10 @@
  */
 package edu.sdsc.mmtf.spark.apps;
 
-import java.util.Arrays;
-
 import org.apache.hadoop.io.BytesWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.spark.SparkConf;
-import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
-import org.rcsb.mmtf.api.StructureDataInterface;
-
-import edu.sdsc.mmtf.spark.filters.ContainsLProteinChain;
-import edu.sdsc.mmtf.spark.io.MmtfSequenceFileReader;
 
 /**
  * @author peter
