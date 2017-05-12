@@ -16,8 +16,6 @@ import edu.sdsc.mmtf.spark.filters.Resolution;
 import edu.sdsc.mmtf.spark.filters.Rfree;
 import edu.sdsc.mmtf.spark.io.MmtfSequenceFileReader;
 import edu.sdsc.mmtf.spark.io.MmtfStructureReader;
-import edu.sdsc.mmtf.spark.mappers.ReducedEncoder;
-import edu.sdsc.mmtf.spark.mappers.ReducedEncoderNew;
 import edu.sdsc.mmtf.spark.mappers.StructureToPolymerChains;
 import scala.Tuple2;
 

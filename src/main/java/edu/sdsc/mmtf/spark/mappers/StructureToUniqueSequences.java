@@ -24,7 +24,7 @@ public class StructureToUniqueSequences implements PairFlatMapFunction<Tuple2<St
 		List<Tuple2<String, String>> sequences = new ArrayList<>();
 
 		for (int i = 0; i < structure.getNumEntities(); i++) {
-			if (structure.getEntityType(i).equals("polymer")) {
+			if (structure.getEntityType(i).equals("polymer") && ! structure.getEntitySequence(i).isEmpty()) {
 				sequences.add(new Tuple2<String,String>(t._1, structure.getEntitySequence(i)));
 			}
 		}

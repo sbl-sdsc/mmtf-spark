@@ -1,4 +1,4 @@
-package edu.sdsc.mmtf.spark.mappers;
+package edu.sdsc.mmtf.spark.incubator;
 
 import static org.junit.Assert.*;
 

@@ -32,9 +32,6 @@ public class Demo8 {
 	    
 	    long start = System.nanoTime();
 	    
-//	    SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(Demo5.class.getSimpleName());
-//	    JavaSparkContext sc = new JavaSparkContext(conf);
-	    
 	    SparkSession spark = SparkSession
 	    		  .builder()
 	    		  .master("local[*]")
@@ -45,20 +42,19 @@ public class Demo8 {
 		 
 	    // read PDB in MMTF format
 	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfSequenceFileReader.read(args[0],  sc);
-
-//	    pdb = pdb.filter(t -> t._1.equals("1STP"));
 	    
-	    JavaRDD<Row> rows = pdb.flatMap(new StructureToInteractingResidues("ADP", 4));
+	    // create a list of all residues with a threshold distance
+	    JavaRDD<Row> rows = pdb.flatMap(new StructureToInteractingResidues("ZN", 4));
 	    
 	    Dataset<Row> ds = spark.createDataFrame(rows, StructureToInteractingResidues.getSchema()).cache();
 	    ds.printSchema();
-	    
-	    ds.groupBy("Res2").count().sort("count").show(100);
 	    ds.show();
 	    System.out.println(ds.count());
-
-//	    System.out.println(list.count());
-//	    rows.foreach(t -> System.out.println(t));
+	    
+	    Dataset<Row> counts = ds.groupBy("Res2").count();
+	    counts.orderBy(counts.col("count").desc()).show(100);
+//	    ds.show();
+//	    System.out.println(ds.count());
 	  
 	    long end = System.nanoTime();
 	    

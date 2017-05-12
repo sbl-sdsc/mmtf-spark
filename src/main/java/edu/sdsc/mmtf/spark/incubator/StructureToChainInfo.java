@@ -1,4 +1,4 @@
-package edu.sdsc.mmtf.spark.mappers;
+package edu.sdsc.mmtf.spark.incubator;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -11,11 +11,9 @@ import org.rcsb.mmtf.dataholders.Entity;
 import scala.Tuple2;
 
 /**
- * Convert a full format of the file to a reduced format.
- * @author Anthony Bradley
  *
  */
-public class StructureToPolymerType implements PairFlatMapFunction<Tuple2<String,StructureDataInterface>,String, String> {
+public class StructureToChainInfo implements PairFlatMapFunction<Tuple2<String,StructureDataInterface>,String, String> {
 	private static final long serialVersionUID = -3348372120358649240L;
 
 	@Override
@@ -26,16 +24,16 @@ public class StructureToPolymerType implements PairFlatMapFunction<Tuple2<String
 
 	/**
 	 * Get the reduced form of the input {@link StructureDataInterface}.
-	 * @param structureDataInterface the input {@link StructureDataInterface} 
+	 * @param struct the input {@link StructureDataInterface} 
 	 * @return the reduced form of the {@link StructureDataInterface} as another {@link StructureDataInterface}
 	 */
-	public static List<Tuple2<String, String>> getReduced(StructureDataInterface structureDataInterface) {
-		int numChains = structureDataInterface.getChainsPerModel()[0];
+	public static List<Tuple2<String, String>> getReduced(StructureDataInterface struct) {
+		int numChains = struct.getChainsPerModel()[0];
 		List<Tuple2<String, String>> chainList = new ArrayList<>(numChains);
 
 		for (int j=0; j<numChains; j++){			
-			Entity entity = getEntityInfo(structureDataInterface, j);
-			chainList.add(new Tuple2<String,String>(structureDataInterface.getStructureId()+structureDataInterface.getChainIds()[j], entity.getType()));
+			Entity entity = getEntityInfo(struct, j);
+			chainList.add(new Tuple2<String,String>(struct.getStructureId()+struct.getChainIds()[j], Integer.toString(struct.getGroupsPerChain()[j])));
 		}
 
 		return chainList;

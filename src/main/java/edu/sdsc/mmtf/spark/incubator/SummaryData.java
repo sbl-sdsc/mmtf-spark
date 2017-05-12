@@ -1,4 +1,4 @@
-package edu.sdsc.mmtf.spark.mappers;
+package edu.sdsc.mmtf.spark.incubator;
 
 /**
  * Class to store summary data about a structure.

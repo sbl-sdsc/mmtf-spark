@@ -7,11 +7,7 @@ import edu.sdsc.mmtf.spark.filters.ContainsGroup;
 import edu.sdsc.mmtf.spark.io.MmtfSequenceFileReader;
 
 /**
- * This example demonstrates how to filter the PDB by polymer chain type. It filters
- * 
- * Simple example of reading an MMTF Hadoop Sequence file, filtering the entries by resolution,
- * and counting the number of entries. This example shows how methods can be chained for a more
- * concise syntax.
+ * This example demonstrates how to filter the PDB entries by a list of chemical components.
  * 
  * @author Peter Rose
  *

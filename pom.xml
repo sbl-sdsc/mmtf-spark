@@ -11,11 +11,12 @@
 		<maven.enforcer.jdk-version>1.8</maven.enforcer.jdk-version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.build.targetEncoding>UTF-8</project.build.targetEncoding>
-<!-- 		<maxmem>512M</maxmem> -->
+		<!-- <maxmem>512M</maxmem> -->
 		<slf4j.version>1.7.20</slf4j.version>
 		<log4j.version>2.5</log4j.version>
 		<junit.version>4.12</junit.version>
 		<mmtf.version>1.0.5</mmtf.version>
+		<biojava.version>5.0.0-alpha8</biojava.version>
 		<spark.version>2.1.0</spark.version>
 	</properties>
 
@@ -36,6 +37,11 @@
 			<version>${mmtf.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>org.biojava</groupId>
+			<artifactId>biojava-structure</artifactId>
+			<version>${biojava.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>org.apache.spark</groupId>
 			<artifactId>spark-core_2.11</artifactId>
 			<version>${spark.version}</version>
@@ -46,6 +52,4 @@
 			<version>${spark.version}</version>
 		</dependency>
 	</dependencies>
-
-
 </project>

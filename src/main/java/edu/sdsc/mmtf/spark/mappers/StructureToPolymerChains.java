@@ -15,6 +15,7 @@ import org.rcsb.mmtf.decoder.DecoderUtils;
 import org.rcsb.mmtf.encoder.AdapterToStructureData;
 import org.rcsb.mmtf.encoder.EncoderUtils;
 
+import edu.sdsc.mmtf.spark.incubator.SummaryData;
 import scala.Tuple2;
 
 /**

@@ -11,9 +11,7 @@ import org.rcsb.mmtf.api.StructureDataInterface;
 
 import edu.sdsc.mmtf.spark.filters.ContainsSequenceRegex;
 import edu.sdsc.mmtf.spark.io.MmtfSequenceFileReader;
-import edu.sdsc.mmtf.spark.mappers.StructureToChains;
 import edu.sdsc.mmtf.spark.mappers.StructureToPolymerChains;
-import edu.sdsc.mmtf.spark.mappers.StructureToPolymerType;
 import scala.Tuple2;
 
 /**

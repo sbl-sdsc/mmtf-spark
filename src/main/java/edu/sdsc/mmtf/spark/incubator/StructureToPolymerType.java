@@ -1,4 +1,4 @@
-package edu.sdsc.mmtf.spark.mappers;
+package edu.sdsc.mmtf.spark.incubator;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -11,29 +11,31 @@ import org.rcsb.mmtf.dataholders.Entity;
 import scala.Tuple2;
 
 /**
+ * Convert a full format of the file to a reduced format.
+ * @author Anthony Bradley
  *
  */
-public class StructureToChainInfo3 implements PairFlatMapFunction<Tuple2<String,StructureDataInterface>,String, Integer> {
+public class StructureToPolymerType implements PairFlatMapFunction<Tuple2<String,StructureDataInterface>,String, String> {
 	private static final long serialVersionUID = -3348372120358649240L;
 
 	@Override
-	public Iterator<Tuple2<String, Integer>> call(Tuple2<String, StructureDataInterface> t) throws Exception {
+	public Iterator<Tuple2<String, String>> call(Tuple2<String, StructureDataInterface> t) throws Exception {
 		return getReduced(t._2).iterator();
 	}
 
 
 	/**
 	 * Get the reduced form of the input {@link StructureDataInterface}.
-	 * @param struct the input {@link StructureDataInterface} 
+	 * @param structureDataInterface the input {@link StructureDataInterface} 
 	 * @return the reduced form of the {@link StructureDataInterface} as another {@link StructureDataInterface}
 	 */
-	public static List<Tuple2<String, Integer>> getReduced(StructureDataInterface struct) {
-		int numChains = struct.getChainsPerModel()[0];
-		List<Tuple2<String, Integer>> chainList = new ArrayList<>(numChains);
+	public static List<Tuple2<String, String>> getReduced(StructureDataInterface structureDataInterface) {
+		int numChains = structureDataInterface.getChainsPerModel()[0];
+		List<Tuple2<String, String>> chainList = new ArrayList<>(numChains);
 
 		for (int j=0; j<numChains; j++){			
-			Entity entity = getEntityInfo(struct, j);
-			chainList.add(new Tuple2<String,Integer>(struct.getStructureId()+struct.getChainIds()[j], struct.getGroupsPerChain()[j]));
+			Entity entity = getEntityInfo(structureDataInterface, j);
+			chainList.add(new Tuple2<String,String>(structureDataInterface.getStructureId()+structureDataInterface.getChainIds()[j], entity.getType()));
 		}
 
 		return chainList;
