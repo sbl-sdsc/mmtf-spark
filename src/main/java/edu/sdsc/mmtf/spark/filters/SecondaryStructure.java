@@ -10,7 +10,6 @@ import scala.Tuple2;
  * This filter return true if the polymer sequence matches the specified regular
  * expression
  *
- * 
  * @author Peter Rose
  *
  */

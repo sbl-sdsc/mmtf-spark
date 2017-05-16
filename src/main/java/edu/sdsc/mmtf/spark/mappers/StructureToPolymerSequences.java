@@ -10,11 +10,11 @@ import org.rcsb.mmtf.api.StructureDataInterface;
 import scala.Tuple2;
 
 /**
- * Maps a structure to its unique polymer sequences
+ * Maps a structure to its unique polymer sequences.
  * @author Peter Rose
  *
  */
-public class StructureToUniqueSequences implements PairFlatMapFunction<Tuple2<String,StructureDataInterface>,String, String> {
+public class StructureToPolymerSequences implements PairFlatMapFunction<Tuple2<String,StructureDataInterface>,String, String> {
 	private static final long serialVersionUID = -3348372120358649240L;
 
 	@Override

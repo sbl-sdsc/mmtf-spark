@@ -6,8 +6,8 @@ import org.rcsb.mmtf.api.StructureDataInterface;
 import scala.Tuple2;
 
 /**
- * This filter returns entries that contain polymer chain(s) made of L-amino acids 
- * (L-proteins). The default constructor returns entries that contain at least one 
+ * This filter returns entries that contain polymer chain(s) made of L-amino acids. 
+ * The default constructor returns entries that contain at least one 
  * polymer chain that is an L-protein. If the "exclusive" flag is set to true 
  * in the constructor, all polymer chains must be L-proteins. For a multi-model structure,
  * this filter only checks the first model.

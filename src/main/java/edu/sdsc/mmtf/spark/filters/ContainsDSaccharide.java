@@ -6,8 +6,8 @@ import org.rcsb.mmtf.api.StructureDataInterface;
 import scala.Tuple2;
 
 /**
- * This filter returns entries that contain protein chain(s) made of L-amino acids 
- * (L-proteins). The default constructor returns entries that contain at least one 
+ * This filter returns entries that contain chain(s) made of D-saccharides. 
+ * The default constructor returns entries that contain at least one 
  * polymer chain that is an L-protein. If the "exclusive" flag is set to true 
  * in the constructor, all polymer chains must be L-proteins. For a multi-model structure,
  * this filter only checks the first model.
@@ -20,8 +20,8 @@ public class ContainsDSaccharide implements Function<Tuple2<String, StructureDat
 	private ContainsPolymerType filter;
 
 	/**
-	 * Default constructor matches any entry that contains at least one L-protein chain.
-	 * As an example, an L-protein/L-DNA complex passes this filter.
+	 * Default constructor matches any entry that contains at least one chain made of D-saccharides.
+	 * As an example, a glycosylated protein complex passes this filter.
 	 */
 	public ContainsDSaccharide() {
 		this(false);

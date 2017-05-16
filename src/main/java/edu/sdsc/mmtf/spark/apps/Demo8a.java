@@ -18,7 +18,7 @@ import edu.sdsc.mmtf.spark.mappers.StructureToInteractingResidues;
  * @author peter
  *
  */
-public class Demo8 {
+public class Demo8a {
 
 	/**
 	 * @param args
@@ -26,7 +26,7 @@ public class Demo8 {
 	public static void main(String[] args) {
 
 	    if (args.length != 1) {
-	        System.err.println("Usage: " + Demo8.class.getSimpleName() + " <hadoop sequence file>");
+	        System.err.println("Usage: " + Demo8a.class.getSimpleName() + " <hadoop sequence file>");
 	        System.exit(1);
 	    }
 	    
@@ -35,7 +35,7 @@ public class Demo8 {
 	    SparkSession spark = SparkSession
 	    		  .builder()
 	    		  .master("local[*]")
-	    		  .appName(Demo8.class.getSimpleName())
+	    		  .appName(Demo8a.class.getSimpleName())
 	    		  .getOrCreate();
 	    
 	    JavaSparkContext sc = new JavaSparkContext(spark.sparkContext());
@@ -44,17 +44,18 @@ public class Demo8 {
 	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfSequenceFileReader.read(args[0],  sc);
 	    
 	    // create a list of all residues with a threshold distance
-	    JavaRDD<Row> rows = pdb.flatMap(new StructureToInteractingResidues("ZN", 4));
+	    JavaRDD<Row> rows = pdb.flatMap(new StructureToInteractingResidues("CO", 4));
 	    
 	    Dataset<Row> ds = spark.createDataFrame(rows, StructureToInteractingResidues.getSchema()).cache();
-	    ds.printSchema();
-	    ds.show();
-	    System.out.println(ds.count());
+
+	    System.out.println("Interactions: " + ds.count());
 	    
+	    // show 10 sample interactions
+	    ds.show(10);
+	    
+	    // list the top 10 residue types that interact with Zn
 	    Dataset<Row> counts = ds.groupBy("Res2").count();
-	    counts.orderBy(counts.col("count").desc()).show(100);
-//	    ds.show();
-//	    System.out.println(ds.count());
+	    counts.orderBy(counts.col("count").desc()).show(10);
 	  
 	    long end = System.nanoTime();
 	    

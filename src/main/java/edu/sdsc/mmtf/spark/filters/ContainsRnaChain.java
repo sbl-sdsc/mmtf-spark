@@ -6,13 +6,13 @@ import org.rcsb.mmtf.api.StructureDataInterface;
 import scala.Tuple2;
 
 /**
- * This filter returns entries that contain protein chain(s) made of L-amino acids 
- * (L-proteins). The default constructor returns entries that contain at least one 
- * polymer chain that is an L-protein. If the "exclusive" flag is set to true 
- * in the constructor, all polymer chains must be L-proteins. For a multi-model structure,
- * this filter only checks the first model.
+ * This filter passes entries that contain RNA chains. The default constructor 
+ * passes entries that contain at least one RNA chain. If the "exclusive" flag is 
+ * set to true in the constructor, all polymer chains must be RNA. For a multi-model 
+ * structure (e.g., NMR structure), this filter only checks the first model.
  * 
  * @author Peter Rose
+ * 
  *
  */
 public class ContainsRnaChain implements Function<Tuple2<String, StructureDataInterface>, Boolean> {
@@ -20,17 +20,17 @@ public class ContainsRnaChain implements Function<Tuple2<String, StructureDataIn
 	private ContainsPolymerType filter;
 
 	/**
-	 * Default constructor matches any entry that contains at least one L-protein chain.
-	 * As an example, an L-protein/L-DNA complex passes this filter.
+	 * Default constructor matches any entry that contains at least one RNA chain.
+	 * As an example, a RNA-protein complex passes this filter.
 	 */
 	public ContainsRnaChain() {
 		this(false);
 	}
 	
 	/**
-	 * Optional constructor that can be used to filter entries that exclusively contain L-protein chains.
-	 * For example, with "exclusive" set to true, an L-protein/L-DNA complex does not pass this filter.
-	 * @param exclusive if true, only return entries that are exclusively contain L-protein chains
+	 * Optional constructor that can be used to filter entries that exclusively contain DNA chains.
+	 * For example, with "exclusive" set to true, a RNA-protein complex complex does not pass this filter.
+	 * @param exclusive if true, only return entries that contain RNA chains
 	 */
 	public ContainsRnaChain(boolean exclusive) {
 		this.filter = new ContainsPolymerType(exclusive, "RNA LINKING");

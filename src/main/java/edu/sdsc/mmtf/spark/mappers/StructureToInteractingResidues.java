@@ -5,7 +5,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.spark.api.java.function.FlatMapFunction;
-import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.RowFactory;
 import org.apache.spark.sql.types.DataTypes;
@@ -36,19 +35,14 @@ public class StructureToInteractingResidues implements  FlatMapFunction<Tuple2<S
 		
 		List<Integer> groupIndices = new ArrayList<>();
 		List<String> groupNames = new ArrayList<>();		
-		getGroupIndices(structure, groupIndices, groupNames);
-//		System.out.println("Group names:" + groupNames);
-		
+		getGroupIndices(structure, groupIndices, groupNames);		
 
 		List<Row> neighbors = new ArrayList<>();
 		for (int i = 0; i < groupNames.size(); i++) {
 			if (groupNames.get(i).equals(groupName)) {
 				List<Integer> matches = new ArrayList<>();
 				float[] boundingBox = calcBoundingBox(structure, groupIndices, i, cutoffDistance);
-				// System.out.println("box: " + Arrays.toString(boundingBox));
 				matches.addAll(findNeighbors(structure, i, boundingBox, groupIndices));
-				// remove interactions with itself
-//				matches.remove(i);
 				neighbors.addAll(getDistanceProfile(matches, i, groupIndices, groupNames, structure));
 			}
 		}
@@ -88,7 +82,6 @@ public class StructureToInteractingResidues implements  FlatMapFunction<Tuple2<S
 			}
 			if (minIndex >= 0) {
 				Row row = RowFactory.create(groupNames.get(index), groupNames.get(minIndex), Math.sqrt(minDSq));
-//				System.out.println("adding row: " + row);
 				rows.add(row);
 			}
 		}
@@ -103,14 +96,12 @@ public class StructureToInteractingResidues implements  FlatMapFunction<Tuple2<S
 		List<Integer> matches = new ArrayList<>();
 		
 		for (int i = 0; i < groupIndices.size()-1; i++) {
-//			System.out.println(i + ": " + groupIndices.get(i) + " -> " + groupIndices.get(i+1));
 			for (int j = groupIndices.get(i); j < groupIndices.get(i+1); j++) {
 				
 				if (x[j] >= boundingBox[0] && x[j] <= boundingBox[1] &&
 						y[j] >= boundingBox[2] && y[j] <= boundingBox[3] &&
 						z[j] >= boundingBox[4] && z[j] <= boundingBox[5]) {
 					matches.add(i);
-//					System.out.println("match: " + i);
 					break;
 				}
 			}
@@ -118,16 +109,7 @@ public class StructureToInteractingResidues implements  FlatMapFunction<Tuple2<S
 		return matches;
 	}
 
-	private float[] calcBoundingBox(StructureDataInterface structure, List<Integer> groupIndices, int index, double cutoffDistance) {
-		int first = groupIndices.get(index);	
-		int last = groupIndices.get(index+1);
-
-		return getBoundingBox(first, last, structure, cutoffDistance);	
-	}
-
-	private float[] getBoundingBox(int first, int last, StructureDataInterface structure, double cutoffDistance) {
-		float[] boundingBox = new float[6];
-		
+	private float[] calcBoundingBox(StructureDataInterface structure, List<Integer> groupIndices, int index, double cutoffDistance) {	
 		float[] x = structure.getxCoords();
 		float[] y = structure.getyCoords();
 		float[] z = structure.getzCoords();
@@ -139,6 +121,9 @@ public class StructureToInteractingResidues implements  FlatMapFunction<Tuple2<S
 		float zMin = Float.MAX_VALUE;
 		float zMax = Float.MIN_VALUE;
 		
+		int first = groupIndices.get(index);	
+		int last = groupIndices.get(index+1);
+		
 		for (int i = first; i < last; i++) {
 			xMin = Math.min(xMin, x[i]);
 			xMax = Math.max(xMax, x[i]);
@@ -147,6 +132,8 @@ public class StructureToInteractingResidues implements  FlatMapFunction<Tuple2<S
 			zMin = Math.min(zMin, z[i]);
 			zMax = Math.max(zMax, z[i]);
 		}
+		
+		float[] boundingBox = new float[6];
 		boundingBox[0] = (float) (xMin - cutoffDistance);
 		boundingBox[1] = (float) (xMax + cutoffDistance);
 		boundingBox[2] = (float) (yMin - cutoffDistance);
@@ -167,8 +154,7 @@ public class StructureToInteractingResidues implements  FlatMapFunction<Tuple2<S
 		// add start index for first group
 		groupIndices.add(0);
 
-		for (int i = 0; i < numChains; i++) {	
-			
+		for (int i = 0; i < numChains; i++) {			
 			for (int j = 0; j < structure.getGroupsPerChain()[i]; j++) {
 				int groupIndex = structure.getGroupTypeIndices()[groupCounter];
 				groupNames.add(structure.getGroupName(groupIndex));
