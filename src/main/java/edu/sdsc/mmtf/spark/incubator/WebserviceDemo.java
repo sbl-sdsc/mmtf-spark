@@ -13,7 +13,7 @@ import org.rcsb.mmtf.api.StructureDataInterface;
 
 import edu.sdsc.mmtf.spark.filters.ContainsDSaccharide;
 import edu.sdsc.mmtf.spark.filters.ContainsPolymerType;
-import edu.sdsc.mmtf.spark.filters.RcsbWebserviceFilter;
+import edu.sdsc.mmtf.spark.filters.RcsbWebServiceFilter;
 import edu.sdsc.mmtf.spark.io.MmtfSequenceFileReader;
 import edu.sdsc.mmtf.spark.mappers.StructureToPolymerChains;
 
@@ -52,7 +52,7 @@ public class WebserviceDemo {
 //	    String whereClause = "WHERE ligandMolecularWeight>=300 AND ligandMolecularWeight<=500";
 //	    pdb = pdb.filter(new RcsbWebserviceFilter(whereClause, "ligandMolecularWeight"));
 	    String whereClause = "WHERE pfamAccession LIKE 'PF07714%'"; 
-	    pdb = pdb.filter(new RcsbWebserviceFilter(whereClause, "pfamAccession"));
+	    pdb = pdb.filter(new RcsbWebServiceFilter(whereClause, "pfamAccession"));
 //	    String whereClause = "WHERE pfamAccession IS NOT NULL"; 
 //	    pdb = pdb.filter(new RcsbWebserviceFilter(whereClause, "pfamAccession"));
 	

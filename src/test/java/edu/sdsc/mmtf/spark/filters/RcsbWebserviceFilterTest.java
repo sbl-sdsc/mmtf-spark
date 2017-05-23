@@ -29,7 +29,7 @@ public class RcsbWebserviceFilterTest {
 	    
 	    // this test runs a chain level query and compares the results at the PDB entry level
 		String whereClause = "WHERE ecNo='2.7.11.1'";
-		pdb = pdb.filter(new RcsbWebserviceFilter(whereClause, "ecNo","source"));
+		pdb = pdb.filter(new RcsbWebServiceFilter(whereClause, "ecNo","source"));
 		List<String> matches = pdb.keys().collect();
 		sc.close();
 		
@@ -51,7 +51,7 @@ public class RcsbWebserviceFilterTest {
 	    
 	    // this test runs a chain level query and compares the results at the PDB entry level
 		String whereClause = "WHERE ecNo='2.7.11.1' AND source='Homo sapiens'";
-		pdb = pdb.filter(new RcsbWebserviceFilter(whereClause, "ecNo","source"));
+		pdb = pdb.filter(new RcsbWebServiceFilter(whereClause, "ecNo","source"));
 		List<String> matches = pdb.keys().collect();
 		sc.close();
 		
@@ -74,7 +74,7 @@ public class RcsbWebserviceFilterTest {
 	    
 	    // this test runs a chain level query and compares chain level results
 		String whereClause = "WHERE ecNo='2.7.11.1' AND source='Homo sapiens'";
-		pdb = pdb.filter(new RcsbWebserviceFilter(whereClause, "ecNo","source"));
+		pdb = pdb.filter(new RcsbWebServiceFilter(whereClause, "ecNo","source"));
 		List<String> matches = pdb.keys().collect();
 		sc.close();
 		

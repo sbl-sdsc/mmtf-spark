@@ -36,7 +36,7 @@ import scala.Tuple2;
  * @author Peter Rose
  *
  */
-public class RcsbWebserviceFilter implements Function<Tuple2<String, StructureDataInterface>, Boolean> {
+public class RcsbWebServiceFilter implements Function<Tuple2<String, StructureDataInterface>, Boolean> {
 	private static final long serialVersionUID = -4794067375376198086L;
 	private Set<String> pdbIds;
 	private boolean chainLevel;
@@ -47,7 +47,7 @@ public class RcsbWebserviceFilter implements Function<Tuple2<String, StructureDa
 	 * @param fields one or more field names to be used in query
 	 * @throws IOException
 	 */
-	public RcsbWebserviceFilter(String whereClause, String... fields) throws IOException {
+	public RcsbWebServiceFilter(String whereClause, String... fields) throws IOException {
 		List<String> columnNames = Arrays.asList(fields);
 		
 		// get requested data columns
