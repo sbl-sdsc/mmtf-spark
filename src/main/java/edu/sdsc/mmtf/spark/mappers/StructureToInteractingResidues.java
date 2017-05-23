@@ -81,6 +81,7 @@ public class StructureToInteractingResidues implements  FlatMapFunction<Tuple2<S
 				}
 			}
 			if (minIndex >= 0) {
+				// TODO add unique group (and atom?) for each group?
 				Row row = RowFactory.create(groupNames.get(index), groupNames.get(minIndex), Math.sqrt(minDSq));
 				rows.add(row);
 			}

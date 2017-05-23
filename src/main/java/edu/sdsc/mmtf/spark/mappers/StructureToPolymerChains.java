@@ -20,7 +20,14 @@ import scala.Tuple2;
  */
 public class StructureToPolymerChains implements PairFlatMapFunction<Tuple2<String,StructureDataInterface>,String, StructureDataInterface> {
 	private static final long serialVersionUID = -5979145207983266913L;
+	private boolean chainName = true;
 
+	public StructureToPolymerChains() {}
+	
+	public StructureToPolymerChains(boolean chainName) {
+		this.chainName = chainName;
+	}
+	
 	@Override
 	public Iterator<Tuple2<String, StructureDataInterface>> call(Tuple2<String, StructureDataInterface> t) throws Exception {
 		StructureDataInterface structure = t._2;
@@ -109,8 +116,13 @@ public class StructureToPolymerChains implements PairFlatMapFunction<Tuple2<Stri
 				}
 
 				adapterToStructureData.finalizeStructure();
+				
+				String ch = structure.getChainNames()[i];
+				if (! chainName) {
+					ch =structure.getChainIds()[i];
+				}
 
-				chainList.add(new Tuple2<String, StructureDataInterface>(structure.getStructureId() + "." + structure.getChainIds()[i], adapterToStructureData));
+				chainList.add(new Tuple2<String, StructureDataInterface>(structure.getStructureId() + "." + ch, adapterToStructureData));
 			}
 		}
 

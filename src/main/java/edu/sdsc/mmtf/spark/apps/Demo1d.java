@@ -1,8 +1,7 @@
 package edu.sdsc.mmtf.spark.apps;
 
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
@@ -28,7 +27,7 @@ public class Demo1d {
 	    JavaSparkContext sc = new JavaSparkContext(conf);
 		 
 		 
-	    Set<String> pdbIds = new HashSet<String>(Arrays.asList("1STP","4HHB","1EP4"));
+	    List<String> pdbIds = Arrays.asList("1STP","4HHB","1EP4");
 	    
 	    MmtfSequenceFileReader
 	    		.read(args[0], pdbIds, sc) // read a set of structure from an MMTF hadoop sequence file
