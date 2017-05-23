@@ -18,7 +18,7 @@ import org.apache.spark.sql.SparkSession;
 /**
  * This class uses RCSB PDB Tabular Report RESTful web services to retrieve metadata
  * and annotations for all current entries in the Protein Data Bank.
- * See <a href="https://www.rcsb.org/pdb/results/reportField.do">for list of supported
+ * See <a href="http://www.rcsb.org/pdb/results/reportField.do">for list of supported
  * field names.</a>
  * Reference: The RCSB Protein Data Bank: redesigned web site and web services 2011
  * Nucleic Acids Res. 39: D392-D401.
