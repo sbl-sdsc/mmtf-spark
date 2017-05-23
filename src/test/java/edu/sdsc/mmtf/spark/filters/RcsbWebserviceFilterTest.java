@@ -29,7 +29,7 @@ public class RcsbWebserviceFilterTest {
 	    
 	    // this test runs a chain level query and compares the results at the PDB entry level
 		String whereClause = "WHERE ecNo='2.7.11.1'";
-		pdb = pdb.filter(new RcsbWebServiceFilter(whereClause, "ecNo","source"));
+		pdb = pdb.filter(new RcsbWebServiceFilter(whereClause, "ecNo"));
 		List<String> matches = pdb.keys().collect();
 		sc.close();
 		
@@ -81,7 +81,7 @@ public class RcsbWebserviceFilterTest {
 		assertTrue(matches.contains("5JDE.A"));
 		assertTrue(matches.contains("5JDE.B"));
 		assertTrue(matches.contains("5CU4.A"));
-		assertTrue(matches.contains("5L6W.L")); // 5L6W contains one chain with EC 2.7.11.1
+		assertTrue(matches.contains("5L6W.L"));  // this chain is EC 2.7.11.1
 		assertFalse(matches.contains("5L6W.C")); // this chain in not EC 2.7.11.1
 		assertFalse(matches.contains("5UFU.A"));
 		assertFalse(matches.contains("5UFU.B"));

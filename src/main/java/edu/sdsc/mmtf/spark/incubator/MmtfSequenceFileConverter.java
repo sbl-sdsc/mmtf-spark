@@ -1,7 +1,7 @@
 /**
  * 
  */
-package edu.sdsc.mmtf.spark.io;
+package edu.sdsc.mmtf.spark.incubator;
 
 import org.apache.hadoop.io.BytesWritable;
 import org.apache.hadoop.io.Text;

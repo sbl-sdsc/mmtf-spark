@@ -3,12 +3,8 @@ package edu.sdsc.mmtf.spark.io;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import org.anarres.lzo.hadoop.codec.LzoCodec;
-import org.anarres.lzo.hadoop.codec.LzoCompressor;
 import org.apache.hadoop.io.BytesWritable;
 import org.apache.hadoop.io.Text;
-import org.apache.hadoop.io.compress.BZip2Codec;
-import org.apache.hadoop.io.compress.GzipCodec;
 import org.apache.hadoop.mapred.SequenceFileOutputFormat;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
@@ -28,7 +24,6 @@ public class MmtfSequenceFileWriter {
 	public static void write(String path, JavaSparkContext sc, JavaPairRDD<String, StructureDataInterface> structure) {		
 		JavaPairRDD<Text, BytesWritable> rdd = structure
 				.mapToPair(t -> new Tuple2<String,byte[]>(t._1, toByteArray(t._2)))
-	//			.repartition(4)
 				.mapToPair(t -> new Tuple2<Text,BytesWritable>(new Text(t._1), new BytesWritable(t._2)));
 		rdd.saveAsHadoopFile(path, Text.class, BytesWritable.class, SequenceFileOutputFormat.class);
 	}

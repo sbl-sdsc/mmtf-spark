@@ -1,4 +1,4 @@
-package edu.sdsc.mmtf.spark.io;
+package edu.sdsc.mmtf.spark.incubator;
 
 import java.io.ByteArrayInputStream;
 
