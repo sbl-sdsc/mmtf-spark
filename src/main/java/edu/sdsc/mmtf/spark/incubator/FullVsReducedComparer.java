@@ -5,13 +5,10 @@ package edu.sdsc.mmtf.spark.incubator;
 
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
-import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
-import org.apache.spark.storage.StorageLevel;
 import org.rcsb.mmtf.api.StructureDataInterface;
 
-import edu.sdsc.mmtf.spark.filters.ContainsSequenceRegex;
-import edu.sdsc.mmtf.spark.io.MmtfSequenceFileReader;
+import edu.sdsc.mmtf.spark.io.MmtfReader;
 import edu.sdsc.mmtf.spark.mappers.StructureToPolymerChains;
 import scala.Tuple2;
 
@@ -37,7 +34,7 @@ public class FullVsReducedComparer {
 	    JavaSparkContext sc = new JavaSparkContext(conf);
 		 
 	    // first Hadoop sequence file
-	    JavaPairRDD<String, StructureDataInterface> first = MmtfSequenceFileReader.read(args[0],  sc);
+	    JavaPairRDD<String, StructureDataInterface> first = MmtfReader.readSequenceFile(args[0],  sc);
 	    JavaPairRDD<String, StructureDataInterface> fChains = first.flatMapToPair(new StructureToPolymerChains()); 
 	    System.out.println(args[0] + " #polymers: " + fChains.count());
 	    

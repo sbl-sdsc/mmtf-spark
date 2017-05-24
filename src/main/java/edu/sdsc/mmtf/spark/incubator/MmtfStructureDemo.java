@@ -4,18 +4,12 @@
 package edu.sdsc.mmtf.spark.incubator;
 
 import org.apache.spark.SparkConf;
-import org.apache.spark.api.java.JavaDoubleRDD;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.rcsb.mmtf.api.StructureDataInterface;
 import org.rcsb.mmtf.dataholders.MmtfStructure;
 import org.rcsb.mmtf.decoder.GenericDecoder;
 
-import edu.sdsc.mmtf.spark.filters.ExperimentalMethodsFilter;
-import edu.sdsc.mmtf.spark.filters.Resolution;
-import edu.sdsc.mmtf.spark.filters.Rfree;
-import edu.sdsc.mmtf.spark.io.MmtfSequenceFileReader;
-import edu.sdsc.mmtf.spark.mappers.StructureToPolymerChains;
 import scala.Tuple2;
 
 /**

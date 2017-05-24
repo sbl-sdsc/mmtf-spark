@@ -13,9 +13,8 @@ import edu.sdsc.mmtf.spark.filters.ContainsDSaccharide;
 import edu.sdsc.mmtf.spark.filters.ContainsDnaChain;
 import edu.sdsc.mmtf.spark.filters.ContainsLProteinChain;
 import edu.sdsc.mmtf.spark.filters.ContainsRnaChain;
-import edu.sdsc.mmtf.spark.io.MmtfSequenceFileReader;
+import edu.sdsc.mmtf.spark.io.MmtfReader;
 import edu.sdsc.mmtf.spark.mappers.StructureToPolymerChains;
-import scala.Tuple2;
 
 /**
  * @author peter
@@ -38,7 +37,7 @@ public class FullToReducedMmtfDemo {
 	    SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(FullToReducedMmtfDemo.class.getSimpleName());
 	    JavaSparkContext sc = new JavaSparkContext(conf);
 		 
-	    JavaPairRDD<String, StructureDataInterface> full = MmtfSequenceFileReader.read(args[0],  sc);
+	    JavaPairRDD<String, StructureDataInterface> full = MmtfReader.readSequenceFile(args[0], sc);
     
 //	    full = full.filter(new ExperimentalMethodsFilter("SOLUTION NMR"));
 

@@ -16,7 +16,7 @@ import edu.sdsc.mmtf.spark.apps.Demo1b;
 import edu.sdsc.mmtf.spark.io.MmtfReader;
 import edu.sdsc.mmtf.spark.mappers.StructureToPolymerChains;
 
-public class ContainsLProteinChainTest {
+public class ContainsDnaChainTest {
 
 	@Test
 	public void test1() {
@@ -28,17 +28,17 @@ public class ContainsLProteinChainTest {
 
 	    // 1STP: only L-protein chain
 	    // 1JLP: single L-protein chains with non-polymer capping group (NH2)
-	    // 5X6H: L-protein and L-DNA chain
-	    // 5L2G: L-DNA chain
+	    // 5X6H: L-protein and DNA chain
+	    // 5L2G: DNA chain
 	    // 2MK1: D-saccharide
-	    pdb = pdb.filter(new ContainsLProteinChain());    
+	    pdb = pdb.filter(new ContainsDnaChain());    
 	    List<String> results = pdb.keys().collect();
 	    sc.close();
 	    
-	    assertTrue(results.contains("1STP"));
+	    assertFalse(results.contains("1STP"));
 	    assertFalse(results.contains("1JLP"));
 	    assertTrue(results.contains("5X6H"));
-	    assertFalse(results.contains("5L2G"));
+	    assertTrue(results.contains("5L2G"));
 	    assertFalse(results.contains("2MK1"));
 	}
 	
@@ -52,18 +52,18 @@ public class ContainsLProteinChainTest {
 
 	    // 1STP: only L-protein chain
 	    // 1JLP: single L-protein chains with non-polymer capping group (NH2)
-	    // 5X6H: L-protein and L-DNA chain
-	    // 5L2G: L-DNA chain
+	    // 5X6H: L-protein and DNA chain
+	    // 5L2G: DNA chain
 	    // 2MK1: D-saccharide
 	    boolean exclusive = true;
-	    pdb = pdb.filter(new ContainsLProteinChain(exclusive));   
+	    pdb = pdb.filter(new ContainsDnaChain(exclusive));   
 	    List<String> results = pdb.keys().collect();
 	    sc.close();
 	    
-	    assertTrue(results.contains("1STP"));
+	    assertFalse(results.contains("1STP"));
 	    assertFalse(results.contains("1JLP"));
 	    assertFalse(results.contains("5X6H"));
-	    assertFalse(results.contains("5L2G"));
+	    assertTrue(results.contains("5L2G"));
 	    assertFalse(results.contains("2MK1"));
 	}
 	
@@ -81,15 +81,16 @@ public class ContainsLProteinChainTest {
 	    // 5X6H: L-protein and DNA chain
 	    // 5L2G: DNA chain
 	    // 2MK1: D-saccharide
-	    pdb = pdb.filter(new ContainsLProteinChain());    
+	    pdb = pdb.filter(new ContainsDnaChain());    
 	    List<String> results = pdb.keys().collect();
 	    sc.close();
 	    
-	    assertTrue(results.contains("1STP.A"));
+	    assertFalse(results.contains("1STP.A"));
 	    assertFalse(results.contains("1JLP.A"));
-	    assertTrue(results.contains("5X6H.B"));
-	    assertFalse(results.contains("5L2G.A"));
-	    assertFalse(results.contains("5L2G.B"));
+	    assertFalse(results.contains("5X6H.A"));
+	    assertFalse(results.contains("5X6H.B"));
+	    assertTrue(results.contains("5L2G.A"));
+	    assertTrue(results.contains("5L2G.B"));
 	    assertFalse(results.contains("2MK1.A"));
 	}
 }

@@ -8,7 +8,7 @@ import edu.sdsc.mmtf.spark.filters.ContainsLProteinChain;
 import edu.sdsc.mmtf.spark.filters.ContainsPolymerType;
 import edu.sdsc.mmtf.spark.filters.ContainsRnaChain;
 import edu.sdsc.mmtf.spark.filters.NotFilter;
-import edu.sdsc.mmtf.spark.io.MmtfSequenceFileReader;
+import edu.sdsc.mmtf.spark.io.MmtfReader;
 
 /**
  * This example demonstrates how to filter the PDB by polymer chain type. It filters
@@ -33,8 +33,8 @@ public class Demo2d {
 	    JavaSparkContext sc = new JavaSparkContext(conf);
 	    
 		 
-	    MmtfSequenceFileReader
-	    	.read(args[0], sc) // read MMTF hadoop sequence file
+	    MmtfReader
+	    	.readSequenceFile(args[0], sc) // read MMTF hadoop sequence file
 	    	// find chains that contain DNA, RNA, or both
 	    	.filter(new ContainsPolymerType("DNA LINKING","RNA LINKING")) 
 	    	.filter(new NotFilter(new ContainsDnaChain()))

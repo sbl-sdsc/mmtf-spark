@@ -21,7 +21,7 @@ public class ContainsRnaChain implements Function<Tuple2<String, StructureDataIn
 
 	/**
 	 * Default constructor matches any entry that contains at least one RNA chain.
-	 * As an example, a RNA-protein complex passes this filter.
+	 * As an example, an RNA-protein complex passes this filter.
 	 */
 	public ContainsRnaChain() {
 		this(false);
@@ -29,7 +29,7 @@ public class ContainsRnaChain implements Function<Tuple2<String, StructureDataIn
 	
 	/**
 	 * Optional constructor that can be used to filter entries that exclusively contain DNA chains.
-	 * For example, with "exclusive" set to true, a RNA-protein complex complex does not pass this filter.
+	 * For example, with "exclusive" set to true, an RNA-protein complex complex does not pass this filter.
 	 * @param exclusive if true, only return entries that contain RNA chains
 	 */
 	public ContainsRnaChain(boolean exclusive) {

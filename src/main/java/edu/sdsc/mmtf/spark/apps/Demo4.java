@@ -8,7 +8,7 @@ import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.rcsb.mmtf.api.StructureDataInterface;
 
-import edu.sdsc.mmtf.spark.io.MmtfSequenceFileReader;
+import edu.sdsc.mmtf.spark.io.MmtfReader;
 
 /**
  * @author peter
@@ -32,7 +32,7 @@ public class Demo4 {
 	    JavaSparkContext sc = new JavaSparkContext(conf);
 		 
 	    // read PDB in MMTF format
-	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfSequenceFileReader.read(args[0],  sc);
+	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.readSequenceFile(args[0], sc);
 
 	    // count number of atoms
 	    long numAtoms = pdb.map(t -> t._2.getNumAtoms()).reduce((a,b) -> a+ b);

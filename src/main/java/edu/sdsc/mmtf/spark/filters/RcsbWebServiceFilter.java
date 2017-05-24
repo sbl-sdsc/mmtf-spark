@@ -20,7 +20,7 @@ import scala.Tuple2;
  * used to filter the data. The input to the filter consists of an SQL WHERE clause, and list 
  * of data columns available from RCSB PDB web services.
  * 
- * See <a href="http://www.rcsb.org/pdb/results/reportField.do">for the list of supported
+ * See <a href="http://www.rcsb.org/pdb/results/reportField.do"> list of supported
  * field names.</a>
  * 
  * See <a href="https://www.w3schools.com/sql/sql_where.asp"> for examples of

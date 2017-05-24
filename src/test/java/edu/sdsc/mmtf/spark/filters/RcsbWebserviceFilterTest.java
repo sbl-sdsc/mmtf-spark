@@ -13,7 +13,7 @@ import org.junit.Test;
 import org.rcsb.mmtf.api.StructureDataInterface;
 
 import edu.sdsc.mmtf.spark.apps.Demo1b;
-import edu.sdsc.mmtf.spark.io.MmtfFileDownloadReader;
+import edu.sdsc.mmtf.spark.io.MmtfReader;
 import edu.sdsc.mmtf.spark.mappers.StructureToPolymerChains;
 
 public class RcsbWebserviceFilterTest {
@@ -25,7 +25,7 @@ public class RcsbWebserviceFilterTest {
 	    
 		List<String> pdbIds = Arrays.asList("5JDE","5CU4","5L6W","5UFU","5IHB");
 	    // read PDB in MMTF format
-	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfFileDownloadReader.read(pdbIds, sc);
+	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.downloadMmtfFiles(pdbIds, sc);
 	    
 	    // this test runs a chain level query and compares the results at the PDB entry level
 		String whereClause = "WHERE ecNo='2.7.11.1'";
@@ -47,7 +47,7 @@ public class RcsbWebserviceFilterTest {
 	    
 		List<String> pdbIds = Arrays.asList("5JDE","5CU4","5L6W","5UFU","5IHB");
 	    // read PDB in MMTF format
-	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfFileDownloadReader.read(pdbIds, sc);
+	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.downloadMmtfFiles(pdbIds, sc);
 	    
 	    // this test runs a chain level query and compares the results at the PDB entry level
 		String whereClause = "WHERE ecNo='2.7.11.1' AND source='Homo sapiens'";
@@ -69,7 +69,7 @@ public class RcsbWebserviceFilterTest {
 	    
 		List<String> pdbIds = Arrays.asList("5JDE","5CU4","5L6W","5UFU","5IHB");
 	    // read PDB in MMTF format
-	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfFileDownloadReader.read(pdbIds, sc);
+	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.downloadMmtfFiles(pdbIds, sc);
 	    pdb = pdb.flatMapToPair(new StructureToPolymerChains());
 	    
 	    // this test runs a chain level query and compares chain level results

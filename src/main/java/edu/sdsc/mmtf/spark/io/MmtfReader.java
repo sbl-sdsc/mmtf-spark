@@ -1,6 +1,7 @@
 package edu.sdsc.mmtf.spark.io;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -20,14 +21,24 @@ import org.rcsb.mmtf.serialization.MessagePackSerialization;
 import scala.Tuple2;
 
 /**
- * Reads and decodes an MMTF Hadoop Sequence file. It returns a JavaPairRDD with the structure id
- * (e.g. PDB ID) as the key and the MMTF StructureDataInterface as the value.
+ * Methods for reading MMTF Hadoop sequence files and downloading and reading of individual MMTF files
+ * using MMTF web services (http://mmtf.rcsb.org). The data are returned as JavaPairRDD 
+ * with the structure id (e.g. PDB ID) as the key and the MMTF StructureDataInterface as the value.
+ * 
  * @author Peter Rose
  *
  */
-public class MmtfSequenceFileReader {
+public class MmtfReader {
 
-	public static JavaPairRDD<String, StructureDataInterface>  read(String path, JavaSparkContext sc) {
+	/**
+	 * Reads a Hadoop Sequence file.
+	 * 
+	 * @param path Path to Hadoop sequence file
+	 * @param sc Spark context
+	 * @param pdbIds List of PDB IDs (upper case)
+	 * @return MMTF structures as keyword/value pairs
+	 */
+	public static JavaPairRDD<String, StructureDataInterface> readSequenceFile(String path, JavaSparkContext sc) {
 		return sc
 				.sequenceFile(path, Text.class, BytesWritable.class)
 				.mapToPair(new PairFunction<Tuple2<Text, BytesWritable>,String, StructureDataInterface>() {
@@ -45,7 +56,15 @@ public class MmtfSequenceFileReader {
 				});
 	}
 	
-	public static JavaPairRDD<String, StructureDataInterface>  read(String path, List<String> pdbIds, JavaSparkContext sc) {
+	/**
+	 * Reads the specified PDB entries from a Hadoop Sequence file.
+	 * 
+	 * @param path Path to Hadoop sequence file
+	 * @param pdbIds List of PDB IDs (upper case)
+	 * @param sc Spark context
+	 * @return MMTF structures as keyword/value pairs
+	 */
+	public static JavaPairRDD<String, StructureDataInterface>  readSequenceFile(String path, List<String> pdbIds, JavaSparkContext sc) {
 		Set<String> pdbIdSet = new HashSet<String>(pdbIds);
 		return sc
 				.sequenceFile(path, Text.class, BytesWritable.class)
@@ -61,7 +80,16 @@ public class MmtfSequenceFileReader {
 				});
 	}
 	
-	public static JavaPairRDD<String, StructureDataInterface>  read(String path, double fraction, long seed, JavaSparkContext sc) {
+	/**
+	 * Reads the specified fraction [0,1] of randomly selected PDB entries from a Hadoop Sequence file.
+	 * 
+	 * @param path Path to Hadoop sequence file
+	 * @param fraction Fraction of entries to be read [0,1]
+	 * @param seed Seed for random number generator
+	 * @param sc Spark context
+	 * @return MMTF structures as keyword/value pairs
+	 */
+	public static JavaPairRDD<String, StructureDataInterface> readSequenceFile(String path, double fraction, long seed, JavaSparkContext sc) {
 		return sc
 				.sequenceFile(path, Text.class, BytesWritable.class)
 				.sample(false, fraction, seed)
@@ -74,5 +102,38 @@ public class MmtfSequenceFileReader {
 						return new Tuple2<String, StructureDataInterface>(t._1.toString(), new GenericDecoder(mmtf)); // decode message pack
 					}
 				});
+	}
+	
+	/**
+	 * Downloads and reads the specified PDB entries using <a href="http://mmtf.rcsb.org/download.html">MMTF web services</a>.
+	 * 
+	 * @param pdbIds List of PDB IDs (upper case)
+	 * @param sc Spark context
+	 * @return MMTF structures as keyword/value pairs
+	 */
+	public static JavaPairRDD<String, StructureDataInterface> downloadMmtfFiles(List<String> pdbIds, JavaSparkContext sc) {
+		return sc
+				.parallelize(pdbIds)
+				.mapToPair(t -> new Tuple2<String, StructureDataInterface>(t, getStructure(t, false, false)));
+	}
+	
+	/**
+	 * Downloads and reads the specified PDB entries using <a href="http://mmtf.rcsb.org/download.html">MMTF web services</a>.
+	 * 
+	 * @param pdbIds List of PDB IDs (upper case)
+	 * @param https if true, used https instead of http
+	 * @param reduced if true, downloads a reduced representation (C-alpha, P-backbone, all ligand atoms)
+	 * @param sc Spark context
+	 * @return MMTF structures as keyword/value pairs
+	 */
+	public static JavaPairRDD<String, StructureDataInterface> downloadMmtfFiles(List<String> pdbIds, boolean https, boolean reduced, JavaSparkContext sc) {
+		return sc
+				.parallelize(pdbIds)
+				.mapToPair(t -> new Tuple2<String, StructureDataInterface>(t, getStructure(t, https, reduced)));
+	}
+	
+	private static StructureDataInterface getStructure(String pdbId, boolean https, boolean reduced) throws IOException {
+// TODO use with new version		return new GenericDecoder(ReaderUtils.getDataFromUrl(pdbId, https, reduced));
+		return new GenericDecoder(ReaderUtils.getDataFromUrl(pdbId));
 	}
 }

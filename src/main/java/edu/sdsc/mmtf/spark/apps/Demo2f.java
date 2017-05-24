@@ -4,7 +4,7 @@ import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
 
 import edu.sdsc.mmtf.spark.filters.ContainsGroup;
-import edu.sdsc.mmtf.spark.io.MmtfSequenceFileReader;
+import edu.sdsc.mmtf.spark.io.MmtfReader;
 
 /**
  * This example demonstrates how to filter the PDB entries by a list of chemical components.
@@ -25,8 +25,8 @@ public class Demo2f {
 	    JavaSparkContext sc = new JavaSparkContext(conf);
 	    
 		 
-	    long count = MmtfSequenceFileReader
-	    	.read(args[0], sc) // read MMTF hadoop sequence file
+	    long count = MmtfReader
+	    	.readSequenceFile(args[0], sc) // read MMTF hadoop sequence file
 	    	.filter(new ContainsGroup("ATP","MG"))
             .count();
 	    

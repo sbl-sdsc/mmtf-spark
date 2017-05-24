@@ -8,7 +8,7 @@ import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.rcsb.mmtf.api.StructureDataInterface;
 
-import edu.sdsc.mmtf.spark.io.MmtfFileDownloadReader;
+import edu.sdsc.mmtf.spark.io.MmtfReader;
 
 /**
  * Example of downloading a list of PDB IDs (from http://mmtf.rcsb.org) and reading MMTF files into
@@ -29,7 +29,7 @@ public class Demo0a {
 	    List<String> pdbIds = Arrays.asList(ids.split(","));
 	    
 	    // read PDB in MMTF format
-	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfFileDownloadReader.read(pdbIds,  sc);
+	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.downloadMmtfFiles(pdbIds,  sc);
 	    
 	    System.out.println("# structures: " + pdb.count());
 	    

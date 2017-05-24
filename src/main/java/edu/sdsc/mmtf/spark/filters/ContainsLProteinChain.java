@@ -21,7 +21,7 @@ public class ContainsLProteinChain implements Function<Tuple2<String, StructureD
 
 	/**
 	 * Default constructor matches any entry that contains at least one L-protein chain.
-	 * As an example, an L-protein/L-DNA complex passes this filter.
+	 * As an example, an L-protein/DNA complex passes this filter.
 	 */
 	public ContainsLProteinChain() {
 		this(false);
@@ -29,7 +29,7 @@ public class ContainsLProteinChain implements Function<Tuple2<String, StructureD
 	
 	/**
 	 * Optional constructor that can be used to filter entries that exclusively contain L-protein chains.
-	 * For example, with "exclusive" set to true, an L-protein/L-DNA complex does not pass this filter.
+	 * For example, with "exclusive" set to true, an L-protein/DNA complex does not pass this filter.
 	 * @param exclusive if true, only return entries that exclusively contain L-protein chains
 	 */
 	public ContainsLProteinChain(boolean exclusive) {

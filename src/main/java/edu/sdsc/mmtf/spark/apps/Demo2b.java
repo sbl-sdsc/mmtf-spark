@@ -4,7 +4,7 @@ import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
 
 import edu.sdsc.mmtf.spark.filters.ContainsLProteinChain;
-import edu.sdsc.mmtf.spark.io.MmtfSequenceFileReader;
+import edu.sdsc.mmtf.spark.io.MmtfReader;
 
 /**
  * This example demonstrates how to filter the PDB by polymer chain type. It filters
@@ -29,8 +29,8 @@ public class Demo2b {
 	    JavaSparkContext sc = new JavaSparkContext(conf);
 	    
 		 
-	    long count = MmtfSequenceFileReader
-	    		.read(args[0], sc) // read MMTF hadoop sequence file
+	    long count = MmtfReader
+	    		.readSequenceFile(args[0], sc) // read MMTF hadoop sequence file
 	    		// retain pdb entries that exclusively (flag set to true) contain L-peptide chains
 	    		.filter(new ContainsLProteinChain(true)) 
 	    		.count();

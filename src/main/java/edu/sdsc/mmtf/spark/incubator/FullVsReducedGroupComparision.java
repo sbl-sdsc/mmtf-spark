@@ -6,18 +6,12 @@ package edu.sdsc.mmtf.spark.incubator;
 import java.util.Arrays;
 
 import org.apache.spark.SparkConf;
-import org.apache.spark.api.java.JavaDoubleRDD;
 import org.apache.spark.api.java.JavaPairRDD;
-import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.rcsb.mmtf.api.StructureDataInterface;
 
 import edu.sdsc.mmtf.spark.filters.ContainsGroup;
-import edu.sdsc.mmtf.spark.filters.ExperimentalMethodsFilter;
-import edu.sdsc.mmtf.spark.filters.Resolution;
-import edu.sdsc.mmtf.spark.filters.Rfree;
-import edu.sdsc.mmtf.spark.io.MmtfSequenceFileReader;
-import edu.sdsc.mmtf.spark.mappers.StructureToPolymerChains;
+import edu.sdsc.mmtf.spark.io.MmtfReader;
 import scala.Tuple2;
 
 /**
@@ -42,7 +36,7 @@ public class FullVsReducedGroupComparision {
 	    JavaSparkContext sc = new JavaSparkContext(conf);
 		 
 	    // read PDB in MMTF format
-	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfSequenceFileReader.read(args[0],  sc);
+	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.readSequenceFile(args[0],  sc);
 
 	    String group = "HOH";
 //	    pdb = pdb.filter(t -> Arrays.asList("1N48", "4AB2", "4AAR", "4AAU").contains(t._1));

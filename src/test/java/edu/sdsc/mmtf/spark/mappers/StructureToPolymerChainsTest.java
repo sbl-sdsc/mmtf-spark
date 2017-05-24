@@ -12,7 +12,7 @@ import org.junit.Test;
 import org.rcsb.mmtf.api.StructureDataInterface;
 
 import edu.sdsc.mmtf.spark.apps.Demo1b;
-import edu.sdsc.mmtf.spark.io.MmtfFileDownloadReader;
+import edu.sdsc.mmtf.spark.io.MmtfReader;
 
 public class StructureToPolymerChainsTest {
 
@@ -23,7 +23,7 @@ public class StructureToPolymerChainsTest {
 		 
 	    List<String> pdbIds = Arrays.asList("1STP","4HHB","1JLP","5X6H","5L2G","2MK1");
 	    // read PDB in MMTF format
-	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfFileDownloadReader.read(pdbIds, sc);
+	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.downloadMmtfFiles(pdbIds, sc);
 
 	    // 1STP: 1 L-protein chain:
 	    // 4HHB: 4 polymer chains

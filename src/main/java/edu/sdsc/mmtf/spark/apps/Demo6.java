@@ -9,7 +9,7 @@ import org.apache.spark.api.java.JavaSparkContext;
 import org.rcsb.mmtf.api.StructureDataInterface;
 
 import edu.sdsc.mmtf.spark.filters.ContainsSequenceRegex;
-import edu.sdsc.mmtf.spark.io.MmtfSequenceFileReader;
+import edu.sdsc.mmtf.spark.io.MmtfReader;
 
 /**
  * @author peter
@@ -33,7 +33,7 @@ public class Demo6 {
 	    JavaSparkContext sc = new JavaSparkContext(conf);
 		 
 	    // read PDB in MMTF format
-	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfSequenceFileReader.read(args[0],  sc);
+	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.readSequenceFile(args[0],  sc);
 
 	    // find structures that containing a Zinc finger motif
 	    pdb = pdb.filter(new ContainsSequenceRegex("C.{2,4}C.{12}H.{3,5}H"));

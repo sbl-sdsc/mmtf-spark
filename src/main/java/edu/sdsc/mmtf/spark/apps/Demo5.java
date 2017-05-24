@@ -11,8 +11,8 @@ import org.rcsb.mmtf.api.StructureDataInterface;
 import edu.sdsc.mmtf.spark.filters.ExperimentalMethodsFilter;
 import edu.sdsc.mmtf.spark.filters.Resolution;
 import edu.sdsc.mmtf.spark.filters.Rfree;
-import edu.sdsc.mmtf.spark.io.MmtfSequenceFileReader;
-import edu.sdsc.mmtf.spark.io.MmtfSequenceFileWriter;
+import edu.sdsc.mmtf.spark.io.MmtfReader;
+import edu.sdsc.mmtf.spark.io.MmtfWriter;
 
 /**
  * @author peter
@@ -36,7 +36,7 @@ public class Demo5 {
 	    JavaSparkContext sc = new JavaSparkContext(conf);
 		 
 	    // read PDB in MMTF format
-	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfSequenceFileReader.read(args[0],  sc);
+	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.readSequenceFile(args[0],  sc);
 
 	    // count number of atoms
 	    pdb = pdb
@@ -44,7 +44,7 @@ public class Demo5 {
 	    		.filter(new Resolution(0, 2))
 	    		.filter(new Rfree(0, 0.25));
 	    
-	    MmtfSequenceFileWriter.write(args[0]+"_xray", sc, pdb);
+	    MmtfWriter.writeSequenceFile(args[0]+"_xray", sc, pdb);
 	    
 	    System.out.println("# structures: " + pdb.count());
 	  

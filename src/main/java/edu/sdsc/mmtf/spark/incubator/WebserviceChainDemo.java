@@ -7,14 +7,11 @@ import java.io.IOException;
 
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
-import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.rcsb.mmtf.api.StructureDataInterface;
 
-import edu.sdsc.mmtf.spark.filters.ContainsDSaccharide;
-import edu.sdsc.mmtf.spark.filters.ContainsPolymerType;
 import edu.sdsc.mmtf.spark.filters.RcsbWebServiceFilter;
-import edu.sdsc.mmtf.spark.io.MmtfSequenceFileReader;
+import edu.sdsc.mmtf.spark.io.MmtfReader;
 import edu.sdsc.mmtf.spark.mappers.StructureToPolymerChains;
 
 /**
@@ -39,7 +36,7 @@ public class WebserviceChainDemo {
 	    SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(WebserviceChainDemo.class.getSimpleName());
 	    JavaSparkContext sc = new JavaSparkContext(conf);
 	    
-	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfSequenceFileReader.read(args[0], sc);
+	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.readSequenceFile(args[0], sc);
 	    
 	    pdb = pdb.flatMapToPair(new StructureToPolymerChains());
 	  

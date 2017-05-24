@@ -8,7 +8,7 @@ import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.rcsb.mmtf.api.StructureDataInterface;
 
-import edu.sdsc.mmtf.spark.io.MmtfSequenceFileReader;
+import edu.sdsc.mmtf.spark.io.MmtfReader;
 import edu.sdsc.mmtf.spark.mappers.StructureToPolymerChains;
 import scala.Tuple2;
 
@@ -33,7 +33,7 @@ public class Demo1Reduced {
 	    SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(Demo1Reduced.class.getSimpleName());
 	    JavaSparkContext sc = new JavaSparkContext(conf);
 		 
-	    JavaPairRDD<String, StructureDataInterface> full = MmtfSequenceFileReader.read(args[0],  sc);
+	    JavaPairRDD<String, StructureDataInterface> full = MmtfReader.readSequenceFile(args[0],  sc);
 //	    JavaPairRDD<String, StructureDataInterface> full = MmtfSequenceFileReader.read(args[0],  sc).filter(t -> t._1.equals("4HHB"));
 //	    JavaPairRDD<String, StructureDataInterface> full = MmtfSequenceFileReader.read(args[0],  sc).filter(t -> t._1.equals("3DNA"));
 	    

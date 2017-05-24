@@ -6,7 +6,7 @@ import org.apache.spark.api.java.JavaSparkContext;
 import org.rcsb.mmtf.api.StructureDataInterface;
 
 import edu.sdsc.mmtf.spark.filters.Resolution;
-import edu.sdsc.mmtf.spark.io.MmtfSequenceFileReader;
+import edu.sdsc.mmtf.spark.io.MmtfReader;
 
 /**
  * Simple example of reading an MMTF Hadoop Sequence file, filtering the entries by resolution,
@@ -30,7 +30,7 @@ public class Demo1a {
 	    JavaSparkContext sc = new JavaSparkContext(conf);
 		 
 	    // read entire PDB in MMTF format
-	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfSequenceFileReader.read(args[0],  sc);
+	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.readSequenceFile(args[0],  sc);
 
 	    // filter PDB entries by X-ray resolution. Entries without resolution values, 
 	    // e.g., NMR structure will also be filtered out.

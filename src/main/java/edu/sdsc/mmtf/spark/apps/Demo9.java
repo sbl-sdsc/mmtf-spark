@@ -9,7 +9,7 @@ import org.apache.spark.api.java.JavaSparkContext;
 import org.biojava.nbio.structure.Structure;
 import org.rcsb.mmtf.api.StructureDataInterface;
 
-import edu.sdsc.mmtf.spark.io.MmtfSequenceFileReader;
+import edu.sdsc.mmtf.spark.io.MmtfReader;
 import edu.sdsc.mmtf.spark.mappers.StructureToBioJava;
 
 /**
@@ -36,7 +36,7 @@ public class Demo9 {
 	    double fraction = 0.01;
 	    long seed = 123;
 	    // read PDB in MMTF format
-	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfSequenceFileReader.read(args[0], fraction, seed, sc);
+	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.readSequenceFile(args[0], fraction, seed, sc);
 
 	    // convert to BioJava structure
 	    JavaPairRDD<String, Structure> structures = pdb.mapToPair(new StructureToBioJava());

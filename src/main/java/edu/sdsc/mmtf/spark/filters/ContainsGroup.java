@@ -12,7 +12,8 @@ import scala.Tuple2;
 /**
  * This filter returns entries that contain specified groups (residues).
  * Groups are specified by their one, two, or three-letter codes, e.g. "F", "MG", "ATP", as defined
- * in the wwPDB Chemical Component Dictionary (https://www.wwpdb.org/data/ccd).
+ * in the <a href="https://www.wwpdb.org/data/ccd">wwPDB Chemical Component Dictionary</a>.
+ * 
  * @author Peter Rose
  *
  */

@@ -8,7 +8,7 @@ import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.rcsb.mmtf.api.StructureDataInterface;
 
-import edu.sdsc.mmtf.spark.io.MmtfSequenceFileReader;
+import edu.sdsc.mmtf.spark.io.MmtfReader;
 
 /**
  * Example reading a list of PDB IDs from a local MMTF Hadoop sequence file into
@@ -36,7 +36,7 @@ public class Demo0b {
 	    List<String> pdbIds = Arrays.asList(ids.split(","));
 	    
 	    // read PDB in MMTF format
-	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfSequenceFileReader.read(args[0], pdbIds, sc);
+	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.readSequenceFile(args[0], pdbIds, sc);
 	    
 	    System.out.println("# structures: " + pdb.count());
 	    

@@ -4,7 +4,7 @@ import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
 
 import edu.sdsc.mmtf.spark.filters.ContainsGroup;
-import edu.sdsc.mmtf.spark.io.MmtfSequenceFileReader;
+import edu.sdsc.mmtf.spark.io.MmtfReader;
 
 /**
  * This example demonstrates how to filter the PDB by polymer chain type. It filters
@@ -27,10 +27,9 @@ public class Demo3a {
 	    
 	    SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(Demo3a.class.getSimpleName());
 	    JavaSparkContext sc = new JavaSparkContext(conf);
-	    
 		 
-	    long count = MmtfSequenceFileReader
-	    	.read(args[0], sc) // read MMTF hadoop sequence file
+	    long count = MmtfReader
+	    	.readSequenceFile(args[0], sc) // read MMTF hadoop sequence file
 	    	.filter(new ContainsGroup("ATP","MG"))
             .count();
 	    
