@@ -8,7 +8,7 @@ import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.rcsb.mmtf.api.StructureDataInterface;
 
-import edu.sdsc.mmtf.spark.filters.ExperimentalMethodsFilter;
+import edu.sdsc.mmtf.spark.filters.ExperimentalMethods;
 import edu.sdsc.mmtf.spark.filters.Resolution;
 import edu.sdsc.mmtf.spark.filters.Rfree;
 import edu.sdsc.mmtf.spark.io.MmtfReader;
@@ -40,7 +40,7 @@ public class Demo5 {
 
 	    // count number of atoms
 	    pdb = pdb
-	    		.filter(new ExperimentalMethodsFilter("X-RAY DIFFRACTION"))
+	    		.filter(new ExperimentalMethods("X-RAY DIFFRACTION"))
 	    		.filter(new Resolution(0, 2))
 	    		.filter(new Rfree(0, 0.25));
 	    

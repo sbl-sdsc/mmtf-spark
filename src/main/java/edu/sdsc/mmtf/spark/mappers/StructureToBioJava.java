@@ -16,7 +16,6 @@ import scala.Tuple2;
 public class StructureToBioJava implements PairFunction<Tuple2<String,StructureDataInterface>,String, Structure> {
 	private static final long serialVersionUID = -3348372120358649240L;
 
-
 	@Override
 	public Tuple2<String, Structure> call(Tuple2<String, StructureDataInterface> t) throws Exception {
 		MmtfStructureReader mmtfStructureReader = new MmtfStructureReader();

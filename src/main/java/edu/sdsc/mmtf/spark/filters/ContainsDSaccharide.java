@@ -6,7 +6,7 @@ import org.rcsb.mmtf.api.StructureDataInterface;
 import scala.Tuple2;
 
 /**
- * This filter returns entries that contain chain(s) made of D-saccharides. 
+ * This filter returns entries that contain chain(s) made of linear and branched D-saccharides. 
  * The default constructor returns entries that contain at least one 
  * polymer chain that is a D-saccharides. If the "exclusive" flag is set to true 
  * in the constructor, all polymer chains must be D-saccharides. For a multi-model structure,
@@ -17,7 +17,7 @@ import scala.Tuple2;
  */
 public class ContainsDSaccharide implements Function<Tuple2<String, StructureDataInterface>, Boolean> {
 	private static final long serialVersionUID = -2323293283758321260L;
-	private ContainsPolymerType filter;
+	private ContainsPolymerChainType filter;
 
 	/**
 	 * Default constructor matches any entry that contains at least one chain made of D-saccharides.
@@ -33,8 +33,11 @@ public class ContainsDSaccharide implements Function<Tuple2<String, StructureDat
 	 * @param exclusive if true, only return entries that are exclusively contain D-saccharide chains
 	 */
 	public ContainsDSaccharide(boolean exclusive) {
-		this.filter = new ContainsPolymerType(exclusive, "D-SACCHARIDE", "SACCHARIDE",
-				"D-SACCHARIDE 1,4 AND 1,4 LINKING","D-SACCHARIDE 1,4 AND 1,6 LINKING");
+		this.filter = new ContainsPolymerChainType(exclusive, 
+				ContainsPolymerChainType.D_SACCHARIDE, 
+				ContainsPolymerChainType.SACCHARIDE, // should this be excluded?
+				ContainsPolymerChainType.D_SACCHARIDE_14_and_14_LINKING,
+				ContainsPolymerChainType.D_SACCHARIDE_14_and_16_LINKING);
 	}
 	
 	@Override

@@ -14,18 +14,33 @@ import org.rcsb.mmtf.encoder.AdapterToStructureData;
 import scala.Tuple2;
 
 /**
- * FlatMaps a StructureDataInterface to zero or more polymer chains. For a multi-model
- * structure, only the first model is considered.
+ * Maps a structure to its individual polymer chains. Polymer chains
+ * include polypeptides, polynucleotides, and linear and branched polysaccharides.
+ * For a multi-model structure, only the first model is considered.
+ * 
  * @author Peter Rose
  */
 public class StructureToPolymerChains implements PairFlatMapFunction<Tuple2<String,StructureDataInterface>,String, StructureDataInterface> {
 	private static final long serialVersionUID = -5979145207983266913L;
-	private boolean chainName = true;
+	private boolean useChainIdInsteadOfChainName = false;
 
+	/**
+	 * Extracts all polymer chains from a structure. A key is assigned to
+	 * each polymer: <PDB ID.Chain Name>, e.g., 4HHB.A. Here Chain 
+	 * Name is the name of the chain as found in the corresponding pdb file.
+	 */
 	public StructureToPolymerChains() {}
 	
-	public StructureToPolymerChains(boolean chainName) {
-		this.chainName = chainName;
+	/**
+	 * Extracts all polymer chains from a structure. If the argument is set to true,
+	 * the assigned key is: <PDB ID.Chain ID>, where Chain ID is the unique identifier
+	 * assigned to each molecular entity in an mmCIF file. This Chain ID corresponds to
+	 * <a href="http://mmcif.wwpdb.org/dictionaries/mmcif_mdb.dic/Items/_atom_site.label_asym_id.html">
+	 * _atom_site.label_asym_id</a> field in an mmCIF file.
+	 * @param useChainIdInsteadOfChainName if true, use the Chain Id in the key assignments
+	 */
+	public StructureToPolymerChains(boolean useChainIdInsteadOfChainName) {
+		this.useChainIdInsteadOfChainName = useChainIdInsteadOfChainName;
 	}
 	
 	@Override
@@ -42,7 +57,6 @@ public class StructureToPolymerChains implements PairFlatMapFunction<Tuple2<Stri
 		
 		List<Tuple2<String, StructureDataInterface>> chainList = new ArrayList<>();
 
-		// create a new 
 		for (int i = 0, atomCounter = 0, groupCounter = 0; i < numChains; i++){	
 			AdapterToStructureData adapterToStructureData = new AdapterToStructureData();
 			
@@ -117,12 +131,12 @@ public class StructureToPolymerChains implements PairFlatMapFunction<Tuple2<Stri
 
 				adapterToStructureData.finalizeStructure();
 				
-				String ch = structure.getChainNames()[i];
-				if (! chainName) {
-					ch =structure.getChainIds()[i];
+				String chId = structure.getChainNames()[i];
+				if (useChainIdInsteadOfChainName) {
+					chId = structure.getChainIds()[i];
 				}
 
-				chainList.add(new Tuple2<String, StructureDataInterface>(structure.getStructureId() + "." + ch, adapterToStructureData));
+				chainList.add(new Tuple2<String, StructureDataInterface>(structure.getStructureId() + "." + chId, adapterToStructureData));
 			}
 		}
 
@@ -130,7 +144,7 @@ public class StructureToPolymerChains implements PairFlatMapFunction<Tuple2<Stri
 	}
 
 	/**
-	 * Get the number of atoms and bonds per chain.
+	 * Gets the number of atoms and bonds per chain.
 	 */
 	private static void getNumAtomsAndBond(StructureDataInterface structure, int[] atomsPerChain, int[] bondsPerChain) {
 		int numChains = structure.getChainsPerModel()[0];

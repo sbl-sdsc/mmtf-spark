@@ -13,11 +13,10 @@ import scala.Tuple2;
  * 
  * @author Peter Rose
  * 
- *
  */
 public class ContainsDnaChain implements Function<Tuple2<String, StructureDataInterface>, Boolean> {
 	private static final long serialVersionUID = -2323293283758321260L;
-	private ContainsPolymerType filter;
+	private ContainsPolymerChainType filter;
 
 	/**
 	 * Default constructor matches any entry that contains at least one DNA chain.
@@ -33,7 +32,7 @@ public class ContainsDnaChain implements Function<Tuple2<String, StructureDataIn
 	 * @param exclusive if true, only return entries that contain DNA chains
 	 */
 	public ContainsDnaChain(boolean exclusive) {
-		this.filter = new ContainsPolymerType(exclusive, "DNA LINKING");
+		this.filter = new ContainsPolymerChainType(exclusive, ContainsPolymerChainType.DNA_LINKING);
 	}
 	
 	@Override

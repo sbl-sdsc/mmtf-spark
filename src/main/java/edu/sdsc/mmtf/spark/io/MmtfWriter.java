@@ -18,12 +18,19 @@ import org.rcsb.mmtf.serialization.MessagePackSerialization;
 import scala.Tuple2;
 
 /**
- * Encodes and writes an MMTF Hadoop Sequence file. 
+ * Encodes and writes MMTF encoded and gzipped structure data to a Hadoop Sequence file. 
+ * 
  * @author Peter Rose
  *
  */
 public class MmtfWriter {
 
+	/**
+	 * Encodes and writes MMTF encoded and gzipped structure data to a Hadoop Sequence file.
+	 * @param path Path to Hadoop file dictionary
+	 * @param sc Spark context
+	 * @param structure Structure data to be written
+	 */
 	public static void writeSequenceFile(String path, JavaSparkContext sc, JavaPairRDD<String, StructureDataInterface> structure) {		
 		structure
 				.mapToPair(t -> new Tuple2<String,byte[]>(t._1, toGzippedByteArray(t._2)))
@@ -32,9 +39,10 @@ public class MmtfWriter {
 	}
 	
 	/**
-	 * @param path
-	 * @param sc
-	 * @param structure
+	 * Encodes and writes MMTF encoded and gzipped structure data to individual .mmtf.gz files.
+	 * @param path Path to dictionary where to save the individual files
+	 * @param sc Spark context
+	 * @param structure Structure data to be written
 	 */
 	public static void writeMmtfFiles(String path, JavaSparkContext sc, JavaPairRDD<String, StructureDataInterface> structure) {		
         if (! path.endsWith("/")) {
@@ -49,7 +57,7 @@ public class MmtfWriter {
 	
 	/**
 	 * Returns a gzipped MMTF-encoded byte array.
-	 * @return MMTF encoded data
+	 * @return MMTF encoded and gzipped structure data
 	 * @throws IOException
 	 */
 	private static byte[] toGzippedByteArray(StructureDataInterface structure) throws IOException {

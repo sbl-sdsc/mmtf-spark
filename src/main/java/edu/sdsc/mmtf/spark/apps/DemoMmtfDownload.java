@@ -17,12 +17,12 @@ import edu.sdsc.mmtf.spark.io.MmtfReader;
  * @author Peter Rose
  *
  */
-public class Demo0a {
+public class DemoMmtfDownload {
 
 	public static void main(String[] args) {    
 	    long start = System.nanoTime();
 	    // instantiate Spark. Each Spark application needs these two lines of code.
-	    SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(Demo0a.class.getSimpleName());
+	    SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(DemoMmtfDownload.class.getSimpleName());
 	    JavaSparkContext sc = new JavaSparkContext(conf);
 		 
 	    String ids = "1AQ1,1B38,1B39,1BUH,1C25,1CKP,1DI8,1DM2,1E1V,1E1X,1E9H,1F5Q,1FIN,1FPZ,1FQ1,1FQV,1FS1";

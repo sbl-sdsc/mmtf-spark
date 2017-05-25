@@ -17,7 +17,7 @@ import scala.Tuple2;
  */
 public class ContainsLProteinChain implements Function<Tuple2<String, StructureDataInterface>, Boolean> {
 	private static final long serialVersionUID = -2323293283758321260L;
-	private ContainsPolymerType filter;
+	private ContainsPolymerChainType filter;
 
 	/**
 	 * Default constructor matches any entry that contains at least one L-protein chain.
@@ -33,7 +33,9 @@ public class ContainsLProteinChain implements Function<Tuple2<String, StructureD
 	 * @param exclusive if true, only return entries that exclusively contain L-protein chains
 	 */
 	public ContainsLProteinChain(boolean exclusive) {
-		this.filter = new ContainsPolymerType(exclusive, "L-PEPTIDE LINKING", "PEPTIDE LINKING");
+		this.filter = new ContainsPolymerChainType(exclusive, 
+				ContainsPolymerChainType.L_PEPTIDE_LINKING, 
+				ContainsPolymerChainType.PEPTIDE_LINKING);
 	}
 	
 	@Override

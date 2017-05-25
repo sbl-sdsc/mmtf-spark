@@ -3,7 +3,7 @@ package edu.sdsc.mmtf.spark.apps;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
 
-import edu.sdsc.mmtf.spark.filters.ExperimentalMethodsFilter;
+import edu.sdsc.mmtf.spark.filters.ExperimentalMethods;
 import edu.sdsc.mmtf.spark.io.MmtfReader;
 
 /**
@@ -30,8 +30,8 @@ public class Demo1c {
 		 
 	    MmtfReader
 	    		.readSequenceFile(args[0], sc) // read MMTF hadoop sequence file
-	    		 // filter by experimental method using joint X-RAY and NMR refinement
-	    		.filter(new ExperimentalMethodsFilter("X-RAY DIFFRACTION", "SOLUTION NMR")) // filter by experimental method
+	    		 // filter by experimental methods using joint Neutron/X-RAY diffraction
+	    		.filter(new ExperimentalMethods(ExperimentalMethods.NEUTRON_DIFFRACTION, ExperimentalMethods.X_RAY_DIFFRACTION)) 
 	    		.keys() // extract the keys (PDB IDs)
 	    		.foreach(key -> System.out.println(key)); // print the keys (using a lambda expression)
 	    

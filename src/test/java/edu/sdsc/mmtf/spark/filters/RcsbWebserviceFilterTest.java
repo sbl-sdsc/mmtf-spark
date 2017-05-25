@@ -24,7 +24,6 @@ public class RcsbWebserviceFilterTest {
 	    JavaSparkContext sc = new JavaSparkContext(conf);
 	    
 		List<String> pdbIds = Arrays.asList("5JDE","5CU4","5L6W","5UFU","5IHB");
-	    // read PDB in MMTF format
 	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.downloadMmtfFiles(pdbIds, sc);
 	    
 	    // this test runs a chain level query and compares the results at the PDB entry level

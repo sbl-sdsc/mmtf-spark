@@ -21,9 +21,10 @@ import org.rcsb.mmtf.serialization.MessagePackSerialization;
 import scala.Tuple2;
 
 /**
- * Methods for reading MMTF Hadoop sequence files and downloading and reading of individual MMTF files
- * using MMTF web services (http://mmtf.rcsb.org). The data are returned as JavaPairRDD 
- * with the structure id (e.g. PDB ID) as the key and the MMTF StructureDataInterface as the value.
+ * Methods for reading MMTF Hadoop sequence files and downloading and of individual MMTF files
+ * using MMTF web services <a href="http://mmtf.rcsb.org/download.html">MMTF web services</a>. 
+ * The data are returned as JavaPairRDD with the structure id (e.g. PDB ID) as the key and 
+ * the structural data as the value.
  * 
  * @author Peter Rose
  *
@@ -31,12 +32,12 @@ import scala.Tuple2;
 public class MmtfReader {
 
 	/**
-	 * Reads a Hadoop Sequence file.
+	 * Reads an MMTF Hadoop Sequence file.
+	 * See <a href="http://mmtf.rcsb.org/download.html"> for file download information</a>
 	 * 
 	 * @param path Path to Hadoop sequence file
 	 * @param sc Spark context
-	 * @param pdbIds List of PDB IDs (upper case)
-	 * @return MMTF structures as keyword/value pairs
+	 * @return structure data as keyword/value pairs
 	 */
 	public static JavaPairRDD<String, StructureDataInterface> readSequenceFile(String path, JavaSparkContext sc) {
 		return sc
@@ -62,7 +63,7 @@ public class MmtfReader {
 	 * @param path Path to Hadoop sequence file
 	 * @param pdbIds List of PDB IDs (upper case)
 	 * @param sc Spark context
-	 * @return MMTF structures as keyword/value pairs
+	 * @return structure data as keyword/value pairs
 	 */
 	public static JavaPairRDD<String, StructureDataInterface>  readSequenceFile(String path, List<String> pdbIds, JavaSparkContext sc) {
 		Set<String> pdbIdSet = new HashSet<String>(pdbIds);
@@ -73,7 +74,11 @@ public class MmtfReader {
 					private static final long serialVersionUID = 3512575873287789314L;
 
 					public Tuple2<String, StructureDataInterface> call(Tuple2<Text, BytesWritable> t) throws Exception {
-						byte[] values = ReaderUtils.deflateGzip(t._2.copyBytes()); // unzip binary MessagePack data
+						byte[] values = t._2.copyBytes();
+						try {
+						    values = ReaderUtils.deflateGzip(t._2.copyBytes()); // unzip binary MessagePack data
+						} catch (ZipException e) {
+						}
 						MmtfStructure mmtf = new MessagePackSerialization().deserialize(new ByteArrayInputStream(values)); // deserialize message pack
 						return new Tuple2<String, StructureDataInterface>(t._1.toString(), new GenericDecoder(mmtf)); // decode message pack
 					}
@@ -87,7 +92,7 @@ public class MmtfReader {
 	 * @param fraction Fraction of entries to be read [0,1]
 	 * @param seed Seed for random number generator
 	 * @param sc Spark context
-	 * @return MMTF structures as keyword/value pairs
+	 * @return structure data as keyword/value pairs
 	 */
 	public static JavaPairRDD<String, StructureDataInterface> readSequenceFile(String path, double fraction, long seed, JavaSparkContext sc) {
 		return sc
@@ -97,7 +102,11 @@ public class MmtfReader {
 					private static final long serialVersionUID = 3512575873287789314L;
 
 					public Tuple2<String, StructureDataInterface> call(Tuple2<Text, BytesWritable> t) throws Exception {
-						byte[] values = ReaderUtils.deflateGzip(t._2.copyBytes()); // unzip binary MessagePack data
+						byte[] values = t._2.copyBytes();
+						try {
+						    values = ReaderUtils.deflateGzip(t._2.copyBytes()); // unzip binary MessagePack data
+						} catch (ZipException e) {
+						}
 						MmtfStructure mmtf = new MessagePackSerialization().deserialize(new ByteArrayInputStream(values)); // deserialize message pack
 						return new Tuple2<String, StructureDataInterface>(t._1.toString(), new GenericDecoder(mmtf)); // decode message pack
 					}
@@ -109,7 +118,7 @@ public class MmtfReader {
 	 * 
 	 * @param pdbIds List of PDB IDs (upper case)
 	 * @param sc Spark context
-	 * @return MMTF structures as keyword/value pairs
+	 * @return structure data as keyword/value pairs
 	 */
 	public static JavaPairRDD<String, StructureDataInterface> downloadMmtfFiles(List<String> pdbIds, JavaSparkContext sc) {
 		return sc
@@ -124,7 +133,7 @@ public class MmtfReader {
 	 * @param https if true, used https instead of http
 	 * @param reduced if true, downloads a reduced representation (C-alpha, P-backbone, all ligand atoms)
 	 * @param sc Spark context
-	 * @return MMTF structures as keyword/value pairs
+	 * @return structure data as keyword/value pairs
 	 */
 	public static JavaPairRDD<String, StructureDataInterface> downloadMmtfFiles(List<String> pdbIds, boolean https, boolean reduced, JavaSparkContext sc) {
 		return sc
