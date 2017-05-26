@@ -1,6 +1,7 @@
 package edu.sdsc.mmtf.spark.filters;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -9,28 +10,42 @@ import java.util.List;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.rcsb.mmtf.api.StructureDataInterface;
 
-import edu.sdsc.mmtf.spark.apps.Demo1b;
 import edu.sdsc.mmtf.spark.io.MmtfReader;
 import edu.sdsc.mmtf.spark.mappers.StructureToPolymerChains;
 
 public class RcsbWebserviceFilterTest {
+	private JavaSparkContext sc;
+	private JavaPairRDD<String, StructureDataInterface> pdb;
+	
+	@Before
+	public void setUp() throws Exception {
+		SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(RcsbWebserviceFilterTest.class.getSimpleName());
+	    sc = new JavaSparkContext(conf);
+	    
+	    List<String> pdbIds = Arrays.asList("5JDE","5CU4","5L6W","5UFU","5IHB");
+	    pdb = MmtfReader.downloadMmtfFiles(pdbIds, sc);
+	}
+
+	@After
+	public void tearDown() throws Exception {
+		sc.close();
+	}
+
 
 	@Test
+	/**
+	 * This test runs a chain level query and compares the results at the PDB entry level
+	 * @throws IOException
+	 */
 	public void test1() throws IOException {
-		SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(Demo1b.class.getSimpleName());
-	    JavaSparkContext sc = new JavaSparkContext(conf);
-	    
-		List<String> pdbIds = Arrays.asList("5JDE","5CU4","5L6W","5UFU","5IHB");
-	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.downloadMmtfFiles(pdbIds, sc);
-	    
-	    // this test runs a chain level query and compares the results at the PDB entry level
 		String whereClause = "WHERE ecNo='2.7.11.1'";
 		pdb = pdb.filter(new RcsbWebServiceFilter(whereClause, "ecNo"));
 		List<String> matches = pdb.keys().collect();
-		sc.close();
 		
 		assertTrue(matches.contains("5JDE"));
 		assertTrue(matches.contains("5CU4"));
@@ -40,19 +55,14 @@ public class RcsbWebserviceFilterTest {
 	}
 	
 	@Test
+	/**
+	 * This test runs a chain level query and compares the results at the PDB entry level
+	 * @throws IOException
+	 */
 	public void test2() throws IOException {
-		SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(Demo1b.class.getSimpleName());
-	    JavaSparkContext sc = new JavaSparkContext(conf);
-	    
-		List<String> pdbIds = Arrays.asList("5JDE","5CU4","5L6W","5UFU","5IHB");
-	    // read PDB in MMTF format
-	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.downloadMmtfFiles(pdbIds, sc);
-	    
-	    // this test runs a chain level query and compares the results at the PDB entry level
 		String whereClause = "WHERE ecNo='2.7.11.1' AND source='Homo sapiens'";
 		pdb = pdb.filter(new RcsbWebServiceFilter(whereClause, "ecNo","source"));
 		List<String> matches = pdb.keys().collect();
-		sc.close();
 		
 		assertTrue(matches.contains("5JDE"));
 		assertTrue(matches.contains("5CU4"));
@@ -62,20 +72,15 @@ public class RcsbWebserviceFilterTest {
 	}
 	
 	@Test
+	/**
+	 *  This test runs a chain level query and compares chain level results
+	 * @throws IOException
+	 */
 	public void test3() throws IOException {
-		SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(Demo1b.class.getSimpleName());
-	    JavaSparkContext sc = new JavaSparkContext(conf);
-	    
-		List<String> pdbIds = Arrays.asList("5JDE","5CU4","5L6W","5UFU","5IHB");
-	    // read PDB in MMTF format
-	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.downloadMmtfFiles(pdbIds, sc);
 	    pdb = pdb.flatMapToPair(new StructureToPolymerChains());
-	    
-	    // this test runs a chain level query and compares chain level results
 		String whereClause = "WHERE ecNo='2.7.11.1' AND source='Homo sapiens'";
 		pdb = pdb.filter(new RcsbWebServiceFilter(whereClause, "ecNo","source"));
 		List<String> matches = pdb.keys().collect();
-		sc.close();
 		
 		assertTrue(matches.contains("5JDE.A"));
 		assertTrue(matches.contains("5JDE.B"));

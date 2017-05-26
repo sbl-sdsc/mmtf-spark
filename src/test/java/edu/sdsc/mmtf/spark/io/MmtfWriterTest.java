@@ -26,9 +26,10 @@ public class MmtfWriterTest {
 	    List<String> pdbIds = Arrays.asList("1STP","4HHB","1JLP","5X6H","5L2G","2MK1");
 	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.downloadMmtfFiles(pdbIds, sc);
 	    
-	    Path tempFile = Files.createTempFile("MmtfWriterTest","");
+	    Path tempFile = Files.createTempFile(null,"");
 		MmtfWriter.writeMmtfFiles(tempFile.getFileName().toString(), sc, pdb);
 		
+		sc.close();
 	}
 
 }

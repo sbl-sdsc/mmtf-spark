@@ -40,7 +40,7 @@ public class Demo5 {
 
 	    // count number of atoms
 	    pdb = pdb
-	    		.filter(new ExperimentalMethods("X-RAY DIFFRACTION"))
+	    		.filter(new ExperimentalMethods(ExperimentalMethods.X_RAY_DIFFRACTION))
 	    		.filter(new Resolution(0, 2))
 	    		.filter(new Rfree(0, 0.25));
 	    

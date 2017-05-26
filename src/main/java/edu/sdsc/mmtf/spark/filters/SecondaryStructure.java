@@ -2,14 +2,21 @@ package edu.sdsc.mmtf.spark.filters;
 
 import org.apache.spark.api.java.function.Function;
 import org.rcsb.mmtf.api.StructureDataInterface;
+import org.rcsb.mmtf.encoder.EncoderUtils;
 
 import edu.sdsc.mmtf.spark.utils.DsspSecondaryStructure;
 import scala.Tuple2;
 
 /**
- * This filter return true if the polymer sequence matches the specified regular
- * expression
- *
+ * This filter returns entries that contain polymer chain(s) with the specified fraction of
+ * secondary structure assignments, obtained by DSSP. Note, DSSP secondary structure
+ * in MMTF files is assigned by the BioJava implementation of DSSP. It may differ in some 
+ * cases from the original DSSP implemetation.
+ * 
+ * The default constructor returns entries that contain at least one 
+ * polymer chain that matches the criteria. If the "exclusive" flag is set to true 
+ * in the constructor, all polymer chains must match the criteria. For a multi-model structure,
+ * this filter only checks the first model.
  * @author Peter Rose
  *
  */
@@ -21,69 +28,95 @@ public class SecondaryStructure implements Function<Tuple2<String, StructureData
 	double sheetFractionMax = 1.0;
 	double coilFractionMin = 0;
 	double coilFractionMax = 1.0;
+	boolean exclusive = false;
 
-	public SecondaryStructure() {
+	public SecondaryStructure(double helixFractionMin, double helixFractionMax, 
+			double sheetFractionMin, double sheetFractionMax,
+			double coilFractionMin, double coilFractionMax) {
+		this(helixFractionMin, helixFractionMax, 
+				sheetFractionMin, sheetFractionMax,
+				coilFractionMin, coilFractionMax, false);
 	}
-
-	public SecondaryStructure helix(double helixFractionMin, double helixFractionMax) {
+	
+	public SecondaryStructure(double helixFractionMin, double helixFractionMax, 
+			double sheetFractionMin, double sheetFractionMax,
+			double coilFractionMin, double coilFractionMax, boolean exclusive) {
 		this.helixFractionMin = helixFractionMin;
 		this.helixFractionMax = helixFractionMax;
-		return this;
-	}
-
-	public SecondaryStructure sheet(double sheetFractionMin, double sheetFractionMax) {
 		this.sheetFractionMin = sheetFractionMin;
 		this.sheetFractionMax = sheetFractionMax;
-		return this;
-	}
-
-	public SecondaryStructure coil(double coilFractionMin, double coilFractionMax) {
 		this.coilFractionMin = coilFractionMin;
 		this.coilFractionMax = coilFractionMax;
-		return this;
+		this.exclusive = exclusive;
 	}
 
 	@Override
 	public Boolean call(Tuple2<String, StructureDataInterface> t) throws Exception {
 		StructureDataInterface structure = t._2;
 
-		// this filter only works for a single chain (entity)
-		if (structure.getNumEntities() == 1) {
-			if (structure.getSecStructList().length == 0) {
-				return false;
-			}
+		boolean containsPolymer = false;
+		boolean globalMatch = false;
+		int numChains = structure.getChainsPerModel()[0]; // only check first model
+		int[] secStruct = structure.getSecStructList();	
 
+		
+		for (int i = 0, groupCounter = 0; i < numChains; i++) {		
 			double helix = 0;
 			double sheet = 0;
 			double coil = 0;
+		
+			boolean match = true;	
+			String chainType = EncoderUtils.getTypeFromChainId(structure, i);
+			boolean polymer = chainType.equals("polymer");
 
-			for (int code : structure.getSecStructList()) {
-				switch (DsspSecondaryStructure.getQ3Code(code)) {
-				case ALPHA_HELIX:
-					helix++;
-					break;
-				case EXTENDED:
-					sheet++;
-					break;
-				case COIL:
-					coil++;
-					break;
-				default:
-					break;
+			if (polymer) {
+				containsPolymer = true;
+			} else {
+				match = false;
+			}
+
+		    for (int j = 0; j < structure.getGroupsPerChain()[i]; j++, groupCounter++) {	
+		    	
+				if (match && polymer) {
+					int code = secStruct[groupCounter];
+					switch (DsspSecondaryStructure.getQ3Code(code)) {
+					
+					case ALPHA_HELIX:
+						helix++;
+						break;
+					case EXTENDED:
+						sheet++;
+						break;
+					case COIL:
+						coil++;
+						break;
+					default:
+						break;
+					}
 				}
 			}
 
-			int len = structure.getSecStructList().length;
+		    if (match && polymer) {
+		    	helix /= structure.getGroupsPerChain()[i];
+		    	sheet /= structure.getGroupsPerChain()[i];
+		    	coil /= structure.getGroupsPerChain()[i];
 
-			helix /= len;
-			sheet /= len;
-			coil /= len;
+		    	match = helix >= helixFractionMin && helix <= helixFractionMax && sheet >= sheetFractionMin
+		    			&& sheet <= sheetFractionMax && coil >= coilFractionMin && coil <= coilFractionMax;
+		    }
 
-			return helix >= helixFractionMin && helix <= helixFractionMax && sheet >= sheetFractionMin
-					&& sheet <= sheetFractionMax && coil >= coilFractionMin && coil <= coilFractionMax;
-
+			if (polymer && match && ! exclusive) {
+				return true;
+			}
+			if (polymer && ! match && exclusive) {
+				return false;
+			}
+			
+			if (match) {
+				globalMatch = true;
+			}
 		}
 
-		return false;
+		return globalMatch && containsPolymer;
 	}
 }

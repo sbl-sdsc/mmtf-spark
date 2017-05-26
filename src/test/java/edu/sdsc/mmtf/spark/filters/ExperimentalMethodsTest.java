@@ -18,8 +18,8 @@ import edu.sdsc.mmtf.spark.io.MmtfReader;
 import edu.sdsc.mmtf.spark.mappers.StructureToPolymerChains;
 
 public class ExperimentalMethodsTest {
-	JavaSparkContext sc;
-	JavaPairRDD<String, StructureDataInterface> pdb;
+	private JavaSparkContext sc;
+	private JavaPairRDD<String, StructureDataInterface> pdb;
 	
 	@Before
 	public void setUp() throws Exception {

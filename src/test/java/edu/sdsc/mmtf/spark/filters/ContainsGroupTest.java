@@ -15,15 +15,14 @@ import org.junit.Test;
 import org.rcsb.mmtf.api.StructureDataInterface;
 
 import edu.sdsc.mmtf.spark.io.MmtfReader;
-import edu.sdsc.mmtf.spark.mappers.StructureToPolymerChains;
 
-public class ContainsLProteinChainTest {
+public class ContainsGroupTest {
 	private JavaSparkContext sc;
 	private JavaPairRDD<String, StructureDataInterface> pdb;
 	
 	@Before
 	public void setUp() throws Exception {
-		SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(ContainsLProteinChainTest.class.getSimpleName());
+		SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(ContainsGroupTest.class.getSimpleName());
 	    sc = new JavaSparkContext(conf);
 	    
 	    // 1STP: only L-protein chain
@@ -42,20 +41,7 @@ public class ContainsLProteinChainTest {
 
 	@Test
 	public void test1() {
-	    pdb = pdb.filter(new ContainsLProteinChain());    
-	    List<String> results = pdb.keys().collect();
-	    
-	    assertTrue(results.contains("1STP"));
-	    assertFalse(results.contains("1JLP"));
-	    assertTrue(results.contains("5X6H"));
-	    assertFalse(results.contains("5L2G"));
-	    assertFalse(results.contains("2MK1"));
-	}
-	
-	@Test
-	public void test2() {
-	    boolean exclusive = true;
-	    pdb = pdb.filter(new ContainsLProteinChain(exclusive));   
+	    pdb = pdb.filter(new ContainsGroup("BTN"));    
 	    List<String> results = pdb.keys().collect();
 	    
 	    assertTrue(results.contains("1STP"));
@@ -66,16 +52,26 @@ public class ContainsLProteinChainTest {
 	}
 	
 	@Test
-	public void test3() {
-		pdb = pdb.flatMapToPair(new StructureToPolymerChains());
-	    pdb = pdb.filter(new ContainsLProteinChain());    
+	public void test2() {
+	    pdb = pdb.filter(new ContainsGroup("HYP"));   
 	    List<String> results = pdb.keys().collect();
 	    
-	    assertTrue(results.contains("1STP.A"));
-	    assertFalse(results.contains("1JLP.A"));
-	    assertTrue(results.contains("5X6H.B"));
-	    assertFalse(results.contains("5L2G.A"));
-	    assertFalse(results.contains("5L2G.B"));
-	    assertFalse(results.contains("2MK1.A"));
+	    assertFalse(results.contains("1STP"));
+	    assertTrue(results.contains("1JLP"));
+	    assertFalse(results.contains("5X6H"));
+	    assertFalse(results.contains("5L2G"));
+	    assertFalse(results.contains("2MK1"));
+	}
+	
+	@Test
+	public void test3() {
+	    pdb = pdb.filter(new ContainsGroup("HYP","NH2"));   
+	    List<String> results = pdb.keys().collect();
+	    
+	    assertFalse(results.contains("1STP"));
+	    assertTrue(results.contains("1JLP"));
+	    assertFalse(results.contains("5X6H"));
+	    assertFalse(results.contains("5L2G"));
+	    assertFalse(results.contains("2MK1"));
 	}
 }

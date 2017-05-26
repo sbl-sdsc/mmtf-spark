@@ -24,6 +24,8 @@ public class RcsbTabularReportServiceTest {
         ds.printSchema();
         ds.show(5);
         assertTrue(ds.count() > 130101);
+        
+        ds.sparkSession().close();
 	}
 
 }

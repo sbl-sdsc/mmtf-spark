@@ -12,7 +12,7 @@ import org.rcsb.mmtf.encoder.EncoderUtils;
 import scala.Tuple2;
 
 /**
- * This filter returns entries that contain chains amino acids. The default 
+ * This filter returns chains with the specified monomers. The default 
  * constructor returns entries that contain at least one chain that matches 
  * the conditions. If the "exclusive" flag is set to true in the constructor, 
  * all chains must match the conditions. For a multi-model structure, this 
@@ -35,19 +35,19 @@ public class PolymerComposition implements Function<Tuple2<String, StructureData
 	// 20 nat. amino acids, 22 nat. amino acids, nat. DNA, nat. RNA
 	// custom sets
 	/**
-	 * The default constructor for the 20 natural amino acids
+	 * The default constructor.
 	 */
-	public PolymerComposition(List<String> groupNames) {
-	    this.residues = new HashSet<String>(groupNames);
+	public PolymerComposition(List<String> monomerNames) {
+	    this.residues = new HashSet<String>(monomerNames);
 	}
 	
 	/**
 	 * Optional constructor that can be used to filter entries that exclusively match all chains.
-	 * @param exclusive if true, all chains must match contain the 20 natural L-amino acids.
+	 * @param exclusive if true, all chains must be made of the specified monomers
 	 */
-	public PolymerComposition(boolean exclusive, List<String> groupNames) {
+	public PolymerComposition(boolean exclusive, List<String> monomerNames) {
 		this.exclusive = exclusive;
-		this.residues = new HashSet<String>(groupNames);
+		this.residues = new HashSet<String>(monomerNames);
 	}
 	
 	/**

@@ -17,21 +17,19 @@ import org.rcsb.mmtf.api.StructureDataInterface;
 import edu.sdsc.mmtf.spark.io.MmtfReader;
 import edu.sdsc.mmtf.spark.mappers.StructureToPolymerChains;
 
-public class ContainsDSaccharideChainTest {
+public class ContainsSequenceRegexTest {
 	private JavaSparkContext sc;
 	private JavaPairRDD<String, StructureDataInterface> pdb;
 	
 	@Before
 	public void setUp() throws Exception {
-		SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(ContainsDSaccharideChainTest.class.getSimpleName());
+		SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(ContainsSequenceRegexTest.class.getSimpleName());
 	    sc = new JavaSparkContext(conf);
 	    
-	    // 1STP: only L-protein chain
-	    // 1JLP: single L-protein chains with non-polymer capping group (NH2)
-	    // 5X6H: L-protein and L-DNA chain
-	    // 5L2G: L-DNA chain
-	    // 2MK1: D-saccharide
-	    List<String> pdbIds = Arrays.asList("1STP","1JLP","5X6H","5L2G","2MK1");
+	    // 5KE8: contains Zinc finger motif
+	    // 1JLP: does not contain Zinc finger motif
+	    // 5VAI: contains Walker P loop
+	    List<String> pdbIds = Arrays.asList("5KE8","1JLP","5VAI");
 	    pdb = MmtfReader.downloadMmtfFiles(pdbIds, sc);
 	}
 
@@ -42,28 +40,35 @@ public class ContainsDSaccharideChainTest {
 
 	@Test
 	public void test1() {
-	    pdb = pdb.filter(new ContainsDSaccharide());    
+	    pdb = pdb.filter(new ContainsSequenceRegex("C.{2,4}C.{12}H.{3,5}H"));    
 	    List<String> results = pdb.keys().collect();
 	    
-	    assertFalse(results.contains("1STP"));
+	    assertTrue(results.contains("5KE8"));
 	    assertFalse(results.contains("1JLP"));
-	    assertFalse(results.contains("5X6H"));
-	    assertFalse(results.contains("5L2G"));
-	    assertTrue(results.contains("2MK1"));
+	    assertFalse(results.contains("5VAI"));
 	}
+	
 	
 	@Test
 	public void test2() {
 		pdb = pdb.flatMapToPair(new StructureToPolymerChains());
-	    pdb = pdb.filter(new ContainsDSaccharide());    
+		pdb = pdb.filter(new ContainsSequenceRegex("C.{2,4}C.{12}H.{3,5}H"));     
 	    List<String> results = pdb.keys().collect();
 	    
-	    assertFalse(results.contains("1STP.A"));
+	    assertTrue(results.contains("5KE8.A"));
+	    assertFalse(results.contains("5KE8.B"));
+	    assertFalse(results.contains("5KE8.C"));
 	    assertFalse(results.contains("1JLP.A"));
-	    assertFalse(results.contains("5X6H.B"));
-	    assertFalse(results.contains("5L2G.A"));
-	    assertFalse(results.contains("5L2G.B"));
-	    assertTrue(results.contains("2MK1.A"));
+	    assertFalse(results.contains("5VAI.A"));
 	}
 	
+	@Test
+	public void test3() {
+	    pdb = pdb.filter(new ContainsSequenceRegex("[AG].{4}GK[ST]"));    
+	    List<String> results = pdb.keys().collect();
+	    
+	    assertFalse(results.contains("5KE8"));
+	    assertFalse(results.contains("1JLP"));
+	    assertTrue(results.contains("5VAI"));
+	}
 }
