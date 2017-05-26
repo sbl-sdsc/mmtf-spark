@@ -1,4 +1,4 @@
-package edu.sdsc.mmtf.spark.mappers;
+package edu.sdsc.mmtf.spark.incubator;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -19,12 +19,12 @@ import scala.Tuple2;
  * @author Peter Rose
  *
  */
-public class StructureToInteractingResidues implements  FlatMapFunction<Tuple2<String,StructureDataInterface>, Row> {
+public class StructureToAllInteractions implements  FlatMapFunction<Tuple2<String,StructureDataInterface>, Row> {
 	private static final long serialVersionUID = -3348372120358649240L;
     private String groupName;
     private double cutoffDistance;
     
-    public StructureToInteractingResidues(String groupName, double cutoffDistance) {
+    public StructureToAllInteractions(String groupName, double cutoffDistance) {
 		this.groupName = groupName;
 		this.cutoffDistance = cutoffDistance;
 	}
@@ -61,13 +61,14 @@ public class StructureToInteractingResidues implements  FlatMapFunction<Tuple2<S
 		int first = groupIndices.get(index);
 		int last = groupIndices.get(index+1);
 		
+		int groupIndex1 = structure.getGroupTypeIndices()[index];
+		
 		List<Row> rows = new ArrayList<>();
 		for (int i: matches) {
 			if (i == index) {
 				continue;
 			}
-			double minDSq = Double.MAX_VALUE;
-			int minIndex = -1;
+
 			for (int j = groupIndices.get(i); j < groupIndices.get(i+1); j++) {
 				
 				for (int k = first; k < last; k++) {
@@ -75,16 +76,22 @@ public class StructureToInteractingResidues implements  FlatMapFunction<Tuple2<S
 					double dy = (y[j] - y[k]);
 					double dz = (z[j] - z[k]);
 					double dSq = dx*dx + dy*dy + dz*dz;
-					if (dSq <= cutoffDistanceSq && dSq < minDSq) {
-						minDSq = Math.min(minDSq, dSq);
-						minIndex = i;
+					
+					if (dSq < cutoffDistanceSq) {
+						int aIndex1 =  k-first;
+						String atomName1 = structure.getGroupAtomNames(groupIndex1)[aIndex1];
+						String element1 = structure.getGroupElementNames(groupIndex1)[aIndex1];
+						
+						int groupIndex2 = structure.getGroupTypeIndices()[i];
+                        int aIndex2 = j - groupIndices.get(i);
+                        String atomName2 = structure.getGroupAtomNames(groupIndex2)[aIndex2];
+						String element2 = structure.getGroupElementNames(groupIndex2)[aIndex2];
+
+                        double d = Math.sqrt(dSq);
+						Row row = RowFactory.create(structureId, groupNames.get(index), atomName1, element1, index, groupNames.get(i), atomName2, element2, i, (float)d);
+						rows.add(row);		
 					}
 				}
-			}
-			if (minIndex >= 0) {
-				// TODO add unique group (and atom?) for each group?
-				Row row = RowFactory.create(structureId, groupNames.get(index), index, groupNames.get(minIndex), minIndex, (float)Math.sqrt(minDSq));
-				rows.add(row);
 			}
 		}
 		return rows;
@@ -171,8 +178,12 @@ public class StructureToInteractingResidues implements  FlatMapFunction<Tuple2<S
 		List<StructField> fields = new ArrayList<>();
 	    fields.add(DataTypes.createStructField("StructureId", DataTypes.StringType, true));
 	    fields.add(DataTypes.createStructField("Res1", DataTypes.StringType, true));
+	    fields.add(DataTypes.createStructField("Atom1", DataTypes.StringType, true));
+	    fields.add(DataTypes.createStructField("Element1", DataTypes.StringType, true));
 	    fields.add(DataTypes.createStructField("Index1", DataTypes.IntegerType, true));
 	    fields.add(DataTypes.createStructField("Res2", DataTypes.StringType, true));
+	    fields.add(DataTypes.createStructField("Atom2", DataTypes.StringType, true));
+	    fields.add(DataTypes.createStructField("Element2", DataTypes.StringType, true));
 	    fields.add(DataTypes.createStructField("Index2", DataTypes.IntegerType, true));
 	    fields.add(DataTypes.createStructField("Dist", DataTypes.FloatType, true));
 	    return DataTypes.createStructType(fields);

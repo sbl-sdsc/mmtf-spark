@@ -37,7 +37,7 @@ public class ContainsPolymerChainType implements Function<Tuple2<String, Structu
 	public static final String DNA_OH_3_PRIME_TERMINUS = "DNA OH 3 PRIME TERMINUS";
 	public static final String DNA_OH_5_PRIME_TERMINUS = "DNA OH 5 PRIME TERMINUS";	
 	public static final String DNA_LINKING = "DNA LINKING";	
-	public static final String L_PETIDE_COOH_CARBOXY_TERMINUS = "L-PEPTIDE COOH CARBOXY TERMINUS";
+	public static final String L_PEPTIDE_COOH_CARBOXY_TERMINUS = "L-PEPTIDE COOH CARBOXY TERMINUS";
 	public static final String L_PEPTIDE_NH3_AMINO_TERMINUS = "L-PEPTIDE NH3 AMINO TERMINUS";	
 	public static final String L_PEPTIDE_LINKING = "L-PEPTIDE LINKING";	
 	public static final String L_SACCHARIDE = "L-SACCHARIDE";	
@@ -50,64 +50,37 @@ public class ContainsPolymerChainType implements Function<Tuple2<String, Structu
 	public static final String NON_POLYMER = "NON-POLYMER";
 	public static final String OTHER = "OTHER";	
 	public static final String SACCHARIDE = "SACCHARIDE";
-	/*
-	 * D-peptide COOH carboxy terminus	
-	 * D-peptide NH3 amino terminus	
-	 * D-peptide linking	
-	 * D-saccharide	
-	 * D-saccharide 1,4 and 1,4 linking	
-	 * D-saccharide 1,4 and 1,6 linking	
-	 * DNA OH 3 prime terminus	
-	 * DNA OH 5 prime terminus	
-	 * DNA linking	
-	 * L-peptide COOH carboxy terminus	
-	 * L-peptide NH3 amino terminus	
-	 * L-peptide linking	
-	 * L-saccharide	
-	 * L-saccharide 1,4 and 1,4 linking	
-	 * L-saccharide 1,4 and 1,6 linking	
-	 * RNA OH 3 prime terminus	
-	 * RNA OH 5 prime terminus	
-	 * RNA linking	
-	 * non-polymer	
-	 * other	
-	 * saccharide
-	 */
 
 	/**
 	 * Default constructor matches any entry that contains a chain with only
 	 * the specified monomer types:
-	 * 
-	 * {@link ExperimentalMethods#X_RAY_DIFFRACTION ExperimentalMethods.X_RAY_DIFFRACTION},
-	 * TODO these should be in upper case
-	 * D-peptide COOH carboxy terminus	
-	 * D-peptide NH3 amino terminus	
-	 * D-peptide linking	
-	 * D-saccharide	
-	 * D-saccharide 1,4 and 1,4 linking	
-	 * D-saccharide 1,4 and 1,6 linking	
-	 * DNA OH 3 prime terminus	
-	 * DNA OH 5 prime terminus	
-	 * DNA linking	
-	 * L-peptide COOH carboxy terminus	
-	 * L-peptide NH3 amino terminus	
-	 * L-peptide linking	
-	 * L-saccharide	
-	 * L-saccharide 1,4 and 1,4 linking	
-	 * L-saccharide 1,4 and 1,6 linking	
-	 * RNA OH 3 prime terminus	
-	 * RNA OH 5 prime terminus	
-	 * RNA linking	
-	 * non-polymer	
-	 * other	
-	 * saccharide
-	 */
-	
-	/**
-	 * 
 	 * @param monomerTypes comma separated list of monomer types in a polymer chains
-	 * 
-	 * {@link ContainsPolymerChainTypes#L_PEPTIDE_LINKING ContainsPolymerChainType.L_PEPTIDE_LINKING},
+	 * <p>
+	 * Frequently occurring monomer types:
+	 * {@link ContainsPolymerChainType#L_PEPTIDE_LINKING ContainsPolymerChainType.L_PEPTIDE_LINKING},
+	 * {@link ContainsPolymerChainType#D_PEPTIDE_LINKING ContainsPolymerChainType.D_PEPTIDE_LINKING},
+	 * {@link ContainsPolymerChainType#DNA_LINKING ContainsPolymerChainType.DNA_LINKING},
+	 * {@link ContainsPolymerChainType#RNA_LINKING ContainsPolymerChainType.RNA_LINKING},
+	 * {@link ContainsPolymerChainType#NON_POLYMER ContainsPolymerChainType.NON_POLYMER},
+	 * <p>
+	 * Less frequently occurring monomer types:
+	 * {@link ContainsPolymerChainType#D_PEPTIDE_COOH_CARBOXY_TERMINUS ContainsPolymerChainType.D_PEPTIDE_COOH_CARBOXY_TERMINUS},
+	 * {@link ContainsPolymerChainType#D_PEPTIDE_NH3_AMINO_TERMINUS ContainsPolymerChainType.D_PEPTIDE_NH3_AMINO_TERMINUS},
+	 * {@link ContainsPolymerChainType#D_SACCHARIDE ContainsPolymerChainType.D_SACCHARIDE},
+	 * {@link ContainsPolymerChainType#D_SACCHARIDE_14_and_14_LINKING ContainsPolymerChainType.D_SACCHARIDE_14_and_14_LINKING},
+	 * {@link ContainsPolymerChainType#D_SACCHARIDE_14_and_16_LINKING ContainsPolymerChainType.D_SACCHARIDE_14_and_16_LINKING},
+	 * {@link ContainsPolymerChainType#DNA_OH_3_PRIME_TERMINUS ContainsPolymerChainType.DNA_OH_3_PRIME_TERMINUS},
+	 * {@link ContainsPolymerChainType#DNA_OH_5_PRIME_TERMINUS  ContainsPolymerChainType.DNA_OH_5_PRIME_TERMINUS },
+	 * {@link ContainsPolymerChainType#L_PEPTIDE_NH3_AMINO_TERMINUS ContainsPolymerChainType.L_PEPTIDE_NH3_AMINO_TERMINUS},
+	 * {@link ContainsPolymerChainType#L_PEPTIDE_LINKING ContainsPolymerChainType.L_PEPTIDE_LINKING},
+	 * {@link ContainsPolymerChainType#L_SACCHARIDE ContainsPolymerChainType.L_SACCHARIDE},
+	 * {@link ContainsPolymerChainType#L_SACCHARIDE_14_AND_14_LINKING ContainsPolymerChainType.L_SACCHARIDE_14_AND_14_LINKING},
+	 * {@link ContainsPolymerChainType#L_SACCHARIDE_14_AND_16_LINKING ContainsPolymerChainType.L_SACCHARIDE_14_AND_16_LINKING},
+	 * {@link ContainsPolymerChainType#PEPTIDE_LINKING ContainsPolymerChainType.PEPTIDE_LINKING},
+	 * {@link ContainsPolymerChainType#RNA_OH_3_PRIME_TERMINUS ContainsPolymerChainType.RNA_OH_3_PRIME_TERMINUS},
+	 * {@link ContainsPolymerChainType#RNA_OH_5_PRIME_TERMINUS ContainsPolymerChainType.RNA_OH_5_PRIME_TERMINUS},
+	 * {@link ContainsPolymerChainType#OTHER ContainsPolymerChainType.OTHER},
+	 * {@link ContainsPolymerChainType#SACCHARIDE ContainsPolymerChainType.SACCHARIDE}
 	 */
 	public ContainsPolymerChainType(String...monomerTypes) {
         this(false, monomerTypes);

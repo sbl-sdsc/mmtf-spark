@@ -36,7 +36,7 @@ public class Demo2d {
 	    
 	    MmtfReader
 	    	.readSequenceFile(args[0], sc) // read MMTF hadoop sequence file
-	    	// find chains that contain DNA, RNA, or both
+	    	 // find chains that contain DNA, RNA, or both
 	    	.filter(new ContainsPolymerChainType("DNA LINKING","RNA LINKING")) 
 	    	.filter(new NotFilter(new ContainsDnaChain()))
 	    	.filter(new NotFilter(new ContainsRnaChain()))

@@ -28,8 +28,8 @@ public class ContainsLProteinChainTest {
 
 	    // 1STP: only L-protein chain
 	    // 1JLP: single L-protein chains with non-polymer capping group (NH2)
-	    // 5X6H: L-protein and L-DNA chain
-	    // 5L2G: L-DNA chain
+	    // 5X6H: L-protein and DNA chain
+	    // 5L2G: DNA chain
 	    // 2MK1: D-saccharide
 	    pdb = pdb.filter(new ContainsLProteinChain());    
 	    List<String> results = pdb.keys().collect();
@@ -52,8 +52,8 @@ public class ContainsLProteinChainTest {
 
 	    // 1STP: only L-protein chain
 	    // 1JLP: single L-protein chains with non-polymer capping group (NH2)
-	    // 5X6H: L-protein and L-DNA chain
-	    // 5L2G: L-DNA chain
+	    // 5X6H: L-protein and DNA chain
+	    // 5L2G: DNA chain
 	    // 2MK1: D-saccharide
 	    boolean exclusive = true;
 	    pdb = pdb.filter(new ContainsLProteinChain(exclusive));   
