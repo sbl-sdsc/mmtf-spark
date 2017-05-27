@@ -26,7 +26,7 @@ public class ExperimentalMethodsTest {
 		SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(ExperimentalMethodsTest.class.getSimpleName());
 	    sc = new JavaSparkContext(conf);
 	    
-	    List<String> pdbIds = Arrays.asList("1STP","5VLN","5VAI","5JXV","5K7N","3PDM","5MNX","5I1R","5MON","5LCB","3J07");
+	    List<String> pdbIds = Arrays.asList("2ONX","5VLN","5VAI","5JXV","5K7N","3PDM","5MNX","5I1R","5MON","5LCB","3J07");
 	    pdb = MmtfReader.downloadMmtfFiles(pdbIds, sc);
 	}
 
@@ -42,7 +42,7 @@ public class ExperimentalMethodsTest {
 				 .keys()
 				 .collect();
  
-	    assertTrue(results.contains("1STP"));
+	    assertTrue(results.contains("2ONX"));
 	    assertFalse(results.contains("5VLN"));
 	    assertFalse(results.contains("5VAI"));
 	    assertFalse(results.contains("5JXV"));
@@ -63,7 +63,7 @@ public class ExperimentalMethodsTest {
 				 .keys()
 				 .collect();
  
-	    assertTrue(results.contains("1STP.A"));
+	    assertTrue(results.contains("2ONX.A"));
 	    assertFalse(results.contains("5VLN.A"));
 	}
 	
@@ -74,7 +74,7 @@ public class ExperimentalMethodsTest {
 				 .keys()
 				 .collect();
  
-	    assertFalse(results.contains("1STP"));
+	    assertFalse(results.contains("2ONX"));
 	    assertTrue(results.contains("5VLN"));
 	    assertFalse(results.contains("5VAI"));
 	    assertFalse(results.contains("5JXV"));
@@ -94,7 +94,7 @@ public class ExperimentalMethodsTest {
 				 .keys()
 				 .collect();
  
-	    assertFalse(results.contains("1STP"));
+	    assertFalse(results.contains("2ONX"));
 	    assertFalse(results.contains("5VLN"));
 	    assertTrue(results.contains("5VAI"));
 	    assertFalse(results.contains("5JXV"));
@@ -114,7 +114,7 @@ public class ExperimentalMethodsTest {
 				 .keys()
 				 .collect();
  
-	    assertFalse(results.contains("1STP"));
+	    assertFalse(results.contains("2ONX"));
 	    assertFalse(results.contains("5VLN"));
 	    assertFalse(results.contains("5VAI"));
 	    assertTrue(results.contains("5JXV"));
@@ -134,7 +134,7 @@ public class ExperimentalMethodsTest {
 				 .keys()
 				 .collect();
  
-	    assertFalse(results.contains("1STP"));
+	    assertFalse(results.contains("2ONX"));
 	    assertFalse(results.contains("5VLN"));
 	    assertFalse(results.contains("5VAI"));
 	    assertFalse(results.contains("5JXV"));
@@ -154,7 +154,7 @@ public class ExperimentalMethodsTest {
 				 .keys()
 				 .collect();
  
-	    assertFalse(results.contains("1STP"));
+	    assertFalse(results.contains("2ONX"));
 	    assertFalse(results.contains("5VLN"));
 	    assertFalse(results.contains("5VAI"));
 	    assertFalse(results.contains("5JXV"));
@@ -174,7 +174,7 @@ public class ExperimentalMethodsTest {
 				 .keys()
 				 .collect();
  
-	    assertFalse(results.contains("1STP"));
+	    assertFalse(results.contains("2ONX"));
 	    assertFalse(results.contains("5VLN"));
 	    assertFalse(results.contains("5VAI"));
 	    assertFalse(results.contains("5JXV"));
@@ -194,7 +194,7 @@ public class ExperimentalMethodsTest {
 				 .keys()
 				 .collect();
  
-	    assertFalse(results.contains("1STP"));
+	    assertFalse(results.contains("2ONX"));
 	    assertFalse(results.contains("5VLN"));
 	    assertFalse(results.contains("5VAI"));
 	    assertFalse(results.contains("5JXV"));
@@ -214,7 +214,7 @@ public class ExperimentalMethodsTest {
 				 .keys()
 				 .collect();
  
-	    assertFalse(results.contains("1STP"));
+	    assertFalse(results.contains("2ONX"));
 	    assertFalse(results.contains("5VLN"));
 	    assertFalse(results.contains("5VAI"));
 	    assertFalse(results.contains("5JXV"));
@@ -234,7 +234,7 @@ public class ExperimentalMethodsTest {
 				 .keys()
 				 .collect();
  
-	    assertFalse(results.contains("1STP"));
+	    assertFalse(results.contains("2ONX"));
 	    assertFalse(results.contains("5VLN"));
 	    assertFalse(results.contains("5VAI"));
 	    assertFalse(results.contains("5JXV"));

@@ -25,11 +25,11 @@ public class ResolutionFilterTest {
 		SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(ResolutionFilterTest.class.getSimpleName());
 	    sc = new JavaSparkContext(conf);
 	    
-	    // 5JT8: 2.1 A x-ray resolution
-	    // 5VHT: 2.0 A x-ray resolution
-	    // 5LO2: n/a 
-	    // 5KHE: n/a (35 A EM resolution)
-	    List<String> pdbIds = Arrays.asList("5JT8","5VHT","5LO2","5KHE");
+	    // 2ONX: 1.52 A x-ray resolution
+	    // 2OLX: 1.42 A x-ray resolution
+	    // 3REC: n/a NMR structure
+	    // 1LU3: n/a (16.8 A EM resolution)
+	    List<String> pdbIds = Arrays.asList("2ONX","2OLX","3REC","1LU3");
 	    pdb = MmtfReader.downloadMmtfFiles(pdbIds, sc);
 	}
 
@@ -40,24 +40,24 @@ public class ResolutionFilterTest {
 
 	@Test
 	public void test1() {
-	    pdb = pdb.filter(new Resolution(2.099, 2.101));    
+	    pdb = pdb.filter(new Resolution(1.51, 1.53));    
 	    List<String> results = pdb.keys().collect();
 	    
-	    assertTrue(results.contains("5JT8"));
-	    assertFalse(results.contains("5VHT"));
-	    assertFalse(results.contains("5LO2"));
-	    assertFalse(results.contains("5KHE"));
+	    assertTrue(results.contains("2ONX"));
+	    assertFalse(results.contains("2OLX"));
+	    assertFalse(results.contains("3REC"));
+	    assertFalse(results.contains("1LU3"));
 	}
 	
 	@Test
 	public void test2() {
-	    pdb = pdb.filter(new Resolution(1.99, 2.01));    
+	    pdb = pdb.filter(new Resolution(1.41, 1.43));    
 	    List<String> results = pdb.keys().collect();
 	    
-	    assertFalse(results.contains("5JT8"));
-	    assertTrue(results.contains("5VHT"));
-	    assertFalse(results.contains("5LO2"));
-	    assertFalse(results.contains("5KHE"));
+	    assertFalse(results.contains("2ONX"));
+	    assertTrue(results.contains("2OLX"));
+	    assertFalse(results.contains("3REC"));
+	    assertFalse(results.contains("1LU3"));
 	}
 	
 	@Test
@@ -68,10 +68,9 @@ public class ResolutionFilterTest {
 	    pdb = pdb.filter(new Resolution(34.99, 35.01));    
 	    List<String> results = pdb.keys().collect();
 	    
-	    assertFalse(results.contains("5JT8"));
-	    assertFalse(results.contains("5VHT"));
-	    assertFalse(results.contains("5LO2"));
-	    assertFalse(results.contains("5KHE"));
+	    assertFalse(results.contains("2ONX"));
+	    assertFalse(results.contains("2OLX"));
+	    assertFalse(results.contains("3REC"));
+	    assertFalse(results.contains("1LU3"));
 	}
-	
 }

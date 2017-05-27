@@ -26,7 +26,7 @@ public class ContainsDProteinChainTest {
 		SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(ContainsDProteinChainTest.class.getSimpleName());
 	    sc = new JavaSparkContext(conf);
 	    
-	    // 1STP: only L-protein chain
+	    // 2ONX: only L-protein chain
 	    // 1JLP: single L-protein chains with non-polymer capping group (NH2)
 	    // 5X6H: L-protein and DNA chain
 	    // 5L2G: DNA chain
@@ -34,7 +34,7 @@ public class ContainsDProteinChainTest {
 	    // 2V5W: Chain C: GLY-GLY-GLY matches both D-protein and L-protein
 	    // 5XDP: L-protein and D-protein (modified)
 	    // 5GOD: 2 L-protein + 2 D-protein
-	    List<String> pdbIds = Arrays.asList("1STP","1JLP","5X6H","5L2G","2MK1","2V5W","5XDP","5GOD");
+	    List<String> pdbIds = Arrays.asList("2ONX","1JLP","5X6H","5L2G","2MK1","2V5W","5XDP","5GOD");
 	    pdb = MmtfReader.downloadMmtfFiles(pdbIds, sc);
 	}
 
@@ -49,7 +49,7 @@ public class ContainsDProteinChainTest {
 	    List<String> results = pdb.keys().collect();
 	    System.out.println(results);
 	    
-	    assertFalse(results.contains("1STP"));
+	    assertFalse(results.contains("2ONX"));
 	    assertFalse(results.contains("1JLP"));
 	    assertFalse(results.contains("5X6H"));
 	    assertFalse(results.contains("5L2G"));
@@ -65,7 +65,7 @@ public class ContainsDProteinChainTest {
 	    pdb = pdb.filter(new ContainsDProteinChain(exclusive));   
 	    List<String> results = pdb.keys().collect();
 	    
-	    assertFalse(results.contains("1STP"));
+	    assertFalse(results.contains("2ONX"));
 	    assertFalse(results.contains("1JLP"));
 	    assertFalse(results.contains("5X6H"));
 	    assertFalse(results.contains("5L2G"));
@@ -81,7 +81,7 @@ public class ContainsDProteinChainTest {
 	    pdb = pdb.filter(new ContainsDProteinChain());    
 	    List<String> results = pdb.keys().collect();
 	    
-	    assertFalse(results.contains("1STP.A"));
+	    assertFalse(results.contains("2ONX.A"));
 	    assertFalse(results.contains("1JLP.A"));
 	    assertFalse(results.contains("5X6H.B"));
 	    assertFalse(results.contains("5L2G.A"));

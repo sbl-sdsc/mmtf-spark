@@ -26,7 +26,7 @@ public class PolymerCompositionTest {
 		SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(PolymerCompositionTest.class.getSimpleName());
 	    sc = new JavaSparkContext(conf);
 	    
-	    // 1STP: only L-protein chain
+	    // 2ONX: only L-protein chain
 	    // 1JLP: single L-protein chains with non-polymer capping group (NH2)
 	    // 5X6H: L-protein and DNA chain (with std. nucleotides)
 	    // 5L2G: DNA chain (with non-std. nucleotide)
@@ -34,7 +34,7 @@ public class PolymerCompositionTest {
 	    // 5UZT: RNA chain (with std. nucleotides)
 	    // 1AA6: contains SEC, selenocysteine (21st amino acid)
 	    // 1NTH: contains PYL, pyrrolysine (22nd amino acid)
-	    List<String> pdbIds = Arrays.asList("1STP","1JLP","5X6H","5L2G","2MK1","5UZT","1AA6","1NTH");
+	    List<String> pdbIds = Arrays.asList("2ONX","1JLP","5X6H","5L2G","2MK1","5UZT","1AA6","1NTH");
 	    pdb = MmtfReader.downloadMmtfFiles(pdbIds, sc);
 	}
 
@@ -48,7 +48,7 @@ public class PolymerCompositionTest {
 	    pdb = pdb.filter(new PolymerComposition(PolymerComposition.AMINO_ACIDS_20));    
 	    List<String> results = pdb.keys().collect();
 	    
-	    assertTrue(results.contains("1STP"));
+	    assertTrue(results.contains("2ONX"));
 	    assertFalse(results.contains("1JLP"));
 	    assertTrue(results.contains("5X6H"));
 	    assertFalse(results.contains("5L2G"));
@@ -65,7 +65,7 @@ public class PolymerCompositionTest {
 	    pdb = pdb.filter(new PolymerComposition(exclusive, PolymerComposition.AMINO_ACIDS_20));   
 	    List<String> results = pdb.keys().collect();
 	    
-	    assertTrue(results.contains("1STP"));
+	    assertTrue(results.contains("2ONX"));
 	    assertFalse(results.contains("1JLP"));
 	    assertFalse(results.contains("5X6H"));
 	    assertFalse(results.contains("5L2G"));
@@ -81,7 +81,7 @@ public class PolymerCompositionTest {
 	    pdb = pdb.filter(new PolymerComposition(PolymerComposition.AMINO_ACIDS_20));    
 	    List<String> results = pdb.keys().collect();
 	    
-	    assertTrue(results.contains("1STP.A"));
+	    assertTrue(results.contains("2ONX.A"));
 	    assertFalse(results.contains("1JLP.A"));
 	    assertTrue(results.contains("5X6H.B"));
 	    assertFalse(results.contains("5L2G.A"));
@@ -98,7 +98,7 @@ public class PolymerCompositionTest {
 	    pdb = pdb.filter(new PolymerComposition(PolymerComposition.AMINO_ACIDS_22));    
 	    List<String> results = pdb.keys().collect();
 	    
-	    assertTrue(results.contains("1STP.A"));
+	    assertTrue(results.contains("2ONX.A"));
 	    assertFalse(results.contains("1JLP.A"));
 	    assertTrue(results.contains("5X6H.B"));
 	    assertFalse(results.contains("5L2G.A"));
@@ -114,7 +114,7 @@ public class PolymerCompositionTest {
 	    pdb = pdb.filter(new PolymerComposition(PolymerComposition.DNA_STD_NUCLEOTIDES));    
 	    List<String> results = pdb.keys().collect();
 	    
-	    assertFalse(results.contains("1STP"));
+	    assertFalse(results.contains("2ONX"));
 	    assertFalse(results.contains("1JLP"));
 	    assertTrue(results.contains("5X6H"));
 	    assertFalse(results.contains("5L2G"));
@@ -127,7 +127,7 @@ public class PolymerCompositionTest {
 	    pdb = pdb.filter(new PolymerComposition(PolymerComposition.RNA_STD_NUCLEOTIDES));    
 	    List<String> results = pdb.keys().collect();
 	    
-	    assertFalse(results.contains("1STP"));
+	    assertFalse(results.contains("2ONX"));
 	    assertFalse(results.contains("1JLP"));
 	    assertFalse(results.contains("5X6H"));
 	    assertFalse(results.contains("5L2G"));
@@ -140,7 +140,7 @@ public class PolymerCompositionTest {
 	    pdb = pdb.filter(new PolymerComposition(PolymerComposition.RNA_STD_NUCLEOTIDES));    
 	    List<String> results = pdb.keys().collect();
 	    
-	    assertFalse(results.contains("1STP"));
+	    assertFalse(results.contains("2ONX"));
 	    assertFalse(results.contains("1JLP"));
 	    assertFalse(results.contains("5X6H"));
 	    assertFalse(results.contains("5L2G"));

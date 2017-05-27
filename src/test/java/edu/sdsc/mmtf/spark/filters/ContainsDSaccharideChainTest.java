@@ -26,12 +26,12 @@ public class ContainsDSaccharideChainTest {
 		SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(ContainsDSaccharideChainTest.class.getSimpleName());
 	    sc = new JavaSparkContext(conf);
 	    
-	    // 1STP: only L-protein chain
+	    // 2ONX: only L-protein chain
 	    // 1JLP: single L-protein chains with non-polymer capping group (NH2)
 	    // 5X6H: L-protein and L-DNA chain
 	    // 5L2G: L-DNA chain
 	    // 2MK1: D-saccharide
-	    List<String> pdbIds = Arrays.asList("1STP","1JLP","5X6H","5L2G","2MK1");
+	    List<String> pdbIds = Arrays.asList("2ONX","1JLP","5X6H","5L2G","2MK1");
 	    pdb = MmtfReader.downloadMmtfFiles(pdbIds, sc);
 	}
 
@@ -45,7 +45,7 @@ public class ContainsDSaccharideChainTest {
 	    pdb = pdb.filter(new ContainsDSaccharide());    
 	    List<String> results = pdb.keys().collect();
 	    
-	    assertFalse(results.contains("1STP"));
+	    assertFalse(results.contains("2ONX"));
 	    assertFalse(results.contains("1JLP"));
 	    assertFalse(results.contains("5X6H"));
 	    assertFalse(results.contains("5L2G"));
@@ -58,7 +58,7 @@ public class ContainsDSaccharideChainTest {
 	    pdb = pdb.filter(new ContainsDSaccharide());    
 	    List<String> results = pdb.keys().collect();
 	    
-	    assertFalse(results.contains("1STP.A"));
+	    assertFalse(results.contains("2ONX.A"));
 	    assertFalse(results.contains("1JLP.A"));
 	    assertFalse(results.contains("5X6H.B"));
 	    assertFalse(results.contains("5L2G.A"));

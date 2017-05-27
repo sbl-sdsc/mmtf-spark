@@ -26,14 +26,14 @@ public class ContainsRnaChainTest {
 		SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(ContainsRnaChainTest.class.getSimpleName());
 	    sc = new JavaSparkContext(conf);
 	    
-	 // 1STP: only L-protein chain
+	 // 2ONX: only L-protein chain
 	    // 1JLP: single L-protein chains with non-polymer capping group (NH2)
 	    // 5X6H: L-protein and DNA chain
 	    // 5L2G: DNA chain
 	    // 2MK1: D-saccharide
 	    // 5UX0: 2 L-protein, 2 RNA, 2 DNA chains
 	    // 2NCQ: 2 RNA chains
-	    List<String> pdbIds = Arrays.asList("1STP","1JLP","5X6H","5L2G","2MK1","5UX0","2NCQ");
+	    List<String> pdbIds = Arrays.asList("2ONX","1JLP","5X6H","5L2G","2MK1","5UX0","2NCQ");
 	    pdb = MmtfReader.downloadMmtfFiles(pdbIds, sc);
 	}
 
@@ -47,7 +47,7 @@ public class ContainsRnaChainTest {
 	    pdb = pdb.filter(new ContainsRnaChain());    
 	    List<String> results = pdb.keys().collect();
 	    
-	    assertFalse(results.contains("1STP"));
+	    assertFalse(results.contains("2ONX"));
 	    assertFalse(results.contains("1JLP"));
 	    assertFalse(results.contains("5X6H"));
 	    assertFalse(results.contains("5L2G"));
@@ -62,7 +62,7 @@ public class ContainsRnaChainTest {
 	    pdb = pdb.filter(new ContainsRnaChain(exclusive));   
 	    List<String> results = pdb.keys().collect();
 	    
-	    assertFalse(results.contains("1STP"));
+	    assertFalse(results.contains("2ONX"));
 	    assertFalse(results.contains("1JLP"));
 	    assertFalse(results.contains("5X6H"));
 	    assertFalse(results.contains("5L2G"));
@@ -77,7 +77,7 @@ public class ContainsRnaChainTest {
 	    pdb = pdb.filter(new ContainsRnaChain());    
 	    List<String> results = pdb.keys().collect();
 	    
-	    assertFalse(results.contains("1STP.A"));
+	    assertFalse(results.contains("2ONX.A"));
 	    assertFalse(results.contains("1JLP.A"));
 	    assertFalse(results.contains("5X6H.A"));
 	    assertFalse(results.contains("5X6H.B"));

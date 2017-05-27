@@ -25,11 +25,11 @@ public class RfreeFilterTest {
 		SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(RfreeFilterTest.class.getSimpleName());
 	    sc = new JavaSparkContext(conf);
 	    
-	    // 5JT8: 0.217 rfree
-	    // 5VHT: 0.240 rfree
-	    // 5LO2: n/a for NMR structure
-	    // 5KHE" n/a for EM structure
-	    List<String> pdbIds = Arrays.asList("5JT8","5VHT","5LO2","5KHE");
+	    // 2ONX: 0.202 rfree x-ray resolution
+	    // 2OLX: 0.235 rfree x-ray resolution
+	    // 3REC: n/a NMR structure
+	    // 1LU3: n/a EM structure
+	    List<String> pdbIds = Arrays.asList("2ONX","2OLX","3REC","1LU3");
 	    pdb = MmtfReader.downloadMmtfFiles(pdbIds, sc);
 	}
 
@@ -40,23 +40,23 @@ public class RfreeFilterTest {
 
 	@Test
 	public void test1() {
-	    pdb = pdb.filter(new Rfree(0.216, 0.218));    
+	    pdb = pdb.filter(new Rfree(0.201, 0.203));    
 	    List<String> results = pdb.keys().collect();
 	    
-	    assertTrue(results.contains("5JT8"));
-	    assertFalse(results.contains("5VHT"));
-	    assertFalse(results.contains("5LO2"));
+	    assertTrue(results.contains("2ONX"));
+	    assertFalse(results.contains("2OLX"));
+	    assertFalse(results.contains("3REC"));
 	    assertFalse(results.contains("5KHE"));
 	}
 	
 	@Test
 	public void test2() {
-	    pdb = pdb.filter(new Rfree(0.239, 0.241));    
+	    pdb = pdb.filter(new Rfree(0.234, 0.236));    
 	    List<String> results = pdb.keys().collect();
 	    
-	    assertFalse(results.contains("5JT8"));
-	    assertTrue(results.contains("5VHT"));
-	    assertFalse(results.contains("5LO2"));
+	    assertFalse(results.contains("2ONX"));
+	    assertTrue(results.contains("2OLX"));
+	    assertFalse(results.contains("3REC"));
 	    assertFalse(results.contains("5KHE"));
 	}
 	
@@ -65,10 +65,9 @@ public class RfreeFilterTest {
 	    pdb = pdb.filter(new Rfree(0.15, 0.2));    
 	    List<String> results = pdb.keys().collect();
 	    
-	    assertFalse(results.contains("5JT8"));
-	    assertFalse(results.contains("5VHT"));
-	    assertFalse(results.contains("5LO2"));
+	    assertFalse(results.contains("2ONX"));
+	    assertFalse(results.contains("2OLX"));
+	    assertFalse(results.contains("3REC"));
 	    assertFalse(results.contains("5KHE"));
 	}
-	
 }
