@@ -11,7 +11,6 @@ import org.apache.spark.sql.SparkSession;
 import org.rcsb.mmtf.api.StructureDataInterface;
 
 import edu.sdsc.mmtf.spark.incubator.StructureToAllInteractions;
-import edu.sdsc.mmtf.spark.mappers.StructureToInteractingResidues;
 
 /**
  * @author Peter Rose

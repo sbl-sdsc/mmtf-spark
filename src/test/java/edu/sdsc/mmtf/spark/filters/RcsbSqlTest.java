@@ -18,13 +18,13 @@ import org.rcsb.mmtf.api.StructureDataInterface;
 import edu.sdsc.mmtf.spark.io.MmtfReader;
 import edu.sdsc.mmtf.spark.mappers.StructureToPolymerChains;
 
-public class RcsbWebserviceFilterTest {
+public class RcsbSqlTest {
 	private JavaSparkContext sc;
 	private JavaPairRDD<String, StructureDataInterface> pdb;
 	
 	@Before
 	public void setUp() throws Exception {
-		SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(RcsbWebserviceFilterTest.class.getSimpleName());
+		SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(RcsbSqlTest.class.getSimpleName());
 	    sc = new JavaSparkContext(conf);
 	    
 	    List<String> pdbIds = Arrays.asList("5JDE","5CU4","5L6W","5UFU","5IHB");
@@ -44,7 +44,7 @@ public class RcsbWebserviceFilterTest {
 	 */
 	public void test1() throws IOException {
 		String whereClause = "WHERE ecNo='2.7.11.1'";
-		pdb = pdb.filter(new RcsbWebServiceFilter(whereClause, "ecNo"));
+		pdb = pdb.filter(new RcsbSql(whereClause, "ecNo"));
 		List<String> matches = pdb.keys().collect();
 		
 		assertTrue(matches.contains("5JDE"));
@@ -61,7 +61,7 @@ public class RcsbWebserviceFilterTest {
 	 */
 	public void test2() throws IOException {
 		String whereClause = "WHERE ecNo='2.7.11.1' AND source='Homo sapiens'";
-		pdb = pdb.filter(new RcsbWebServiceFilter(whereClause, "ecNo","source"));
+		pdb = pdb.filter(new RcsbSql(whereClause, "ecNo","source"));
 		List<String> matches = pdb.keys().collect();
 		
 		assertTrue(matches.contains("5JDE"));
@@ -79,7 +79,7 @@ public class RcsbWebserviceFilterTest {
 	public void test3() throws IOException {
 	    pdb = pdb.flatMapToPair(new StructureToPolymerChains());
 		String whereClause = "WHERE ecNo='2.7.11.1' AND source='Homo sapiens'";
-		pdb = pdb.filter(new RcsbWebServiceFilter(whereClause, "ecNo","source"));
+		pdb = pdb.filter(new RcsbSql(whereClause, "ecNo","source"));
 		List<String> matches = pdb.keys().collect();
 		
 		assertTrue(matches.contains("5JDE.A"));

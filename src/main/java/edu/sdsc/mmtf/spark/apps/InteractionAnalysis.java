@@ -13,7 +13,7 @@ import org.apache.spark.sql.Row;
 import org.rcsb.mmtf.api.StructureDataInterface;
 
 import edu.sdsc.mmtf.spark.analysis.InteractionFinder;
-import edu.sdsc.mmtf.spark.filters.RcsbWebServiceFilter;
+import edu.sdsc.mmtf.spark.filters.RcsbSql;
 import edu.sdsc.mmtf.spark.io.MmtfReader;
 
 /**
@@ -45,7 +45,7 @@ public class InteractionAnalysis {
 	   
 	    // filter by best (rankNumber=1) representative for 90% sequence identity subset
 	    String whereClause = "WHERE rankNumber90=1";
-	    pdb = pdb.filter(new RcsbWebServiceFilter(whereClause, "rankNumber90"));
+	    pdb = pdb.filter(new RcsbSql(whereClause, "rankNumber90"));
 	    
 	    // find interactions between Zinc within 3 Angstroms
 	    InteractionFinder finder = new InteractionFinder(pdb);
