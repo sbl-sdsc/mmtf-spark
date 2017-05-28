@@ -7,11 +7,8 @@ import java.io.IOException;
 
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
-import org.forester.development.neTest;
 
-import edu.sdsc.mmtf.spark.filters.ContainsGroup;
 import edu.sdsc.mmtf.spark.filters.RcsbWildType;
-import edu.sdsc.mmtf.spark.filters.PolymerComposition;
 import edu.sdsc.mmtf.spark.io.MmtfReader;
 
 /**

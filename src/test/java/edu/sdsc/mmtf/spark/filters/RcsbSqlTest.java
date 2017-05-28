@@ -36,30 +36,12 @@ public class RcsbSqlTest {
 		sc.close();
 	}
 
-
 	@Test
 	/**
 	 * This test runs a chain level query and compares the results at the PDB entry level
 	 * @throws IOException
 	 */
 	public void test1() throws IOException {
-		String whereClause = "WHERE ecNo='2.7.11.1'";
-		pdb = pdb.filter(new RcsbSql(whereClause, "ecNo"));
-		List<String> matches = pdb.keys().collect();
-		
-		assertTrue(matches.contains("5JDE"));
-		assertTrue(matches.contains("5CU4"));
-		assertTrue(matches.contains("5L6W"));
-		assertTrue(matches.contains("5UFU"));
-		assertFalse(matches.contains("5IHB"));
-	}
-	
-	@Test
-	/**
-	 * This test runs a chain level query and compares the results at the PDB entry level
-	 * @throws IOException
-	 */
-	public void test2() throws IOException {
 		String whereClause = "WHERE ecNo='2.7.11.1' AND source='Homo sapiens'";
 		pdb = pdb.filter(new RcsbSql(whereClause, "ecNo","source"));
 		List<String> matches = pdb.keys().collect();
@@ -76,7 +58,7 @@ public class RcsbSqlTest {
 	 *  This test runs a chain level query and compares chain level results
 	 * @throws IOException
 	 */
-	public void test3() throws IOException {
+	public void test2() throws IOException {
 	    pdb = pdb.flatMapToPair(new StructureToPolymerChains());
 		String whereClause = "WHERE ecNo='2.7.11.1' AND source='Homo sapiens'";
 		pdb = pdb.filter(new RcsbSql(whereClause, "ecNo","source"));

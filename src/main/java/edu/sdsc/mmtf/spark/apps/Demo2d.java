@@ -2,7 +2,6 @@ package edu.sdsc.mmtf.spark.apps;
 
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
-import org.apache.zookeeper.server.auth.SaslServerCallbackHandler;
 
 import edu.sdsc.mmtf.spark.filters.ContainsDSaccharide;
 import edu.sdsc.mmtf.spark.filters.ContainsDnaChain;

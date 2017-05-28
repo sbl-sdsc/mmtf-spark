@@ -67,9 +67,14 @@ public class StructureToPolymerChains implements PairFlatMapFunction<Tuple2<Stri
 			Map<Integer, Integer> atomMap = new HashMap<>();
 
 			if (polymer) {
-				// set header info
+		        // to avoid of information loss, add chainName/IDs and entity id
+				// this required by some queries
+				String structureId = structure.getStructureId() + "." + structure.getChainNames()[i] +
+						"." + structure.getChainIds()[i] + "." + (entityToChainIndex+1);
+				
+				// set header
 				adapterToStructureData.initStructure(bondsPerChain[i], atomsPerChain[i], 
-						structure.getGroupsPerChain()[i], 1, 1, structure.getStructureId());
+						structure.getGroupsPerChain()[i], 1, 1, structureId);
 				DecoderUtils.addXtalographicInfo(structure, adapterToStructureData);
 				DecoderUtils.addHeaderInfo(structure, adapterToStructureData);	
 

@@ -48,6 +48,7 @@ public class RcsbAdvancedSearch implements Function<Tuple2<String, StructureData
 		
 		entityLevel = results.size() > 0 && results.get(0).contains(":");
 		structureIds = new HashSet<String>(results);
+		this.exclusive = false; // exclusive not supported, query could match non-polymers
 	}
 
 	@Override
@@ -59,10 +60,12 @@ public class RcsbAdvancedSearch implements Function<Tuple2<String, StructureData
 		int[] entityChainIndex = getChainToEntityIndex(structure);
 
 		for (int i = 0; i < numChains; i++) {		
-			// TODO if chain ids are keys, need to convert to entity ids
-			String id = t._1;		
+			String id = t._1;
+			
+			// match entity level information from RCSB Advanced search.
+			// The results from the search are in the format <structureId>:<entityId>, e.g. 1F3M:1
 			if (entityLevel) {
-				id += ":" + (entityChainIndex[i]+1); // +1 since entity ids are one-based
+				id = getStructureEntityId(structure, id, entityChainIndex[i]);
 			}
 
 		    boolean match = structureIds.contains(id);
@@ -80,6 +83,40 @@ public class RcsbAdvancedSearch implements Function<Tuple2<String, StructureData
 		}
 
 		return globalMatch;
+	}
+
+	private String getStructureEntityId(StructureDataInterface structure, String origStructureId, int origEntityId) {
+		String id;
+		
+		// extract structure id from key
+		String keyStructureId = origStructureId;
+		int index = keyStructureId.indexOf(".");
+		if (index > 0) {
+		    keyStructureId = keyStructureId.substring(0, index);
+		}
+		
+		int pos = structure.getStructureId().lastIndexOf(".");
+
+		if (pos > 0) {
+			// extracted structure id from value
+			String valueStructureId = structure.getStructureId().substring(0, structure.getStructureId().indexOf(".")); 
+			
+			if (! keyStructureId.equals(valueStructureId)) {
+				throw new IllegalArgumentException("Structures mismatch: key vs. value: " + 
+						keyStructureId + " vs. " + valueStructureId);
+			}
+
+			// extract entity id
+			String entityId = structure.getStructureId().substring(pos+1);
+			
+			// form composite id, which is used by the RCSB Advanced search
+			id = valueStructureId + ":" + entityId; 
+		} else {
+			// use original entity id
+		    id = keyStructureId + ":" + (origEntityId+1); // +1 since entity ids are one-based
+		}
+		
+		return id;
 	}
 
 	/**
