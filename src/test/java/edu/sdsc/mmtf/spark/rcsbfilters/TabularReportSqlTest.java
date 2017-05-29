@@ -1,4 +1,4 @@
-package edu.sdsc.mmtf.spark.filters;
+package edu.sdsc.mmtf.spark.rcsbfilters;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -17,14 +17,15 @@ import org.rcsb.mmtf.api.StructureDataInterface;
 
 import edu.sdsc.mmtf.spark.io.MmtfReader;
 import edu.sdsc.mmtf.spark.mappers.StructureToPolymerChains;
+import edu.sdsc.mmtf.spark.rcsbfilters.TabularReportSql;
 
-public class RcsbSqlTest {
+public class TabularReportSqlTest {
 	private JavaSparkContext sc;
 	private JavaPairRDD<String, StructureDataInterface> pdb;
 	
 	@Before
 	public void setUp() throws Exception {
-		SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(RcsbSqlTest.class.getSimpleName());
+		SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(TabularReportSqlTest.class.getSimpleName());
 	    sc = new JavaSparkContext(conf);
 	    
 	    List<String> pdbIds = Arrays.asList("5JDE","5CU4","5L6W","5UFU","5IHB");
@@ -43,7 +44,7 @@ public class RcsbSqlTest {
 	 */
 	public void test1() throws IOException {
 		String whereClause = "WHERE ecNo='2.7.11.1' AND source='Homo sapiens'";
-		pdb = pdb.filter(new RcsbSql(whereClause, "ecNo","source"));
+		pdb = pdb.filter(new TabularReportSql(whereClause, "ecNo","source"));
 		List<String> matches = pdb.keys().collect();
 		
 		assertTrue(matches.contains("5JDE"));
@@ -61,7 +62,7 @@ public class RcsbSqlTest {
 	public void test2() throws IOException {
 	    pdb = pdb.flatMapToPair(new StructureToPolymerChains());
 		String whereClause = "WHERE ecNo='2.7.11.1' AND source='Homo sapiens'";
-		pdb = pdb.filter(new RcsbSql(whereClause, "ecNo","source"));
+		pdb = pdb.filter(new TabularReportSql(whereClause, "ecNo","source"));
 		List<String> matches = pdb.keys().collect();
 		
 		assertTrue(matches.contains("5JDE.A"));

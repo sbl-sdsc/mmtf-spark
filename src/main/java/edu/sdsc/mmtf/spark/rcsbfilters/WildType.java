@@ -1,4 +1,4 @@
-package edu.sdsc.mmtf.spark.filters;
+package edu.sdsc.mmtf.spark.rcsbfilters;
 
 import java.io.IOException;
 
@@ -17,7 +17,7 @@ import scala.Tuple2;
  * @author Peter Rose
  *
  */
-public class RcsbWildType implements Function<Tuple2<String, StructureDataInterface>, Boolean> {
+public class WildType implements Function<Tuple2<String, StructureDataInterface>, Boolean> {
 	private static final long serialVersionUID = -2323293283758321260L;
 	
 	public static int SEQUENCE_COVERAGE_100 = 100;
@@ -30,14 +30,14 @@ public class RcsbWildType implements Function<Tuple2<String, StructureDataInterf
 	public static int SEQUENCE_COVERAGE_65 = 65;
 	public static int SEQUENCE_COVERAGE_60 = 60;
 	
-	private RcsbAdvancedSearch filter;
+	private AdvancedSearch filter;
 
 	/**
 	 * Default constructor matches any entry that contains at least one L-protein chain.
 	 * As an example, an L-protein/DNA complex passes this filter.
 	 * @throws IOException 
 	 */
-	public RcsbWildType(boolean includeExpressionTags) throws IOException {
+	public WildType(boolean includeExpressionTags) throws IOException {
 		String query = "<orgPdbQuery><queryType>org.pdb.query.simple.WildTypeProteinQuery</queryType>";
 		if (includeExpressionTags) {
 			query = query +   "<includeExprTag>Y</includeExprTag>";
@@ -45,7 +45,7 @@ public class RcsbWildType implements Function<Tuple2<String, StructureDataInterf
 			query = query +   "<includeExprTag>N</includeExprTag>";
 		}
 		query = query + "</orgPdbQuery>";
-		filter = new RcsbAdvancedSearch(query);
+		filter = new AdvancedSearch(query);
 	}
 	
 	/**
@@ -53,7 +53,7 @@ public class RcsbWildType implements Function<Tuple2<String, StructureDataInterf
 	 * As an example, an L-protein/DNA complex passes this filter.
 	 * @throws IOException 
 	 */
-	public RcsbWildType(boolean includeExpressionTags, int percentSequenceCoverage) throws IOException {
+	public WildType(boolean includeExpressionTags, int percentSequenceCoverage) throws IOException {
 		String query = "<orgPdbQuery><queryType>org.pdb.query.simple.WildTypeProteinQuery</queryType>";
 		if (includeExpressionTags) {
 			query = query + "<includeExprTag>Y</includeExprTag>";
@@ -64,7 +64,7 @@ public class RcsbWildType implements Function<Tuple2<String, StructureDataInterf
 	    query = query +	percentSequenceCoverage;
 	    query = query + "</percentSeqAlignment>";
 		query = query + "</orgPdbQuery>";
-		filter = new RcsbAdvancedSearch(query);
+		filter = new AdvancedSearch(query);
 	}
 	
 	@Override

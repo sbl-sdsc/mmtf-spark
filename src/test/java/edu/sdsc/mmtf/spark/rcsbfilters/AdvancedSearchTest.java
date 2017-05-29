@@ -1,4 +1,4 @@
-package edu.sdsc.mmtf.spark.filters;
+package edu.sdsc.mmtf.spark.rcsbfilters;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -18,13 +18,13 @@ import org.rcsb.mmtf.api.StructureDataInterface;
 import edu.sdsc.mmtf.spark.io.MmtfReader;
 import edu.sdsc.mmtf.spark.mappers.StructureToPolymerChains;
 
-public class RcsbAdvancedSearchTest {
+public class AdvancedSearchTest {
 	private JavaSparkContext sc;
 	private JavaPairRDD<String, StructureDataInterface> pdb;
 
 	@Before
 	public void setUp() throws Exception {
-		SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(RcsbAdvancedSearchTest.class.getSimpleName());
+		SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(AdvancedSearchTest.class.getSimpleName());
 		sc = new JavaSparkContext(conf);
 
 		// 1PEN wildtype query 100 matches: 1PEN:1
@@ -55,7 +55,7 @@ public class RcsbAdvancedSearchTest {
 	                "<percentSeqAlignment>100</percentSeqAlignment>" +
 				"</orgPdbQuery>";
 		
-		pdb = pdb.filter(new RcsbAdvancedSearch(query));
+		pdb = pdb.filter(new AdvancedSearch(query));
 		List<String> matches = pdb.keys().collect();
 
 		assertTrue(matches.contains("1PEN"));
@@ -77,7 +77,7 @@ public class RcsbAdvancedSearchTest {
 				    "<exactMatch>false</exactMatch>" +
 				"</orgPdbQuery>";
 		
-		pdb = pdb.filter(new RcsbAdvancedSearch(query));
+		pdb = pdb.filter(new AdvancedSearch(query));
 		List<String> matches = pdb.keys().collect();
 
 		assertFalse(matches.contains("1PEN"));
@@ -98,7 +98,7 @@ public class RcsbAdvancedSearchTest {
 				    "<Enzyme_Classification>2.7.11.1</Enzyme_Classification>" +
 				"</orgPdbQuery>";
 		
-		pdb = pdb.filter(new RcsbAdvancedSearch(query));
+		pdb = pdb.filter(new AdvancedSearch(query));
 		List<String> matches = pdb.keys().collect();
 
 		assertFalse(matches.contains("1PEN"));
@@ -121,7 +121,7 @@ public class RcsbAdvancedSearchTest {
 				"</orgPdbQuery>";
 		
 		pdb = pdb.flatMapToPair(new StructureToPolymerChains());
-		pdb = pdb.filter(new RcsbAdvancedSearch(query));
+		pdb = pdb.filter(new AdvancedSearch(query));
 		List<String> matches = pdb.keys().collect();
 
 		assertFalse(matches.contains("1PEN.A"));

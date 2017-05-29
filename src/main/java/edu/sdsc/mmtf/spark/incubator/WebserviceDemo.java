@@ -10,8 +10,8 @@ import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.rcsb.mmtf.api.StructureDataInterface;
 
-import edu.sdsc.mmtf.spark.filters.RcsbSql;
 import edu.sdsc.mmtf.spark.io.MmtfReader;
+import edu.sdsc.mmtf.spark.rcsbfilters.TabularReportSql;
 
 /**
  * @author peter
@@ -48,7 +48,7 @@ public class WebserviceDemo {
 //	    String whereClause = "WHERE ligandMolecularWeight>=300 AND ligandMolecularWeight<=500";
 //	    pdb = pdb.filter(new RcsbWebserviceFilter(whereClause, "ligandMolecularWeight"));
 	    String whereClause = "WHERE pfamAccession LIKE 'PF07714%'"; 
-	    pdb = pdb.filter(new RcsbSql(whereClause, "pfamAccession"));
+	    pdb = pdb.filter(new TabularReportSql(whereClause, "pfamAccession"));
 //	    String whereClause = "WHERE pfamAccession IS NOT NULL"; 
 //	    pdb = pdb.filter(new RcsbWebserviceFilter(whereClause, "pfamAccession"));
 	

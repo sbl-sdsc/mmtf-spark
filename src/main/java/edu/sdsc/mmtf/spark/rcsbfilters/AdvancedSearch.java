@@ -1,4 +1,4 @@
-package edu.sdsc.mmtf.spark.filters;
+package edu.sdsc.mmtf.spark.rcsbfilters;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -31,7 +31,7 @@ import scala.Tuple2;
  * @author Peter Rose
  *
  */
-public class RcsbAdvancedSearch implements Function<Tuple2<String, StructureDataInterface>, Boolean> {
+public class AdvancedSearch implements Function<Tuple2<String, StructureDataInterface>, Boolean> {
 	private static final long serialVersionUID = -4794067375376198086L;
 	private Set<String> structureIds;
 	private boolean entityLevel = false;
@@ -42,7 +42,7 @@ public class RcsbAdvancedSearch implements Function<Tuple2<String, StructureData
 	 * @param xmlQuery query in RCSB PDB XML format
 	 * @throws IOException
 	 */
-	public RcsbAdvancedSearch(String xmlQuery) throws IOException {		
+	public AdvancedSearch(String xmlQuery) throws IOException {		
 		RcsbAdvancedSearchService service = new RcsbAdvancedSearchService();
 		List<String> results = service.postQuery(xmlQuery);
 		
