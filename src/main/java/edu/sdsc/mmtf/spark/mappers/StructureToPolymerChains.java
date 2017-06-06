@@ -2,9 +2,11 @@ package edu.sdsc.mmtf.spark.mappers;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.spark.api.java.function.PairFlatMapFunction;
 import org.rcsb.mmtf.api.StructureDataInterface;
@@ -23,6 +25,7 @@ import scala.Tuple2;
 public class StructureToPolymerChains implements PairFlatMapFunction<Tuple2<String,StructureDataInterface>,String, StructureDataInterface> {
 	private static final long serialVersionUID = -5979145207983266913L;
 	private boolean useChainIdInsteadOfChainName = false;
+	private boolean removeDuplicates = false;
 
 	/**
 	 * Extracts all polymer chains from a structure. A key is assigned to
@@ -38,14 +41,17 @@ public class StructureToPolymerChains implements PairFlatMapFunction<Tuple2<Stri
 	 * <a href="http://mmcif.wwpdb.org/dictionaries/mmcif_mdb.dic/Items/_atom_site.label_asym_id.html">
 	 * _atom_site.label_asym_id</a> field in an mmCIF file.
 	 * @param useChainIdInsteadOfChainName if true, use the Chain Id in the key assignments
+	 * @param removeDuplicates if true, return only one chain for each unique sequence
 	 */
-	public StructureToPolymerChains(boolean useChainIdInsteadOfChainName) {
+	public StructureToPolymerChains(boolean useChainIdInsteadOfChainName, boolean removeDuplicates) {
 		this.useChainIdInsteadOfChainName = useChainIdInsteadOfChainName;
+		this.removeDuplicates = removeDuplicates;
 	}
 	
 	@Override
 	public Iterator<Tuple2<String, StructureDataInterface>> call(Tuple2<String, StructureDataInterface> t) throws Exception {
 		StructureDataInterface structure = t._2;
+		Set<String> seqSet = new HashSet<>();
 		
 		int numChains = structure.getChainsPerModel()[0];
 		
@@ -141,6 +147,13 @@ public class StructureToPolymerChains implements PairFlatMapFunction<Tuple2<Stri
 					chId = structure.getChainIds()[i];
 				}
 
+				if (removeDuplicates) {
+					if (seqSet.contains(structure.getEntitySequence(chainToEntityIndex[i]))) {
+						continue;
+					}
+	                seqSet.add(structure.getEntitySequence(chainToEntityIndex[i]));
+				}
+				
 				chainList.add(new Tuple2<String, StructureDataInterface>(structure.getStructureId() + "." + chId, adapterToStructureData));
 			}
 		}

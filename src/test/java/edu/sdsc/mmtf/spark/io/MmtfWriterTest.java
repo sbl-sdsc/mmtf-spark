@@ -14,7 +14,7 @@ import org.apache.spark.api.java.JavaSparkContext;
 import org.junit.Test;
 import org.rcsb.mmtf.api.StructureDataInterface;
 
-import edu.sdsc.mmtf.spark.apps.Demo1b;
+import edu.sdsc.mmtf.spark.demos.Demo1b;
 
 public class MmtfWriterTest {
 

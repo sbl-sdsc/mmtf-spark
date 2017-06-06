@@ -176,16 +176,16 @@ public class StructureToAllInteractions implements  FlatMapFunction<Tuple2<Strin
 	
 	public static StructType getSchema() {
 		List<StructField> fields = new ArrayList<>();
-	    fields.add(DataTypes.createStructField("StructureId", DataTypes.StringType, true));
-	    fields.add(DataTypes.createStructField("Res1", DataTypes.StringType, true));
-	    fields.add(DataTypes.createStructField("Atom1", DataTypes.StringType, true));
-	    fields.add(DataTypes.createStructField("Element1", DataTypes.StringType, true));
-	    fields.add(DataTypes.createStructField("Index1", DataTypes.IntegerType, true));
-	    fields.add(DataTypes.createStructField("Res2", DataTypes.StringType, true));
-	    fields.add(DataTypes.createStructField("Atom2", DataTypes.StringType, true));
-	    fields.add(DataTypes.createStructField("Element2", DataTypes.StringType, true));
-	    fields.add(DataTypes.createStructField("Index2", DataTypes.IntegerType, true));
-	    fields.add(DataTypes.createStructField("Dist", DataTypes.FloatType, true));
+	    fields.add(DataTypes.createStructField("StructureId", DataTypes.StringType, false));
+	    fields.add(DataTypes.createStructField("Res1", DataTypes.StringType, false));
+	    fields.add(DataTypes.createStructField("Atom1", DataTypes.StringType, false));
+	    fields.add(DataTypes.createStructField("Element1", DataTypes.StringType, false));
+	    fields.add(DataTypes.createStructField("Index1", DataTypes.IntegerType, false));
+	    fields.add(DataTypes.createStructField("Res2", DataTypes.StringType, false));
+	    fields.add(DataTypes.createStructField("Atom2", DataTypes.StringType, false));
+	    fields.add(DataTypes.createStructField("Element2", DataTypes.StringType, false));
+	    fields.add(DataTypes.createStructField("Index2", DataTypes.IntegerType, false));
+	    fields.add(DataTypes.createStructField("Dist", DataTypes.FloatType, false));
 	    return DataTypes.createStructType(fields);
 	}
 }

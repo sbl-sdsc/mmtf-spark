@@ -8,9 +8,8 @@ import org.rcsb.mmtf.api.StructureDataInterface;
 import scala.Tuple2;
 
 /**
- * This filter returns entries that contain polymer chain(s) made of L-amino acids. 
- * The default constructor returns entries that contain at least one 
- * polymer chain that is an L-protein. If the "exclusive" flag is set to true 
+ * This filter returns entries that contain wild type protein chains.
+ * polymer chain(s) made of L-amino acids.  If the "exclusive" flag is set to true 
  * in the constructor, all polymer chains must be L-proteins. For a multi-model structure,
  * this filter only checks the first model.
  * 
@@ -30,7 +29,7 @@ public class WildType implements Function<Tuple2<String, StructureDataInterface>
 	public static int SEQUENCE_COVERAGE_65 = 65;
 	public static int SEQUENCE_COVERAGE_60 = 60;
 	
-	private AdvancedSearch filter;
+	private AdvancedQuery filter;
 
 	/**
 	 * Default constructor matches any entry that contains at least one L-protein chain.
@@ -45,7 +44,7 @@ public class WildType implements Function<Tuple2<String, StructureDataInterface>
 			query = query +   "<includeExprTag>N</includeExprTag>";
 		}
 		query = query + "</orgPdbQuery>";
-		filter = new AdvancedSearch(query);
+		filter = new AdvancedQuery(query);
 	}
 	
 	/**
@@ -64,7 +63,7 @@ public class WildType implements Function<Tuple2<String, StructureDataInterface>
 	    query = query +	percentSequenceCoverage;
 	    query = query + "</percentSeqAlignment>";
 		query = query + "</orgPdbQuery>";
-		filter = new AdvancedSearch(query);
+		filter = new AdvancedQuery(query);
 	}
 	
 	@Override
