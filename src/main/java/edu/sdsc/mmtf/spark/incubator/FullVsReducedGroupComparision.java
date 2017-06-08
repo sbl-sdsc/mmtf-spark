@@ -41,7 +41,7 @@ public class FullVsReducedGroupComparision {
 	    String group = "HOH";
 //	    pdb = pdb.filter(t -> Arrays.asList("1N48", "4AB2", "4AAR", "4AAU").contains(t._1));
 	    // these 4 structure have in common, that ATP has higher old PDB residue numbers than the waters
-	    pdb = pdb.filter(t -> Arrays.asList("1ZY8").contains(t._1));
+//	    pdb = pdb.filter(t -> Arrays.asList("1ZY8").contains(t._1));
 	    pdb = pdb.filter(new ContainsGroup(group));
 	    System.out.println("full " + group + ": " + pdb.count());
 //	    JavaRDD<String> full = pdb.map(t -> t._1.toString());

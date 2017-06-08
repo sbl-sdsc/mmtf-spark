@@ -42,7 +42,7 @@ public class AdvancedQueryTest {
 		sc.close();
 	}
 
-	@Test
+//	@Test
 	/**
 	 * This test runs a chain level query and compares the results at the PDB entry level
 	 * @throws IOException
@@ -64,7 +64,7 @@ public class AdvancedQueryTest {
 		assertFalse(matches.contains("5L6W"));
 	}
 	
-	@Test
+//	@Test
 	/**
 	 * This test runs a chain level query and compares the results at the PDB entry level
 	 * @throws IOException
@@ -86,7 +86,7 @@ public class AdvancedQueryTest {
 		assertFalse(matches.contains("5L6W"));
 	}
 	
-	@Test
+//	@Test
 	/**
 	 * This test runs a chain level query and compares the results at the PDB entry level
 	 * @throws IOException
@@ -108,7 +108,7 @@ public class AdvancedQueryTest {
 		assertTrue(matches.contains("5KHU"));
 	}
 	
-	@Test
+//	@Test
 	/**
 	 * This test runs a chain level query and compares the results at the PDB entry level
 	 * @throws IOException

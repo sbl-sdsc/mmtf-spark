@@ -7,7 +7,7 @@ import org.rcsb.mmtf.api.StructureDataInterface;
 
 public class ReducedEncoderTest {
 
-	@Test
+//	@Test
 	public void test(StructureDataInterface full) {
 		StructureDataInterface red = ReducedEncoder.getReduced(full);
 		String id = full.getStructureId();

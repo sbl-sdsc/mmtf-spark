@@ -29,6 +29,7 @@ import edu.sdsc.mmtf.spark.filters.ExperimentalMethods;
 import edu.sdsc.mmtf.spark.filters.PolymerComposition;
 import edu.sdsc.mmtf.spark.io.MmtfReader;
 import edu.sdsc.mmtf.spark.mappers.StructureToPolymerChains;
+import edu.sdsc.mmtf.spark.ml.SequenceWord2Vector;
 import edu.sdsc.mmtf.spark.rcsbfilters.BlastClusters;
 import edu.sdsc.mmtf.spark.utils.SecondaryStructureExtractor;
 
@@ -61,12 +62,13 @@ public class ProteinFoldDatasetCreator {
 		
 		// read MMTF Hadoop sequence file and create a non-redundant set (<=40% seq. identity)
 		// of L-protein chains with standard amino acids
+		int sequenceIdentity = 90;
 		JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader
 				.readSequenceFile(args[0], sc)
-				.filter(new ExperimentalMethods(ExperimentalMethods.X_RAY_DIFFRACTION))
-				.filter(new BlastClusters(40)) // this filters by pdb id using a non-redundant "BlastClust" subset
+//				.filter(new ExperimentalMethods(ExperimentalMethods.X_RAY_DIFFRACTION))
+				.filter(new BlastClusters(sequenceIdentity)) // this filters by pdb id using a non-redundant "BlastClust" subset
 				.flatMapToPair(new StructureToPolymerChains())
-				.filter(new BlastClusters(40)) // this filters is more selective by including chain ids
+				.filter(new BlastClusters(sequenceIdentity)) // this filters is more selective by including chain ids
 				.filter(new ContainsLProteinChain()) // filter out for example D-proteins
 				.filter(new PolymerComposition(PolymerComposition.AMINO_ACIDS_20));
 
@@ -86,7 +88,7 @@ public class ProteinFoldDatasetCreator {
 		int n = 2; // create 2-grams
 		int windowSize = 25; // 25-amino residue window size for Word2Vector
 		int vectorSize = 50; // dimension of feature vector	
-		data = sequenceToFeatureVector(data, n, windowSize, vectorSize).cache();
+		data = SequenceWord2Vector.addFeatureVector(data, n, windowSize, vectorSize).cache();
 
 		System.out.println("Dataset size: " + data.count());		
 		data.show(25);

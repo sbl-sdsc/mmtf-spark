@@ -80,7 +80,8 @@ public class SparkMultiClassClassifier {
 		System.out.println();
 		System.out.println("Sample predictions: " + predictor.getClass().getSimpleName());
 		String primaryKey = predictions.columns()[0];
-		predictions.select(primaryKey, label, "predictedLabel").sample(false, 0.1, seed).show(25);	
+		predictions.sample(false, 0.1, seed).show(25);
+//		predictions.select(primaryKey, label, "predictedLabel").sample(false, 0.1, seed).show(25);	
 				
 	
 		predictions = predictions.withColumnRenamed(label, "stringLabel");

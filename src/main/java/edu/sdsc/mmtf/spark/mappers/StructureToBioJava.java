@@ -20,7 +20,6 @@ public class StructureToBioJava implements PairFunction<Tuple2<String,StructureD
 	public Tuple2<String, Structure> call(Tuple2<String, StructureDataInterface> t) throws Exception {
 		MmtfStructureReader mmtfStructureReader = new MmtfStructureReader();
 		new StructureDataToAdapter(t._2, mmtfStructureReader);
-		mmtfStructureReader.finalizeStructure();
 
 		return new Tuple2<String, Structure>(t._1, mmtfStructureReader.getStructure());
 	}

@@ -15,6 +15,7 @@ import edu.sdsc.mmtf.spark.filters.ContainsLProteinChain;
 import edu.sdsc.mmtf.spark.filters.ContainsRnaChain;
 import edu.sdsc.mmtf.spark.io.MmtfReader;
 import edu.sdsc.mmtf.spark.mappers.StructureToPolymerChains;
+import scala.Tuple2;
 
 /**
  * @author peter
@@ -46,45 +47,45 @@ public class FullToReducedMmtfDemo {
 	    long lProtein = fullChains.filter(new ContainsLProteinChain()).count();
 //	    long lProteinNS = fullChains.filter(new IsLProteinChainNonStrict()).count();
 	    long dProtein = fullChains.filter(new ContainsDProteinChain()).count();
-	    long lDna = fullChains.filter(new ContainsDnaChain()).count();
-	    long lRna =  fullChains.filter(new ContainsRnaChain()).count();
+	    long dna = fullChains.filter(new ContainsDnaChain()).count();
+	    long rna =  fullChains.filter(new ContainsRnaChain()).count();
 	    long dSaccharide = fullChains.filter(new ContainsDSaccharide()).count();
 //	    long monomer = fullChains.filter(new IsMonomerChain()).count();
 //	    long polymer = fullChains.filter(new IsPolymerChain()).count();
-	    long sum = lProtein + dProtein + lDna + lRna + dSaccharide;
+	    long sum = lProtein + dProtein + dna + rna + dSaccharide;
 	    
 	    System.out.println("L-Peptide: " + lProtein);
 //	    System.out.println("L-PeptideNS: " + lProteinNS);
 	    System.out.println("D-Peptide: " + dProtein);
-	    System.out.println("L-RNA: " + lDna);
-	    System.out.println("L-DNA: " + lRna);
+	    System.out.println("DNA: " + dna);
+	    System.out.println("RNA: " + rna);
 	    System.out.println("dSaccaride: " + dSaccharide);
 //	    System.out.println("Non-Polymer: " + monomer);
 //	    System.out.println("Polymer: " + polymer);
 	    System.out.println("Sum: " + sum);
 
-//	    JavaPairRDD<String, StructureDataInterface> reduced = full.mapToPair(t -> new Tuple2<String,StructureDataInterface>(t._1, ReducedEncoderNew.getReduced(t._2)));
-//
-//	    JavaPairRDD<String, StructureDataInterface>reducedChains = reduced.flatMapToPair(new StructureToPolymerChains());
-//	    long lProteinR = reducedChains.filter(new ContainsLProteinChain()).count();
+	    JavaPairRDD<String, StructureDataInterface> reduced = full.mapToPair(t -> new Tuple2<String,StructureDataInterface>(t._1, ReducedEncoderNew.getReduced(t._2)));
+
+	    JavaPairRDD<String, StructureDataInterface>reducedChains = reduced.flatMapToPair(new StructureToPolymerChains());
+	    long lProteinR = reducedChains.filter(new ContainsLProteinChain()).count();
 //	    long lProteinNSR = reducedChains.filter(new IsLProteinChainNonStrict()).count();
-//	    long dProteinR = reducedChains.filter(new ContainsDProteinChain()).count();
-//	    long lDnaR = reducedChains.filter(new ContainsLDnaChain()).count();
-//	    long lRnaR =  reducedChains.filter(new ContainsLRnaChain()).count();
-//	    long dSaccharideR = reducedChains.filter(new ContainsDSaccharide()).count();
-//	    long monomerR = reducedChains.filter(new IsMonomerChain()).count();
-//	    long polymerR = reducedChains.filter(new IsPolymerChain()).count();
-//	    long sumR = lProteinR + dProteinR + lDnaR + lRnaR + dSaccharideR;
+	    long dProteinR = reducedChains.filter(new ContainsDProteinChain()).count();
+	    long dnaR = reducedChains.filter(new ContainsDnaChain()).count();
+	    long rnaR =  reducedChains.filter(new ContainsRnaChain()).count();
+	    long dSaccharideR = reducedChains.filter(new ContainsDSaccharide()).count();
+	    long monomerR = reducedChains.filter(new IsMonomerChain()).count();
+	    long polymerR = reducedChains.filter(new IsPolymerChain()).count();
+	    long sumR = lProteinR + dProteinR + dnaR + rnaR + dSaccharideR;
 	    
-//	    System.out.println("L-Peptide: " + lProteinR);
+	    System.out.println("L-Peptide: " + lProteinR);
 //	    System.out.println("L-PeptideNS: " + lProteinNSR);
-//	    System.out.println("D-Peptide: " + dProteinR);
-//	    System.out.println("L-RNA: " + lDnaR);
-//	    System.out.println("L-DNA: " + lRnaR);
-//	    System.out.println("dSaccaride: " + dSaccharideR);
-//	    System.out.println("Non-Polymer: " + monomerR);
-//	    System.out.println("Polymer: " + polymerR);
-//	    System.out.println("Sum: " + sumR);
+	    System.out.println("D-Peptide: " + dProteinR);
+	    System.out.println("L-RNA: " + dnaR);
+	    System.out.println("L-DNA: " + rnaR);
+	    System.out.println("dSaccaride: " + dSaccharideR);
+	    System.out.println("Non-Polymer: " + monomerR);
+	    System.out.println("Polymer: " + polymerR);
+	    System.out.println("Sum: " + sumR);
 
 	    
 	    long end = System.nanoTime();

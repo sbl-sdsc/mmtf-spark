@@ -64,7 +64,11 @@ public class DatasetClassifier {
 		System.out.println("Dataset size (unbalanced): " + data.count());
 		data.groupBy(label).count().show(classCount);
 
-		data = DatasetBalancer.balance(data, label, 1);
+//		data = DatasetBalancer.upsample(data, label, 1);
+		data = DatasetBalancer.downsample(data, label, 1);
+		data.show(100);
+		
+//		data = DatasetBalancer.balance(data, label, 1);
 		System.out.println("Dataset size (balanced)  : " + data.count());
 		data.groupBy(label).count().show(classCount);
 
