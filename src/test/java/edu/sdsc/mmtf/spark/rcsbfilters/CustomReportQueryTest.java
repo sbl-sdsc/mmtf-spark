@@ -78,5 +78,4 @@ public class CustomReportQueryTest {
 		assertFalse(matches.contains("5IHB.C"));
 		assertFalse(matches.contains("5IHB.D"));
 	}
-
 }

@@ -12,6 +12,7 @@ import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.junit.Test;
 import org.rcsb.mmtf.api.StructureDataInterface;
+import org.rcsb.mmtf.encoder.ReducedEncoder;
 
 import edu.sdsc.mmtf.spark.demos.Demo1b;
 import edu.sdsc.mmtf.spark.io.MmtfReader;
@@ -40,15 +41,18 @@ public class ReducedEncoderNewTest {
 	    List<String> altlocs = pdb.map(t -> t._1 + "_altLocs_" + Arrays.toString(t._2.getAltLocIds())).collect();
 	    System.out.println("full: " + altlocs);
 	    
-	    pdb = pdb
-	    		.mapToPair(t -> new Tuple2<String,StructureDataInterface>(t._1, ReducedEncoderNew.getReduced(t._2))).cache();
-	    
+	//    pdb = pdb
+	//    		.mapToPair(t -> new Tuple2<String,StructureDataInterface>(t._1, ReducedEncoderNew.getReduced(t._2))).cache();
+	    pdb = pdb.mapValues(v -> ReducedEncoderNew.getReduced(v)).cache();
+//	    pdb = pdb.mapValues(v -> ReducedEncoder.getReduced(v)).cache();
+
 	    chainIds = pdb.map(t -> t._1 + "_chainId_" + Arrays.toString(t._2.getChainIds())).collect();
 	    System.out.println("reduced: " + chainIds);
 	    chainNames = pdb.map(t -> t._1 + "_chainNames_" + Arrays.toString(t._2.getChainNames())).collect();
 	    System.out.println("reduced: " + chainNames);
 	    altlocs = pdb.map(t -> t._1 + "_altLocs_" + Arrays.toString(t._2.getAltLocIds())).collect();
 	    System.out.println("reduced: " + altlocs);
+	    
 	    
 	    // 1STP # groups 121 CA + 1 BTN = 122
 	    // 4HHB # groups 141x2 + 146x2 CA +  4 HEM + 2P (from PO4) = 580
@@ -64,7 +68,7 @@ public class ReducedEncoderNewTest {
 	    // 1STP # atoms 121 CA + 16 BTN
 	    // 4HHB # atom 141x2 + 146x2 CA +  43x4 HEM + 2P (from PO4) = 748
 	    // 2ONX # atoms 4 CA
-	    // 2CVV # atoms 99 CA + 4 altloc CA + 15 A2G (sugar) + 14 NAG (orig 15) + 6 GOL + 1 ZN, ACE 4 = 143
+	    // 2CVV # atoms 99 CA + 4 (5?) altloc CA + 15 A2G (sugar) + 14 NAG (orig 15) + 6 GOL + 1 ZN, ACE 4 = 143
         assertTrue(atoms.contains("1STP_atoms_137"));
         assertTrue(atoms.contains("4HHB_atoms_748"));
         assertTrue(atoms.contains("2ONX_atoms_4"));

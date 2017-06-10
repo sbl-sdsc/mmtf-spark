@@ -56,11 +56,11 @@
 			<artifactId>biojava-structure</artifactId>
 			<version>${biojava.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>org.apache.spark</groupId>
-			<artifactId>spark-core_2.11</artifactId>
-			<version>${spark.version}</version>
-		</dependency>
+<!-- 		<dependency> -->
+<!-- 			<groupId>org.apache.spark</groupId> -->
+<!-- 			<artifactId>spark-core_2.11</artifactId> -->
+<!-- 			<version>${spark.version}</version> -->
+<!-- 		</dependency> -->
 		<dependency>
 			<groupId>org.apache.spark</groupId>
 			<artifactId>spark-sql_2.11</artifactId>
@@ -77,5 +77,6 @@
 			<version>1.1.2</version>
 			<type>pom</type>
 		</dependency>
+		
 	</dependencies>
 </project>

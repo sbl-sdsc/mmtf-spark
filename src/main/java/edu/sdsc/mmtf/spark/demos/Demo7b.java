@@ -10,7 +10,7 @@ import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.rcsb.mmtf.api.StructureDataInterface;
 
-import edu.sdsc.mmtf.spark.analysis.InteractionFinder;
+import edu.sdsc.mmtf.spark.datasets.GroupInteractionExtractor;
 import edu.sdsc.mmtf.spark.io.MmtfReader;
 
 /**
@@ -35,19 +35,17 @@ public class Demo7b {
 	    JavaSparkContext sc = new JavaSparkContext(conf);
 	    
 	    // read PDB in MMTF format
-	    double fraction = 0.1;
-	    long seed = 1;
-	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.readSequenceFile(args[0], fraction, seed, sc);
+	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.readSequenceFile(args[0], sc);
 	    
-	    InteractionFinder finder = new InteractionFinder(pdb);
-	    Dataset<Row> interactions = finder.findInteractingGroups("ZN", 3).cache();
+	    GroupInteractionExtractor finder = new GroupInteractionExtractor("ZN", 3);
+	    Dataset<Row> interactions = finder.getDataset(pdb).cache();
 	    
 	    // list the top 10 residue types that interact with Zn
         interactions.printSchema();
         interactions.show(20);
         System.out.println("# interactions: " + interactions.count());
-        interactions.groupBy(interactions.col("Res2")).count().sort("count").show(1000);
-        interactions.groupBy(interactions.col("Res2")).avg("Dist").sort("avg(Dist)").show(1000);
+        interactions.groupBy(interactions.col("residue2")).count().sort("count").show(1000);
+        interactions.groupBy(interactions.col("residue2")).avg("distance").sort("avg(distance)").show(1000);
 
 	  
 	    long end = System.nanoTime();

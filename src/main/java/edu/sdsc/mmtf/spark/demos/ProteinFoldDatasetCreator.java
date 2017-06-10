@@ -11,12 +11,6 @@ import java.io.IOException;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
-import org.apache.spark.ml.Pipeline;
-import org.apache.spark.ml.PipelineModel;
-import org.apache.spark.ml.PipelineStage;
-import org.apache.spark.ml.feature.NGram;
-import org.apache.spark.ml.feature.RegexTokenizer;
-import org.apache.spark.ml.feature.Word2Vec;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
@@ -24,14 +18,12 @@ import org.apache.spark.sql.types.DataTypes;
 import org.biojava.nbio.structure.StructureException;
 import org.rcsb.mmtf.api.StructureDataInterface;
 
+import edu.sdsc.mmtf.spark.datasets.SecondaryStructureExtractor;
 import edu.sdsc.mmtf.spark.filters.ContainsLProteinChain;
-import edu.sdsc.mmtf.spark.filters.ExperimentalMethods;
-import edu.sdsc.mmtf.spark.filters.PolymerComposition;
 import edu.sdsc.mmtf.spark.io.MmtfReader;
 import edu.sdsc.mmtf.spark.mappers.StructureToPolymerChains;
 import edu.sdsc.mmtf.spark.ml.SequenceWord2Vector;
 import edu.sdsc.mmtf.spark.rcsbfilters.BlastClusters;
-import edu.sdsc.mmtf.spark.utils.SecondaryStructureExtractor;
 
 /**
  * This class is a simple example of using Dataset operations to create a dataset
@@ -48,8 +40,14 @@ public class ProteinFoldDatasetCreator {
 	 */
 	public static void main(String[] args) throws IOException {
 
-		if (args.length != 2) {
-			System.err.println("Usage: " + ProteinFoldDatasetCreator.class.getSimpleName() + " <hadoop sequence file> <dataset output file");
+		String path = System.getProperty("MMTF_REDUCED_NEW");
+	    if (path == null) {
+	    	    System.err.println("Environment variable for Hadoop sequence file has not been set");
+	        System.exit(-1);
+	    }
+	    
+		if (args.length != 1) {
+			System.err.println("Usage: " + ProteinFoldDatasetCreator.class.getSimpleName() + " <dataset output file");
 			System.exit(1);
 		}
 
@@ -63,18 +61,17 @@ public class ProteinFoldDatasetCreator {
 		// read MMTF Hadoop sequence file and create a non-redundant set (<=40% seq. identity)
 		// of L-protein chains with standard amino acids
 		int sequenceIdentity = 90;
+		double fraction = 0.1;
+		long seed = 123;
 		JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader
-				.readSequenceFile(args[0], sc)
-//				.filter(new ExperimentalMethods(ExperimentalMethods.X_RAY_DIFFRACTION))
+				.readSequenceFile(path, fraction, seed, sc)
 				.filter(new BlastClusters(sequenceIdentity)) // this filters by pdb id using a non-redundant "BlastClust" subset
 				.flatMapToPair(new StructureToPolymerChains())
 				.filter(new BlastClusters(sequenceIdentity)) // this filters is more selective by including chain ids
-				.filter(new ContainsLProteinChain()) // filter out for example D-proteins
-				.filter(new PolymerComposition(PolymerComposition.AMINO_ACIDS_20));
+				.filter(new ContainsLProteinChain()); // filter out for example D-proteins
 
 		// get secondary structure content
-		Dataset<Row> data = SecondaryStructureExtractor
-				.getAsDataset(pdb);
+		Dataset<Row> data = SecondaryStructureExtractor.getDataset(pdb);
 
 		// classify chains by secondary structure type
 		double minThreshold = 0.05;
@@ -89,51 +86,16 @@ public class ProteinFoldDatasetCreator {
 		int windowSize = 25; // 25-amino residue window size for Word2Vector
 		int vectorSize = 50; // dimension of feature vector	
 		data = SequenceWord2Vector.addFeatureVector(data, n, windowSize, vectorSize).cache();
-
-		System.out.println("Dataset size: " + data.count());		
 		data.show(25);
 		
 		// keep only a subset of relevant fields for further processing
         data = data.select("structureChainId", "alpha", "beta", "coil", "foldType", "features");
 	
-        data.write().mode("overwrite").format("parquet").save(args[1]);
+        data.write().mode("overwrite").format("parquet").save(args[0]);
 		
 		long end = System.nanoTime();
 
 		System.out.println((end-start)/1E9 + " sec");
-	}
-
-	private static Dataset<Row> sequenceToFeatureVector(Dataset<Row> data, int n, int windowSize, int vectorSize) {
-
-		// split sequence into an array of one-letter "words"
-		// e.g. IDCGH... => [I, D, C, G, H, ...
-		RegexTokenizer tokenizer = new RegexTokenizer()
-				.setInputCol("sequence")
-				.setOutputCol("words")
-				.setToLowercase(false)
-		  	    .setPattern("");
-
-		// create n-grams out of the sequence
-		// e.g., 2-gram [I, D, C, G, H, ... => [I D, D C, C G, G H, ...
-		NGram ngrammer = new NGram()
-				.setN(n)
-				.setInputCol("words")
-				.setOutputCol("ngram");
-
-		// convert n-grams to W2V feature vector
-		// [I D, D C, C G, G H, ... => [0.1234, 0.23948, ...]
-		Word2Vec word2Vec = new Word2Vec()
-				.setInputCol("ngram")
-				.setOutputCol("features")
-				.setMinCount(10)
-				.setWindowSize(windowSize)
-				.setVectorSize(vectorSize);
-
-		Pipeline pipeline = new Pipeline().setStages(new PipelineStage[] {tokenizer, ngrammer, word2Vec});
-
-		PipelineModel model = pipeline.fit(data);
-
-		return model.transform(data);
 	}
 	
 	/**

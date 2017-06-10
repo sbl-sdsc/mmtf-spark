@@ -51,10 +51,6 @@ public class MmtfWriter {
         final String fullPath = path;
           
         structure
-		.mapToPair(t -> new Tuple2<String,byte[]>(t._1, toGzippedByteArray(t._2)))
-        .foreach(t -> System.out.println(fullPath+t._1+".mmtf.gz"));
-		
-        structure
 				.mapToPair(t -> new Tuple2<String,byte[]>(t._1, toGzippedByteArray(t._2)))
 		        .foreach(t -> FileUtils.writeByteArrayToFile(new File(fullPath+t._1+".mmtf.gz"), t._2));
 	}

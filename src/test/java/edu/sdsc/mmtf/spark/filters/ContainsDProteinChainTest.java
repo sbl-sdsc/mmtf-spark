@@ -47,7 +47,6 @@ public class ContainsDProteinChainTest {
 	public void test1() {
 	    pdb = pdb.filter(new ContainsDProteinChain());    
 	    List<String> results = pdb.keys().collect();
-	    System.out.println(results);
 	    
 	    assertFalse(results.contains("2ONX"));
 	    assertFalse(results.contains("1JLP"));

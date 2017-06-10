@@ -19,11 +19,13 @@ import org.apache.spark.sql.Row;
  *
  */
 public class SparkRegressor {
+	@SuppressWarnings("rawtypes")
 	private Predictor predictor;
 	private String label;
 	private double testFraction = 0.3;
 	private long seed = 1;
 
+	@SuppressWarnings("rawtypes")
 	public SparkRegressor(Predictor predictor, String label, double testFraction, long seed) {
 		this.predictor = predictor;
 		this.label = label;

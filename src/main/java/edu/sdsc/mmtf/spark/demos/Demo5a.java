@@ -10,9 +10,6 @@ import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.rcsb.mmtf.api.StructureDataInterface;
 
-import edu.sdsc.mmtf.spark.filters.ExperimentalMethods;
-import edu.sdsc.mmtf.spark.filters.Resolution;
-import edu.sdsc.mmtf.spark.filters.Rfree;
 import edu.sdsc.mmtf.spark.io.MmtfReader;
 import edu.sdsc.mmtf.spark.io.MmtfWriter;
 import edu.sdsc.mmtf.spark.rcsbfilters.BlastClusters;

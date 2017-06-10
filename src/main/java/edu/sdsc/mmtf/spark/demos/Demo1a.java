@@ -1,7 +1,5 @@
 package edu.sdsc.mmtf.spark.demos;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
@@ -18,7 +16,6 @@ import edu.sdsc.mmtf.spark.io.MmtfReader;
  *
  */
 public class Demo1a {
-	 private static org.apache.log4j.Logger log = Logger.getLogger(Demo1a.class);
 
 	public static void main(String[] args) {
 

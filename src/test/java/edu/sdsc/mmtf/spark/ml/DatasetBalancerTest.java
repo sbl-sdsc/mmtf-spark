@@ -32,10 +32,8 @@ public class DatasetBalancerTest {
 
 		long seed = 19;
 		Dataset<Row> balancedData = DatasetBalancer.downsample(data, "key", seed);
-		balancedData.show(9);
 		assertTrue(balancedData.count() > 0);
 		
 	    spark.close();
 	}
-
 }

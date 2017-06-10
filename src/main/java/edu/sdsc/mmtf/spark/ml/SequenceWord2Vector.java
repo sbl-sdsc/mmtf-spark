@@ -47,6 +47,7 @@ public class SequenceWord2Vector implements Serializable {
 				.setInputCol("ngram")
 				.setOutputCol("features")
 				.setMinCount(10)
+				.setNumPartitions(8)
 				.setWindowSize(windowSize)
 				.setVectorSize(vectorSize);
 

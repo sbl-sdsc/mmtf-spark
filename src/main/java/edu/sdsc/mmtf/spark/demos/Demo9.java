@@ -23,28 +23,27 @@ public class Demo9 {
 	 */
 	public static void main(String[] args) {
 
-	    if (args.length != 1) {
-	        System.err.println("Usage: " + Demo9.class.getSimpleName() + " <hadoop sequence file>");
-	        System.exit(1);
+		String path = System.getProperty("MMTF_REDUCED_NEW");
+	    if (path == null) {
+	    	    System.err.println("Environment variable for Hadoop sequence file has not been set");
+	        System.exit(-1);
 	    }
-	    
+	     
 	    long start = System.nanoTime();
 	    
 	    SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(Demo9.class.getSimpleName());
 	    JavaSparkContext sc = new JavaSparkContext(conf);
 		 
-	    double fraction = 0.01;
-	    long seed = 123;
 	    // read PDB in MMTF format
-	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.readSequenceFile(args[0], fraction, seed, sc);
+	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.readSequenceFile(path, sc);
 
 	    // convert to BioJava structure
-	    JavaPairRDD<String, Structure> structures = pdb.mapToPair(new StructureToBioJava());
+	    JavaPairRDD<String, Structure> structures = pdb.mapValues(new StructureToBioJava());
 	    
 	    System.out.println("Number of structures: " + structures.count());
 	    long end = System.nanoTime();
 	    
-	    System.out.println("Time:     " + (end-start)/1E9 + "sec.");
+	    System.out.println("Time: " + (end-start)/1E9 + "sec.");
 	    
 	    sc.close();
 	}

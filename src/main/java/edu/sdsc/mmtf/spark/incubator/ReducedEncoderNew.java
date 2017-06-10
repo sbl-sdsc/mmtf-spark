@@ -156,12 +156,15 @@ public class ReducedEncoderNew {
 		int groupCounter = -1;
 		int chainCounter=-1;
 		int atomCounter = 0;
+		
 		for (int i=0; i<structureDataInterface.getNumModels(); i++){
 			int numChains = structureDataInterface.getChainsPerModel()[i];
+			
 			for(int j=0; j<numChains; j++){
 				chainCounter++;
 				summaryData.numChains++;
 				String chainType = EncoderUtils.getTypeFromChainId(structureDataInterface, chainCounter);
+				
 				for(int k=0; k<structureDataInterface.getGroupsPerChain()[chainCounter]; k++){
 					groupCounter++;
 					int groupType = structureDataInterface.getGroupTypeIndices()[groupCounter];

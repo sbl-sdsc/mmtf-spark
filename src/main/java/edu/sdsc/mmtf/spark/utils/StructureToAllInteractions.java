@@ -1,4 +1,4 @@
-package edu.sdsc.mmtf.spark.incubator;
+package edu.sdsc.mmtf.spark.utils;
 
 import java.util.ArrayList;
 import java.util.Iterator;

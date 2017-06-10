@@ -23,11 +23,13 @@ import org.apache.spark.sql.Row;
  *
  */
 public class SparkMultiClassClassifier {
+	@SuppressWarnings("rawtypes")
 	private Predictor predictor;
 	private String label;
 	private double testFraction = 0.3;
 	private long seed = 1;
 
+	@SuppressWarnings("rawtypes")
 	public SparkMultiClassClassifier(Predictor predictor, String label, double testFraction, long seed) {
 		this.predictor = predictor;
 		this.label = label;
@@ -79,8 +81,8 @@ public class SparkMultiClassClassifier {
 		// Display some sample predictions
 		System.out.println();
 		System.out.println("Sample predictions: " + predictor.getClass().getSimpleName());
-		String primaryKey = predictions.columns()[0];
-		predictions.sample(false, 0.1, seed).show(25);
+//		String primaryKey = predictions.columns()[0];
+		predictions.sample(false, 0.01, seed).show(25);
 //		predictions.select(primaryKey, label, "predictedLabel").sample(false, 0.1, seed).show(25);	
 				
 	

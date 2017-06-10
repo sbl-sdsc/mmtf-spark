@@ -40,7 +40,7 @@ public class Demo5 {
 	    // read PDB in MMTF format
 	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.readSequenceFile(args[0], fraction, seed, sc);
 
-	    // count number of atoms
+	    // retain high resolution X-ray structures
 	    pdb = pdb
 	    		.filter(new ExperimentalMethods(ExperimentalMethods.X_RAY_DIFFRACTION))
 	    		.filter(new Resolution(0, 2.5))

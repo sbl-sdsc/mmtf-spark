@@ -35,7 +35,7 @@ public class Demo4 {
 	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.readSequenceFile(args[0], sc);
 
 	    // count number of atoms
-	    long numAtoms = pdb.map(t -> t._2.getNumAtoms()).reduce((a,b) -> a+ b);
+	    long numAtoms = pdb.map(t -> t._2.getNumAtoms()).reduce((a,b) -> a+b);
 	    
 	    System.out.println("Total number of atoms: " + numAtoms);
 	  

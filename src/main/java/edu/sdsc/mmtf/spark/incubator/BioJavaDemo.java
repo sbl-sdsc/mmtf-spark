@@ -48,7 +48,7 @@ public class BioJavaDemo {
 	    .flatMapToPair(new StructureToPolymerChains())
 	    .filter(new BlastClusters(40))
 	    .filter(new AdvancedQuery(query))
-	    .mapToPair(new StructureToBioJava()).cache();
+	    .mapValues(new StructureToBioJava()).cache();
 	    
 	    JavaPairRDD<String, Integer> polyCounts = structures.mapToPair(t -> new Tuple2<String,Integer>(t._1, t._2.getPolyChains().size()));
 	   

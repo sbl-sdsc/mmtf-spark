@@ -1,4 +1,4 @@
-package edu.sdsc.mmtf.spark.utils;
+package edu.sdsc.mmtf.spark.datasets;
 
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
@@ -10,6 +10,20 @@ import org.rcsb.mmtf.api.StructureDataInterface;
 import edu.sdsc.mmtf.spark.mappers.StructureToPolymerSequences;
 import edu.sdsc.mmtf.spark.ml.JavaRDDToDataset;
 
+/**
+ * Creates a dataset of polymer sequences using the full sequence
+ * used in the experiment (i.e., the "SEQRES" record in PDB files). 
+ * 
+ * Example: get dataset of sequences of L-proteins
+ * pdb.flatMapToPair(new StructureToPolymerChains())
+ *    .filter(new ContainsLProteinChain());
+ *    
+ * Dataset<Row> protSeq = PolymerSequenceExtractor.getDataset(pdb);
+ * protSeq.show(10);
+ * 
+ * @author Peter Rose
+ *
+ */
 public class PolymerSequenceExtractor {
 
 	public static Dataset<Row> getDataset(JavaPairRDD<String, StructureDataInterface> structureRDD) {

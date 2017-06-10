@@ -145,4 +145,5 @@ public class MmtfReader {
 // TODO use with new version		return new GenericDecoder(ReaderUtils.getDataFromUrl(pdbId, https, reduced));
 		return new GenericDecoder(ReaderUtils.getDataFromUrl(pdbId));
 	}
+
 }

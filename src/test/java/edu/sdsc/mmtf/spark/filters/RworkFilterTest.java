@@ -70,5 +70,4 @@ public class RworkFilterTest {
 	    assertFalse(results.contains("3REC"));
 	    assertFalse(results.contains("1LU3"));
 	}
-	
 }
