@@ -1,4 +1,4 @@
-package edu.sdsc.mmtf.spark.webservices;
+package edu.sdsc.mmtf.spark.datasets;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,7 +10,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
-import java.util.List;
 
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
@@ -47,19 +46,7 @@ public class CustomReportService {
 	 * @return dataset with the specified columns
 	 * @throws IOException
 	 */
-	public static Dataset<Row> getDataset(String... columnNames) throws IOException {
-		return getDataset(Arrays.asList(columnNames));
-	}
-	/**
-	 * Returns a dataset with the specified columns for all current PDB entries.
-	 * See <a href="https://www.rcsb.org/pdb/results/reportField.do"> for list of supported
-     * field names.
-     * 
-	 * @param columnNames
-	 * @return dataset with the specified columns
-	 * @throws IOException
-	 */
-	public static Dataset<Row> getDataset(List<String> columnNames) throws IOException {
+	public static Dataset<Row> getDataset(String... columnNames) throws IOException {	
 		// form query URL
 		String query = CURRENT_URL + columNamesString(columnNames);
 		
@@ -88,7 +75,7 @@ public class CustomReportService {
 	 * @param dataset
 	 * @return
 	 */
-	private static Dataset<Row> concatIds(SparkSession spark, Dataset<Row> dataset, List<String> columnNames) {
+	private static Dataset<Row> concatIds(SparkSession spark, Dataset<Row> dataset, String[] columnNames) {
 		if (Arrays.asList(dataset.columns()).contains("chainId")) {
 			dataset.createOrReplaceTempView("table");
 			
@@ -106,7 +93,7 @@ public class CustomReportService {
 	* @param url RESTful query URL
 	* @return InputStream 
 	*/
-   	public static InputStream postQuery(String url) throws IOException
+   	private static InputStream postQuery(String url) throws IOException
 	{
 		URL u = new URL(SERVICELOCATION);
 
@@ -130,6 +117,7 @@ public class CustomReportService {
 		
 		input.close();
 		
+		// TODO delete tempFile
 		return tempFile;
 	}
 
@@ -157,11 +145,11 @@ public class CustomReportService {
 		return conn.getInputStream();
 	}
 	
-	private static String columNamesString(List<String> columnNames) {
+	private static String columNamesString(String[] columnNames) {
 		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < columnNames.size(); i++) {
-			sb.append(columnNames.get(i));
-			if (i != columnNames.size()-1) {
+		for (int i = 0; i < columnNames.length; i++) {
+			sb.append(columnNames[i]);
+			if (i != columnNames.length-1) {
 			   sb.append(",");
 			}
 		}

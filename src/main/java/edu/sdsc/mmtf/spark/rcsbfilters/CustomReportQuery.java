@@ -3,7 +3,6 @@ package edu.sdsc.mmtf.spark.rcsbfilters;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.apache.spark.api.java.function.Function;
@@ -11,7 +10,7 @@ import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.rcsb.mmtf.api.StructureDataInterface;
 
-import edu.sdsc.mmtf.spark.webservices.CustomReportService;
+import edu.sdsc.mmtf.spark.datasets.CustomReportService;
 import scala.Tuple2;
 
 /**
@@ -50,10 +49,9 @@ public class CustomReportQuery implements Function<Tuple2<String, StructureDataI
 	 * @throws IOException
 	 */
 	public CustomReportQuery(String whereClause, String... fields) throws IOException {
-		List<String> columnNames = Arrays.asList(fields);
 		
 		// get requested data columns
-		Dataset<Row> dataset = CustomReportService.getDataset(columnNames);
+		Dataset<Row> dataset = CustomReportService.getDataset(fields);
 		
 		// check if the results contain chain level data
 		chainLevel = Arrays.asList(dataset.columns()).contains("structureChainId");

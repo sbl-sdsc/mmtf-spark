@@ -27,7 +27,8 @@ public class ReducedEncoderNewTest2 {
 		SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(ReducedEncoderNewTest2.class.getSimpleName());
 	    JavaSparkContext sc = new JavaSparkContext(conf);
 		 
-	    List<String> pdbIds = Arrays.asList("4CK4","3ZYB","1R9V","1LPV");
+	    // 1PLX: small NMR with 80 models
+	    List<String> pdbIds = Arrays.asList("4CK4","3ZYB","1R9V","1LPV","1PLX");
 	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.downloadMmtfFiles(pdbIds, sc).cache();	    
 	 
 	    pdb = pdb.mapValues(v -> ReducedEncoderNew.getReduced(v)).cache();

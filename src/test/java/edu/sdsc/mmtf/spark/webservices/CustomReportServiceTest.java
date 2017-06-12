@@ -9,6 +9,8 @@ import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.junit.Test;
 
+import edu.sdsc.mmtf.spark.datasets.CustomReportService;
+
 /**
  * 
  * @author Peter Rose

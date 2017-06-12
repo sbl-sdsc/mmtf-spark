@@ -22,10 +22,10 @@ import org.apache.spark.sql.types.Metadata;
 import org.apache.spark.sql.types.StructField;
 import org.apache.spark.sql.types.StructType;
 
+import edu.sdsc.mmtf.spark.datasets.CustomReportService;
 import edu.sdsc.mmtf.spark.io.MmtfReader;
 import edu.sdsc.mmtf.spark.mappers.StructureToPolymerChains;
 import edu.sdsc.mmtf.spark.rcsbfilters.BlastClusters;
-import edu.sdsc.mmtf.spark.webservices.CustomReportService;
 
 /**
  * @author peter
