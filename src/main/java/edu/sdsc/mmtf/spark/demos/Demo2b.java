@@ -20,9 +20,10 @@ public class Demo2b {
 
 	public static void main(String[] args) {
 
-	    if (args.length != 1) {
-	        System.err.println("Usage: " + Demo2b.class.getSimpleName() + " <hadoop sequence file>");
-	        System.exit(1);
+		String path = System.getProperty("MMTF_REDUCED_NEW");
+	    if (path == null) {
+	    	System.err.println("Environment variable for Hadoop sequence file has not been set");
+	        System.exit(-1);
 	    }
 	    
 	    SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(Demo2b.class.getSimpleName());

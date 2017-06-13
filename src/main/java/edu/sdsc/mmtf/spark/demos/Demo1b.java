@@ -18,9 +18,10 @@ public class Demo1b {
 
 	public static void main(String[] args) {
 
-	    if (args.length != 1) {
-	        System.err.println("Usage: " + Demo1b.class.getSimpleName() + " <hadoop sequence file>");
-	        System.exit(1);
+		String path = System.getProperty("MMTF_REDUCED_NEW");
+	    if (path == null) {
+	    	System.err.println("Environment variable for Hadoop sequence file has not been set");
+	        System.exit(-1);
 	    }
 	    
 	    SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(Demo1b.class.getSimpleName());
@@ -28,7 +29,7 @@ public class Demo1b {
 		 
 	    // same as Demo1, but here the methods are chained together
 	    long count = MmtfReader
-	    		.readSequenceFile(args[0], sc)
+	    		.readSequenceFile(path, sc)
 	    		.filter(new Resolution(0.0, 2.0))
 	    		.count();
 	    

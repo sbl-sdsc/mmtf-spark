@@ -16,7 +16,7 @@ import scala.Tuple2;
  * BlastCLust cluster. A sequence identity thresholds needs to be specified.
  * The representative for each cluster is the first chain in a cluster.
  * 
- * <p>See <a href="http://www.rcsb.org/pdb/statistics/clusterStatistics.do"> BlastCluste cluster.
+ * <p>See <a href="http://www.rcsb.org/pdb/statistics/clusterStatistics.do"> BlastClust cluster.
  * field names.</a>
  * 
  * <p>Example: find representative PDB entries at 90% sequence identity.
@@ -40,6 +40,7 @@ public class BlastClusters implements Function<Tuple2<String, StructureDataInter
 	 * @throws IOException
 	 */
 	public BlastClusters(int sequenceIdentity) throws IOException {
+		// TODO need to check input for validity
 		pdbIds = new HashSet<>();
 		BlastClustReader reader = new BlastClustReader(sequenceIdentity);
 		for (List<String> cluster: reader.getPdbChainIdClusters()) {

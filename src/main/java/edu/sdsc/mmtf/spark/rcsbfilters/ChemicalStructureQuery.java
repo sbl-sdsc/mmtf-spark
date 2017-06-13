@@ -36,6 +36,7 @@ public class ChemicalStructureQuery implements Function<Tuple2<String, Structure
 		this(smiles, ChemicalStructureQuery.SUBSTRUCTURE, 0);
 	}
 	
+	// TODO use enums here ...
 	/**
 	 *  Constructor to setup filter that matches any entry with at least one chemical component
 	 *  that matches the specified SMILES string using the specified query type. For details see 

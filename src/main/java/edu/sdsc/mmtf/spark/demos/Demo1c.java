@@ -20,16 +20,17 @@ public class Demo1c {
 
 	public static void main(String[] args) {
 
-	    if (args.length != 1) {
-	        System.err.println("Usage: " + Demo1c.class.getSimpleName() + " <hadoop sequence file>");
-	        System.exit(1);
+		String path = System.getProperty("MMTF_REDUCED_NEW");
+	    if (path == null) {
+	    	    System.err.println("Environment variable for Hadoop sequence file has not been set");
+	        System.exit(-1);
 	    }
 	    
 	    SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(Demo1c.class.getSimpleName());
 	    JavaSparkContext sc = new JavaSparkContext(conf);
 		 
 	    MmtfReader
-	    		.readSequenceFile(args[0], sc) // read MMTF hadoop sequence file
+	    		.readSequenceFile(path, sc) // read MMTF hadoop sequence file
 	    		 // filter by experimental methods using joint Neutron/X-RAY diffraction
 	    		.filter(new ExperimentalMethods(ExperimentalMethods.NEUTRON_DIFFRACTION, ExperimentalMethods.X_RAY_DIFFRACTION)) 
 	    		.keys() // extract the keys (PDB IDs)

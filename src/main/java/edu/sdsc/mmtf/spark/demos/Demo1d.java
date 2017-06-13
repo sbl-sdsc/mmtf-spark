@@ -18,9 +18,10 @@ public class Demo1d {
 
 	public static void main(String[] args) {
 
-	    if (args.length != 1) {
-	        System.err.println("Usage: " + Demo1d.class.getSimpleName() + " <hadoop sequence file>");
-	        System.exit(1);
+		String path = System.getProperty("MMTF_REDUCED_NEW");
+	    if (path == null) {
+	    	System.err.println("Environment variable for Hadoop sequence file has not been set");
+	        System.exit(-1);
 	    }
 	    
 	    SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(Demo1d.class.getSimpleName());
@@ -30,7 +31,7 @@ public class Demo1d {
 	    List<String> pdbIds = Arrays.asList("1STP","4HHB","1EP4");
 	    
 	    MmtfReader
-	    		.readSequenceFile(args[0], pdbIds, sc) // read a set of structure from an MMTF hadoop sequence file
+	    		.readSequenceFile(path, pdbIds, sc) // read a set of structure from an MMTF hadoop sequence file
 	    		.keys() // extract the keys (PDB IDs)
 	    		.foreach(key -> System.out.println(key)); // print the keys (using a lambda expression)
 	    

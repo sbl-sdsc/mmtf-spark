@@ -55,7 +55,7 @@ public class SequenceSimilarity implements Function<Tuple2<String, StructureData
 	public SequenceSimilarity(String smiles, String queryType, int percentSimilarity) throws IOException {
 		if (! (queryType.equals(SUBSTRUCTURE) || queryType.equals(SUPERSTRUCTURE) ||
 			queryType.equals(SIMILAR) || queryType.equals(EXACT)) ) {
-				throw new IllegalAccessError("Invalid search type: " + queryType);
+				throw new IllegalArgumentException("Invalid search type: " + queryType);
 		}
 			
 		String query = "<orgPdbQuery>" +

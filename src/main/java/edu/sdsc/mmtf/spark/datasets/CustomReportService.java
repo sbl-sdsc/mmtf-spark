@@ -58,7 +58,7 @@ public class CustomReportService {
 		
 		SparkSession spark = SparkSession
 	    		.builder()
-	    		.master("local[*]")
+//	    		.master("local[*]")
 	    		.getOrCreate();
 		
 		// load temporary CSV file into Spark dataset

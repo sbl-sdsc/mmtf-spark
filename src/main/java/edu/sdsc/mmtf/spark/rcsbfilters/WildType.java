@@ -19,6 +19,7 @@ import scala.Tuple2;
 public class WildType implements Function<Tuple2<String, StructureDataInterface>, Boolean> {
 	private static final long serialVersionUID = -2323293283758321260L;
 	
+	// TODO use enums
 	public static int SEQUENCE_COVERAGE_100 = 100;
 	public static int SEQUENCE_COVERAGE_95 = 95;
 	public static int SEQUENCE_COVERAGE_90 = 90;

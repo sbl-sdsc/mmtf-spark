@@ -11,6 +11,12 @@ import org.apache.spark.ml.feature.Word2Vec;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 
+/**
+ * Adds a feature vector "features" to the dataset by converting a one-letter
+ * sequence "sequence" into n-grams and then into Word2Vectors.
+ * @author Peter Rose
+ *
+ */
 public class SequenceWord2Vector implements Serializable {
 	private static final long serialVersionUID = -4917145846599991881L;
 

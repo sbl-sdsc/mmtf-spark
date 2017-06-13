@@ -11,11 +11,13 @@ import java.util.List;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
+import org.biojava.nbio.structure.Structure;
 import org.junit.Test;
 import org.rcsb.mmtf.api.StructureDataInterface;
 import org.rcsb.mmtf.encoder.ReducedEncoder;
 
 import edu.sdsc.mmtf.spark.io.MmtfReader;
+import edu.sdsc.mmtf.spark.mappers.StructureToBioJava;
 import scala.Tuple3;
 
 public class ReducedEncoderNewTest3 {
@@ -36,14 +38,16 @@ public class ReducedEncoderNewTest3 {
 		// 2G10, 2ICY ?? problem with groupIds
 
 		//    List<String> pdbIds = Arrays.asList("1PLX","1IGT","1LPV","1MSH","1R9V","4CK4","4P3R");
+		// 5GJK
+//		List<String> pdbIds = Arrays.asList("5GJK");
 		List<String> exclude = Arrays.asList("1LZN","2INQ","2G10","2ICY","2ZYE","3KYW","3Q3L","5DPN","5KWF","1GKT","2WYX");
 
 		JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.readSequenceFile(path, sc);
-		//	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.downloadMmtfFiles(pdbIds, sc).cache();	    
+//		JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.downloadMmtfFiles(pdbIds, sc).cache();	    
 
 		pdb = pdb.filter(t -> !exclude.contains(t._1));
 		pdb.map(t -> new Tuple3<String, StructureDataInterface, StructureDataInterface>
-		(t._1, t._2, ReducedEncoderNew.getReduced(t._2)))
+		(t._1, t._2, ReducedEncoder.getReduced(t._2)))
 //				    (t._1, t._2, ReducedEncoder.getReduced(t._2)))
 		.foreach(v -> compareFullVsReduced(v._1(), v._2(), v._3()));
 

@@ -7,9 +7,6 @@ import java.util.List;
 import org.apache.spark.api.java.function.FlatMapFunction;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.RowFactory;
-import org.apache.spark.sql.types.DataTypes;
-import org.apache.spark.sql.types.StructField;
-import org.apache.spark.sql.types.StructType;
 import org.rcsb.mmtf.api.StructureDataInterface;
 
 import scala.Tuple2;
@@ -165,16 +162,5 @@ public class StructureToInteractingResidues implements  FlatMapFunction<Tuple2<S
 				groupCounter++;	
 			}
 		}
-	}
-	
-	public static StructType getSchema() {
-		List<StructField> fields = new ArrayList<>();
-	    fields.add(DataTypes.createStructField("StructureId", DataTypes.StringType, true));
-	    fields.add(DataTypes.createStructField("Res1", DataTypes.StringType, true));
-	    fields.add(DataTypes.createStructField("Index1", DataTypes.IntegerType, true));
-	    fields.add(DataTypes.createStructField("Res2", DataTypes.StringType, true));
-	    fields.add(DataTypes.createStructField("Index2", DataTypes.IntegerType, true));
-	    fields.add(DataTypes.createStructField("Dist", DataTypes.FloatType, true));
-	    return DataTypes.createStructType(fields);
 	}
 }

@@ -35,6 +35,7 @@ public class JavaRDDToDataset implements Serializable {
 		for (int i = 0; i < row.size(); i++) {
 			Object o = row.get(i);
 
+			// TODO add more types
 			if (o instanceof String) {
 				sf[i] = DataTypes.createStructField(colNames[i], DataTypes.StringType, false);
 			} else if (o instanceof Integer) {
