@@ -14,7 +14,7 @@ import org.junit.Test;
 import org.rcsb.mmtf.api.StructureDataInterface;
 import org.rcsb.mmtf.encoder.ReducedEncoder;
 
-import edu.sdsc.mmtf.spark.demos.Demo1b;
+import edu.sdsc.mmtf.spark.demos.Demo1c;
 import edu.sdsc.mmtf.spark.io.MmtfReader;
 import edu.sdsc.mmtf.spark.io.MmtfWriter;
 import scala.Tuple2;
@@ -23,7 +23,7 @@ public class ReducedEncoderNewTest {
 
 	@Test
 	public void test() {
-		SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(Demo1b.class.getSimpleName());
+		SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(Demo1c.class.getSimpleName());
 	    JavaSparkContext sc = new JavaSparkContext(conf);
 		 
 //	    List<String> pdbIds = Arrays.asList("1STP","4HHB","2ONX","1JLP","5X6H","5L2G","2MK1");

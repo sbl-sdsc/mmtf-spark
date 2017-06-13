@@ -1,5 +1,7 @@
 package edu.sdsc.mmtf.spark.demos;
 
+import java.util.Comparator;
+
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
 
@@ -25,26 +27,24 @@ public class Demo2d {
 
 	public static void main(String[] args) {
 
-	    if (args.length != 1) {
-	        System.err.println("Usage: " + Demo2d.class.getSimpleName() + " <hadoop sequence file>");
-	        System.exit(1);
+		String path = System.getProperty("MMTF_REDUCED");
+	    if (path == null) {
+	    	    System.err.println("Environment variable for Hadoop sequence file has not been set");
+	        System.exit(-1);
 	    }
 	    
 	    SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(Demo2d.class.getSimpleName());
 	    JavaSparkContext sc = new JavaSparkContext(conf);
 	    
-	    MmtfReader
-	    	.readSequenceFile(args[0], sc) // read MMTF hadoop sequence file
+	    long count = MmtfReader
+	    	.readSequenceFile(path, sc) // read MMTF hadoop sequence file
 	    	 // find chains that contain DNA, RNA, or both
 	    	.filter(new ContainsPolymerChainType("DNA LINKING","RNA LINKING")) 
-	    	.filter(new NotFilter(new ContainsDnaChain()))
-	    	.filter(new NotFilter(new ContainsRnaChain()))
 	    	.filter(new NotFilter(new ContainsLProteinChain()))
 	    	.filter(new NotFilter(new ContainsDSaccharide()))
-//	    	.sortByKey(Comparator.naturalOrder()) // or .reverseOrder() // this needs GenericDecoder to be serializable
-            .keys()
-	    	.foreach(key -> System.out.println(key));
+	    .count();
 	    
+	    System.out.println("# pure DNA and RNA entries: " + count);
 	    sc.close();
 	}
 

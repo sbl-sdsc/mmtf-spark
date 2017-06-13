@@ -17,23 +17,23 @@ public class Demo2f {
 
 	public static void main(String[] args) {
 
-	    if (args.length != 1) {
-	        System.err.println("Usage: " + Demo2f.class.getSimpleName() + " <hadoop sequence file>");
-	        System.exit(1);
+		String path = System.getProperty("MMTF_REDUCED");
+	    if (path == null) {
+	    	    System.err.println("Environment variable for Hadoop sequence file has not been set");
+	        System.exit(-1);
 	    }
 	    
 	    SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(Demo2f.class.getSimpleName());
 	    JavaSparkContext sc = new JavaSparkContext(conf);
 	    
 	    long count = MmtfReader
-	    	.readSequenceFile(args[0], sc) // read MMTF hadoop sequence file
-	    	.flatMapToPair(new StructureToPolymerChains(false, true))
-	    	.filter(new PolymerComposition(PolymerComposition.AMINO_ACIDS_20))
-            .count();
+	    		.readSequenceFile(path, sc) // read MMTF hadoop sequence file
+	    		.flatMapToPair(new StructureToPolymerChains(false, true))
+	    		.filter(new PolymerComposition(PolymerComposition.AMINO_ACIDS_20))
+	    		.count();
 	    
 	    System.out.println("Chains with standard amino acids: " + count); //329692
 	    
 	    sc.close();
 	}
-
 }

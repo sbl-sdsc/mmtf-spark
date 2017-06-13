@@ -20,18 +20,17 @@ public class Demo2b {
 
 	public static void main(String[] args) {
 
-		String path = System.getProperty("MMTF_REDUCED_NEW");
+		String path = System.getProperty("MMTF_REDUCED");
 	    if (path == null) {
-	    	System.err.println("Environment variable for Hadoop sequence file has not been set");
+	      	System.err.println("Environment variable for Hadoop sequence file has not been set");
 	        System.exit(-1);
 	    }
 	    
 	    SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(Demo2b.class.getSimpleName());
 	    JavaSparkContext sc = new JavaSparkContext(conf);
-	    
-		 
+	    		 
 	    long count = MmtfReader
-	    		.readSequenceFile(args[0], sc) // read MMTF hadoop sequence file
+	    		.readSequenceFile(path, sc) // read MMTF hadoop sequence file
 	    		// retain pdb entries that exclusively (flag set to true) contain L-peptide chains
 	    		.filter(new ContainsLProteinChain(true)) 
 	    		.count();

@@ -3,12 +3,10 @@ package edu.sdsc.mmtf.spark.demos;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
 
-import edu.sdsc.mmtf.spark.filters.ExperimentalMethods;
+import edu.sdsc.mmtf.spark.filters.Resolution;
 import edu.sdsc.mmtf.spark.io.MmtfReader;
 
 /**
- * This example demonstrates how to filter the PDB by polymer chain type. It filters
- * 
  * Simple example of reading an MMTF Hadoop Sequence file, filtering the entries by resolution,
  * and counting the number of entries. This example shows how methods can be chained for a more
  * concise syntax.
@@ -20,7 +18,7 @@ public class Demo1c {
 
 	public static void main(String[] args) {
 
-		String path = System.getProperty("MMTF_REDUCED_NEW");
+		String path = System.getProperty("MMTF_REDUCED");
 	    if (path == null) {
 	    	    System.err.println("Environment variable for Hadoop sequence file has not been set");
 	        System.exit(-1);
@@ -29,12 +27,13 @@ public class Demo1c {
 	    SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(Demo1c.class.getSimpleName());
 	    JavaSparkContext sc = new JavaSparkContext(conf);
 		 
-	    MmtfReader
-	    		.readSequenceFile(path, sc) // read MMTF hadoop sequence file
-	    		 // filter by experimental methods using joint Neutron/X-RAY diffraction
-	    		.filter(new ExperimentalMethods(ExperimentalMethods.NEUTRON_DIFFRACTION, ExperimentalMethods.X_RAY_DIFFRACTION)) 
-	    		.keys() // extract the keys (PDB IDs)
-	    		.foreach(key -> System.out.println(key)); // print the keys (using a lambda expression)
+	    // same as Demo1b, but here the methods are chained together
+	    long count = MmtfReader
+	    		.readSequenceFile(path, sc)
+	    		.filter(new Resolution(0.0, 2.0))
+	    		.count();
+	    
+	    System.out.println("# structures: " + count);
 	    
 	    sc.close();
 	}

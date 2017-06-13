@@ -22,9 +22,10 @@ public class Demo6 {
 	 */
 	public static void main(String[] args) {
 
-	    if (args.length != 1) {
-	        System.err.println("Usage: " + Demo6.class.getSimpleName() + " <hadoop sequence file>");
-	        System.exit(1);
+		String path = System.getProperty("MMTF_REDUCED");
+	    if (path == null) {
+	    	    System.err.println("Environment variable for Hadoop sequence file has not been set");
+	        System.exit(-1);
 	    }
 	    
 	    long start = System.nanoTime();

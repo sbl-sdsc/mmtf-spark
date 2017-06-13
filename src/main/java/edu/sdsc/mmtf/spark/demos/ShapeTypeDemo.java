@@ -29,7 +29,7 @@ public class ShapeTypeDemo {
 
 	public static void main(String[] args) throws IOException {
 
-		String path = System.getProperty("MMTF_REDUCED_NEW");
+		String path = System.getProperty("MMTF_REDUCED");
 	    if (path == null) {
 	    	    System.err.println("Environment variable for Hadoop sequence file has not been set");
 	        System.exit(-1);
@@ -40,7 +40,7 @@ public class ShapeTypeDemo {
 			System.exit(1);
 		}
 		
-		SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(Demo1b.class.getSimpleName());
+		SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(Demo1c.class.getSimpleName());
 		JavaSparkContext sc = new JavaSparkContext(conf);
 
 		long start = System.nanoTime();

@@ -11,7 +11,7 @@ import org.rcsb.mmtf.api.StructureDataInterface;
 import edu.sdsc.mmtf.spark.io.MmtfReader;
 
 /**
- * @author peter
+ * @author Peter Rose
  *
  */
 public class Demo4 {
@@ -21,9 +21,10 @@ public class Demo4 {
 	 */
 	public static void main(String[] args) {
 
-	    if (args.length != 1) {
-	        System.err.println("Usage: " + Demo4.class.getSimpleName() + " <hadoop sequence file>");
-	        System.exit(1);
+		String path = System.getProperty("MMTF_FULL");
+	    if (path == null) {
+	    	    System.err.println("Environment variable for Hadoop sequence file has not been set");
+	        System.exit(-1);
 	    }
 	    
 	    long start = System.nanoTime();
@@ -32,7 +33,7 @@ public class Demo4 {
 	    JavaSparkContext sc = new JavaSparkContext(conf);
 		 
 	    // read PDB in MMTF format
-	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.readSequenceFile(args[0], sc);
+	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.readSequenceFile(path, sc);
 
 	    // count number of atoms
 	    long numAtoms = pdb.map(t -> t._2.getNumAtoms()).reduce((a,b) -> a+b);

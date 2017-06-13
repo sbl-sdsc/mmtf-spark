@@ -40,7 +40,7 @@ public class ProteinFoldDatasetCreator {
 	 */
 	public static void main(String[] args) throws IOException {
 
-		String path = System.getProperty("MMTF_REDUCED_NEW");
+		String path = System.getProperty("MMTF_REDUCED");
 	    if (path == null) {
 	    	    System.err.println("Environment variable for Hadoop sequence file has not been set");
 	        System.exit(-1);

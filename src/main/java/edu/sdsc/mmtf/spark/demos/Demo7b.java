@@ -24,9 +24,10 @@ public class Demo7b {
 	 */
 	public static void main(String[] args) {
 
-	    if (args.length != 1) {
-	        System.err.println("Usage: " + Demo7b.class.getSimpleName() + " <hadoop sequence file>");
-	        System.exit(1);
+		String path = System.getProperty("MMTF_FULL");
+	    if (path == null) {
+	    	    System.err.println("Environment variable for Hadoop sequence file has not been set");
+	        System.exit(-1);
 	    }
 	    
 	    long start = System.nanoTime();
@@ -46,8 +47,7 @@ public class Demo7b {
         System.out.println("# interactions: " + interactions.count());
         interactions.groupBy(interactions.col("residue2")).count().sort("count").show(1000);
         interactions.groupBy(interactions.col("residue2")).avg("distance").sort("avg(distance)").show(1000);
-
-	  
+        
 	    long end = System.nanoTime();
 	    
 	    System.out.println("Time:     " + (end-start)/1E9 + "sec.");

@@ -23,7 +23,7 @@ public class WildTypeQuery {
 	 */
 	public static void main(String[] args) throws IOException {
 
-		String path = System.getProperty("MMTF_REDUCED_NEW");
+		String path = System.getProperty("MMTF_REDUCED");
 	    if (path == null) {
 	    	System.err.println("Environment variable for Hadoop sequence file has not been set");
 	        System.exit(-1);
@@ -35,9 +35,9 @@ public class WildTypeQuery {
 	    JavaSparkContext sc = new JavaSparkContext(conf);
 		 
 	    long count = MmtfReader
-	    .readSequenceFile(path, sc)
-	    .filter(new WildType(true, WildType.SEQUENCE_COVERAGE_95))
-	    .count();
+	    		.readSequenceFile(path, sc)
+	    		.filter(new WildType(true, WildType.SEQUENCE_COVERAGE_95))
+	    		.count();
 	    		
 	    System.out.println(count);
 	    long end = System.nanoTime();

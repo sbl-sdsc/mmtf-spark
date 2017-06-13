@@ -21,9 +21,9 @@ public class Demo2a {
 
 	public static void main(String[] args) {
 
-		String path = System.getProperty("MMTF_REDUCED_NEW");
+		String path = System.getProperty("MMTF_REDUCED");
 	    if (path == null) {
-	    	System.err.println("Environment variable for Hadoop sequence file has not been set");
+	    	    System.err.println("Environment variable for Hadoop sequence file has not been set");
 	        System.exit(-1);
 	    }
 	    
@@ -40,5 +40,4 @@ public class Demo2a {
 	    System.out.println("# Complexes that contain L-peptide and L-DNA: " + count);
 	    sc.close();
 	}
-
 }

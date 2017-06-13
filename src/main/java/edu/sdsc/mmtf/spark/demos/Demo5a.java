@@ -26,29 +26,25 @@ public class Demo5a {
 	 */
 	public static void main(String[] args) throws IOException {
 
-	    if (args.length != 1) {
-	        System.err.println("Usage: " + Demo5a.class.getSimpleName() + " <hadoop sequence file>");
-	        System.exit(1);
+		String path = System.getProperty("MMTF_FULL");
+	    if (path == null) {
+	    	    System.err.println("Environment variable for Hadoop sequence file has not been set");
+	        System.exit(-1);
 	    }
 	    
 	    long start = System.nanoTime();
 	    
 	    SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(Demo5a.class.getSimpleName());
 	    JavaSparkContext sc = new JavaSparkContext(conf);
-		 
-	    double fraction = 0.5;
-	    long seed = 123;
+	    
 	    // read PDB in MMTF format
-	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.readSequenceFile(args[0], fraction, seed, sc);
+	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.readSequenceFile(path, sc);
 
-	    // count number of atoms
+	    // filter by representative protein chains at 40% sequence identify
 	    pdb = pdb
 	    		.filter(new BlastClusters(40));
-//	    		.filter(new ExperimentalMethods(ExperimentalMethods.X_RAY_DIFFRACTION));
-//	    		.filter(new Resolution(0, 2.5))
-//	    		.filter(new Rfree(0, 0.25));
     
-	    MmtfWriter.writeSequenceFile(args[0]+"_xray", sc, pdb);
+	    MmtfWriter.writeSequenceFile(path +"_representatives40", sc, pdb);
 	    
 	    System.out.println("# structures: " + pdb.count());
 	  

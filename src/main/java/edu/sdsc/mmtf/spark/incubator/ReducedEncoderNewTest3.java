@@ -34,21 +34,16 @@ public class ReducedEncoderNewTest3 {
 		JavaSparkContext sc = new JavaSparkContext(conf);
 
 		// Failure cases
-		// deuterated: 1LZN, 2INQ, 2ZYE, 3KYW,3Q3L, 5DNP, 5KWF, 1GKT, 2WYX
 		// 2G10, 2ICY ?? problem with groupIds
 
-		//    List<String> pdbIds = Arrays.asList("1PLX","1IGT","1LPV","1MSH","1R9V","4CK4","4P3R");
-		// 5GJK
-//		List<String> pdbIds = Arrays.asList("5GJK");
-		List<String> exclude = Arrays.asList("1LZN","2INQ","2G10","2ICY","2ZYE","3KYW","3Q3L","5DPN","5KWF","1GKT","2WYX");
-
+		List<String> exclude = Arrays.asList("2G10","2ICY");
 		JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.readSequenceFile(path, sc);
 //		JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.downloadMmtfFiles(pdbIds, sc).cache();	    
 
 		pdb = pdb.filter(t -> !exclude.contains(t._1));
 		pdb.map(t -> new Tuple3<String, StructureDataInterface, StructureDataInterface>
-		(t._1, t._2, ReducedEncoder.getReduced(t._2)))
-//				    (t._1, t._2, ReducedEncoder.getReduced(t._2)))
+//		(t._1, t._2, ReducedEncoder.getReduced(t._2)))
+				    (t._1, t._2, ReducedEncoderNew.getReduced(t._2)))
 		.foreach(v -> compareFullVsReduced(v._1(), v._2(), v._3()));
 
 		sc.close();

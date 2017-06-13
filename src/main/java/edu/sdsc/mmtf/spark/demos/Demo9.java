@@ -23,7 +23,7 @@ public class Demo9 {
 	 */
 	public static void main(String[] args) {
 
-		String path = System.getProperty("MMTF_REDUCED_NEW");
+		String path = System.getProperty("MMTF_FULL");
 	    if (path == null) {
 	    	    System.err.println("Environment variable for Hadoop sequence file has not been set");
 	        System.exit(-1);
@@ -47,5 +47,4 @@ public class Demo9 {
 	    
 	    sc.close();
 	}
-
 }

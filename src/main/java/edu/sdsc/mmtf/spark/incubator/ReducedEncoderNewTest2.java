@@ -15,7 +15,7 @@ import org.junit.Test;
 import org.rcsb.mmtf.api.StructureDataInterface;
 import org.rcsb.mmtf.encoder.ReducedEncoder;
 
-import edu.sdsc.mmtf.spark.demos.Demo1b;
+import edu.sdsc.mmtf.spark.demos.Demo1c;
 import edu.sdsc.mmtf.spark.io.MmtfReader;
 import edu.sdsc.mmtf.spark.io.MmtfWriter;
 import scala.Tuple2;

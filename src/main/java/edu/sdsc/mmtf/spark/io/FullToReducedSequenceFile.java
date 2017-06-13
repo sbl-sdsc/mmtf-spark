@@ -12,7 +12,7 @@ import org.rcsb.mmtf.encoder.ReducedEncoder;
 import scala.Tuple2;
 
 /**
- * @author peter
+ * @author Peter Rose
  *
  */
 public class FullToReducedSequenceFile {
@@ -32,13 +32,10 @@ public class FullToReducedSequenceFile {
 	    
 	    SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(FullToReducedSequenceFile.class.getSimpleName());
 	    JavaSparkContext sc = new JavaSparkContext(conf);
-
-	    double fraction = 0.1;
-	    long seed = 123;
 	    
 	    // read PDB in MMTF format
 	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader
-	    		.readSequenceFile(path, fraction, seed, sc)
+	    		.readSequenceFile(path, sc)
 	    		.mapToPair(t -> new Tuple2<String,StructureDataInterface>(t._1, ReducedEncoder.getReduced(t._2)));
     
 	    MmtfWriter.writeSequenceFile(args[0], sc, pdb);
