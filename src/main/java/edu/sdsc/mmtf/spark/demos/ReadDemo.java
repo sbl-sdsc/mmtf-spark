@@ -19,9 +19,10 @@ public class ReadDemo {
 	 */
 	public static void main(String[] args) {
 
-	    if (args.length != 1) {
-	        System.err.println("Usage: " + ReadDemo.class.getSimpleName() + " <hadoop sequence file>");
-	        System.exit(1);
+		String path = System.getProperty("MMTF_FULL");
+	    if (path == null) {
+	    	    System.err.println("Environment variable for Hadoop sequence file has not been set");
+	        System.exit(-1);
 	    }
 	    
 	    long start = System.nanoTime();
@@ -29,7 +30,7 @@ public class ReadDemo {
 	    SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(ReadDemo.class.getSimpleName());
 	    JavaSparkContext sc = new JavaSparkContext(conf);
 	    
-	    long c = sc.sequenceFile(args[0], Text.class, BytesWritable.class).count();
+	    long c = sc.sequenceFile(path, Text.class, BytesWritable.class).count();
 	    System.out.println(c);
 		 
 	    long end = System.nanoTime();

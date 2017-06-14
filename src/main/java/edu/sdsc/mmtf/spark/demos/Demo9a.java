@@ -3,6 +3,7 @@
  */
 package edu.sdsc.mmtf.spark.demos;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
@@ -13,13 +14,14 @@ import org.biojava.nbio.structure.Structure;
 import org.rcsb.mmtf.api.StructureDataInterface;
 
 import edu.sdsc.mmtf.spark.io.MmtfReader;
+import edu.sdsc.mmtf.spark.io.MmtfWriter;
 import edu.sdsc.mmtf.spark.mappers.StructureToBioJava;
 
 /**
  * @author peter
  *
  */
-public class Demo9 {
+public class Demo9a {
 
 	/**
 	 * @param args
@@ -34,15 +36,18 @@ public class Demo9 {
 	     
 	    long start = System.nanoTime();
 	    
-	    SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(Demo9.class.getSimpleName());
+	    SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(Demo9a.class.getSimpleName());
 	    JavaSparkContext sc = new JavaSparkContext(conf);
 		 
 	    // read PDB in MMTF format
 	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.readSequenceFile(path, sc);
 
 	    List<String> pdbIds = Arrays.asList("166L");
+	    pdb = pdb.filter(t -> pdbIds.contains(t._1));
+		MmtfWriter.writeMmtfFiles("/Users/peter/MMTF_Files", sc, pdb);
+
 	    // convert to BioJava structure
-//	    pdb = pdb.filter(t -> pdbIds.contains(t._1));
+
 	    JavaPairRDD<String, Structure> structures = pdb.mapValues(new StructureToBioJava());
 	    
 	    System.out.println("Number of structures: " + structures.count());

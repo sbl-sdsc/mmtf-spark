@@ -52,7 +52,7 @@ public class AtpInteractionAnalysis {
 	    Dataset<Row> interactions = finder.getDataset(pdb).cache();
 	    
 	    // TODO add a line to only analyze interactions 
-	    // with the oxygens in the terminal phosphate group 
+	    // with the oxygens in the terminal phosphate group of ATP
 	    // (O1G, O2G, O3G)
 	    // Tip: Google SQL LIKE
 	    interactions = interactions.filter("atom1 LIKE('O%G')");

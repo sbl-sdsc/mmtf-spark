@@ -7,8 +7,8 @@ import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.rcsb.mmtf.api.StructureDataInterface;
-import org.rcsb.mmtf.encoder.ReducedEncoder;
 
+import edu.sdsc.mmtf.spark.incubator.ReducedEncoderNew;
 import scala.Tuple2;
 
 /**
@@ -24,7 +24,7 @@ public class FullToReducedSequenceFile {
 
 		String path = System.getProperty("MMTF_FULL");
 	    if (path == null) {
-	    	    System.err.println("Environment variable for Hadoop sequence file has not been set");
+	    	System.err.println("Environment variable for Hadoop sequence file has not been set");
 	        System.exit(-1);
 	    }
 	    
@@ -36,9 +36,14 @@ public class FullToReducedSequenceFile {
 	    // read PDB in MMTF format
 	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader
 	    		.readSequenceFile(path, sc)
-	    		.mapToPair(t -> new Tuple2<String,StructureDataInterface>(t._1, ReducedEncoder.getReduced(t._2)));
+	    		.mapToPair(t -> new Tuple2<String,StructureDataInterface>(t._1, ReducedEncoderNew.getReduced(t._2)));
     
-	    MmtfWriter.writeSequenceFile(args[0], sc, pdb);
+	    path = System.getProperty("MMTF_REDUCED");
+	    if (path == null) {
+	    	System.err.println("Environment variable for Hadoop sequence file has not been set");
+	        System.exit(-1);
+	    }
+	    MmtfWriter.writeSequenceFile(path, sc, pdb);
 	    
 	    System.out.println("# structures: " + pdb.count());
 	  

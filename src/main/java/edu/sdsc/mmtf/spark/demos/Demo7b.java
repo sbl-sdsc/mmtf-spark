@@ -36,7 +36,7 @@ public class Demo7b {
 	    JavaSparkContext sc = new JavaSparkContext(conf);
 	    
 	    // read PDB in MMTF format
-	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.readSequenceFile(args[0], sc);
+	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.readSequenceFile(path, sc);
 	    
 	    GroupInteractionExtractor finder = new GroupInteractionExtractor("ZN", 3);
 	    Dataset<Row> interactions = finder.getDataset(pdb).cache();

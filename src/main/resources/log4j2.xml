@@ -9,6 +9,9 @@
         </File>
 	</appenders>
     <loggers>
+<!--     <root level="info"> -->
+<!-- 			<appender-ref ref="Console"/> -->
+<!-- 		</root> -->
 		<root level="info">
 			<appender-ref ref="FixNameFileAppender"/>
 		</root>

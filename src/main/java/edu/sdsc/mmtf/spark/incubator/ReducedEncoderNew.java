@@ -54,7 +54,7 @@ public class ReducedEncoderNew {
 		// Note, atomCount, groupCount, and chainCount keep track of the total number of atoms, groups, and chains.
 		// They are required to index the data structure.
 		
-		for (int i = 0, atomCount = 0, groupCount = 0, chainCount = 0, reducedAtomCount = 0; i<full.getNumModels(); i++) {
+		for (int i = 0, atomCount = 0, groupCount = 0, chainCount = 0, reducedAtomCount = -1; i<full.getNumModels(); i++) {
 			int numChains = full.getChainsPerModel()[i];
 			reduced.setModelInfo(i, numChains);
 			
