@@ -1,4 +1,4 @@
-package edu.sdsc.mmtf.utils;
+package edu.sdsc.mmtf.spark.datasets;
 
 import static org.junit.Assert.assertEquals;
 
