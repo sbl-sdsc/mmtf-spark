@@ -15,7 +15,8 @@
 		<log4j.version>2.5</log4j.version>
 		<junit.version>4.12</junit.version>
 <!-- 		<mmtf.version>1.0.5</mmtf.version> -->
-		<mmtf.version>1.0.6-SNAPSHOT</mmtf.version>
+<!-- 		<mmtf.version>1.0.6-SNAPSHOT</mmtf.version> -->
+		<mmtf.version>1.0.6</mmtf.version>
 		<biojava.version>5.0.0-alpha8</biojava.version>
 		<spark.version>2.1.0</spark.version>
 	</properties>

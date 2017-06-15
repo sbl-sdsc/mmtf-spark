@@ -47,6 +47,7 @@ public class Demo5 {
 	    		.filter(new Resolution(0, 2.5))
 	    		.filter(new Rfree(0, 0.25));
     
+	    // save this subset in a Hadoop Sequence file
 	    MmtfWriter.writeSequenceFile(path +"_xray", sc, pdb);
 	    
 	    System.out.println("# structures: " + pdb.count());

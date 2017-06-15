@@ -147,26 +147,6 @@ public class CathClassificationDataset {
 		return data;
 	}
 
-	private static Dataset<Row> getScopFold() throws IOException {
-		Dataset<Row> ecData = CustomReportService.getDataset("scopFold","rankNumber90"); // this comes from _entity.pdbx_ec!
- //       ecData = ecData.dropDuplicates("structureId", "taxonomyId");
-        
-        // prepare data
-        // 1. keep structureChainID as primary key
-        // 2. create column label
-        // 4. exclude records that contain the "#", which delimits multiple data
-        // 5. use only first representative in 90% sequence identity cluster
-        ecData.createOrReplaceTempView("table");	
-        
-		String sql = "SELECT structureChainId, scopFold as label from table " +
-		"WHERE scopFold IS NOT NULL AND scopFold NOT LIKE '%#%' AND rankNumber90 ='1'";
-		
-		ecData = ecData.sparkSession().sql(sql);
-		ecData.show(20);
-		
-		return ecData;
-	}
-	
 	private static Dataset<Row> getEcClassificationLevel1() throws IOException {
 		Dataset<Row> data = CustomReportService.getDataset("ecNo"); // this comes from _entity.pdbx_ec!
         
@@ -186,5 +166,4 @@ public class CathClassificationDataset {
 		
 		return data;
 	}
-	
 }

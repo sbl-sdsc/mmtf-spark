@@ -1,15 +1,11 @@
 package edu.sdsc.mmtf.spark.demos;
 
-import java.util.Comparator;
-
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
 
 import edu.sdsc.mmtf.spark.filters.ContainsDSaccharide;
-import edu.sdsc.mmtf.spark.filters.ContainsDnaChain;
 import edu.sdsc.mmtf.spark.filters.ContainsLProteinChain;
 import edu.sdsc.mmtf.spark.filters.ContainsPolymerChainType;
-import edu.sdsc.mmtf.spark.filters.ContainsRnaChain;
 import edu.sdsc.mmtf.spark.filters.NotFilter;
 import edu.sdsc.mmtf.spark.io.MmtfReader;
 

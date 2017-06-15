@@ -1,7 +1,6 @@
 package edu.sdsc.mmtf.spark.incubator;
 
 import org.apache.spark.api.java.function.Function;
-import org.rcsb.mmtf.api.StructureDataInterface;
 import org.rcsb.mmtf.dataholders.MmtfStructure;
 
 import scala.Tuple2;

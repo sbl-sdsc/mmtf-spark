@@ -1,9 +1,7 @@
 package edu.sdsc.mmtf.spark.incubator;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
-import java.io.File;
-import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 
@@ -16,8 +14,6 @@ import org.rcsb.mmtf.encoder.ReducedEncoder;
 
 import edu.sdsc.mmtf.spark.demos.Demo1c;
 import edu.sdsc.mmtf.spark.io.MmtfReader;
-import edu.sdsc.mmtf.spark.io.MmtfWriter;
-import scala.Tuple2;
 
 public class ReducedEncoderNewTest {
 
@@ -41,10 +37,7 @@ public class ReducedEncoderNewTest {
 	    List<String> altlocs = pdb.map(t -> t._1 + "_altLocs_" + Arrays.toString(t._2.getAltLocIds())).collect();
 	    System.out.println("full: " + altlocs);
 	    
-	//    pdb = pdb
-	//    		.mapToPair(t -> new Tuple2<String,StructureDataInterface>(t._1, ReducedEncoderNew.getReduced(t._2))).cache();
-	    pdb = pdb.mapValues(v -> ReducedEncoderNew.getReduced(v)).cache();
-//	    pdb = pdb.mapValues(v -> ReducedEncoder.getReduced(v)).cache();
+	    pdb = pdb.mapValues(v -> ReducedEncoder.getReduced(v)).cache();
 
 	    chainIds = pdb.map(t -> t._1 + "_chainId_" + Arrays.toString(t._2.getChainIds())).collect();
 	    System.out.println("reduced: " + chainIds);
@@ -83,13 +76,7 @@ public class ReducedEncoderNewTest {
         assertTrue(bonds.contains("4HHB_bonds_200"));
         assertTrue(bonds.contains("2ONX_bonds_0"));
         assertTrue(bonds.contains("2CCV_bonds_40"));
-	    //	    Path tempFile = Files.createTempDirectory(null);
-	    Path tempFile = new File("/Users/peter/work/mmtf-spark/").toPath();
-	    System.out.println("fn: " + tempFile.toString());
-	    System.out.println("fn: " + tempFile.getFileName().toString());
-		MmtfWriter.writeMmtfFiles(tempFile.toString(), sc, pdb);
 		
 		sc.close();
 	}
-
 }

@@ -17,15 +17,8 @@ public class StructureToBioJava implements Function<StructureDataInterface, Stru
 	@Override
 	public Structure call(StructureDataInterface t) throws Exception {
 		MmtfStructureReader mmtfStructureReader = new MmtfStructureReader();
-		try {
-	
 		new StructureDataToAdapter(t, mmtfStructureReader);
 
-
-		} catch (Exception e) {
-			System.out.println("Exception: " + t.getStructureId());
-			e.printStackTrace();
-		}
 		return mmtfStructureReader.getStructure();
 	}
 }

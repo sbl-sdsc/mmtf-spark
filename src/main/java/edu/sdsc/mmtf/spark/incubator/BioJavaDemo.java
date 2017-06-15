@@ -26,9 +26,7 @@ public class BioJavaDemo {
 	    long start = System.nanoTime();
 	    List<String> pdbIds = Arrays.asList("1STP","4HHB","1JLP","5X6H","5L2G","2MK1");
 	    // read PDB in MMTF format
-//	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.downloadMmtfFiles(pdbIds, sc);
-	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.readSequenceFile("/Users/peter/MMTF_Files/full", sc);
-
+	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.downloadMmtfFiles(pdbIds, sc);
 	    // 1STP: 1 L-protein chain:
 	    // 4HHB: 4 polymer chains
 	    // 1JLP: 1 L-protein chains with non-polymer capping group (NH2)

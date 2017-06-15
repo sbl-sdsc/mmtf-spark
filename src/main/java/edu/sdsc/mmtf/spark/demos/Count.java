@@ -1,8 +1,5 @@
 package edu.sdsc.mmtf.spark.demos;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;

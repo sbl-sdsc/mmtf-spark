@@ -3,9 +3,6 @@
  */
 package edu.sdsc.mmtf.spark.demos;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
@@ -40,10 +37,14 @@ public class Demo9 {
 	    // read PDB in MMTF format
 	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.readSequenceFile(path, sc);
 
-	    List<String> pdbIds = Arrays.asList("166L");
+	    pdb = pdb.filter(t -> t._1.equals("1STP"));
+	    
 	    // convert to BioJava structure
-//	    pdb = pdb.filter(t -> pdbIds.contains(t._1));
 	    JavaPairRDD<String, Structure> structures = pdb.mapValues(new StructureToBioJava());
+	   
+	    JavaPairRDD<String, String> seqRes = structures.mapValues(v -> v.getPolyChains().get(0).getSeqResSequence());
+	    seqRes.foreach(t -> System.out.println(t));
+	    // seqRes has X for non-observed residues
 	    
 	    System.out.println("Number of structures: " + structures.count());
 	    long end = System.nanoTime();
