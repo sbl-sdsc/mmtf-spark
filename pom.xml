@@ -11,11 +11,7 @@
 		<maven.enforcer.jdk-version>1.8</maven.enforcer.jdk-version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.build.targetEncoding>UTF-8</project.build.targetEncoding>
-		<slf4j.version>1.7.20</slf4j.version>
-		<log4j.version>2.5</log4j.version>
 		<junit.version>4.12</junit.version>
-<!-- 		<mmtf.version>1.0.5</mmtf.version> -->
-<!-- 		<mmtf.version>1.0.6-SNAPSHOT</mmtf.version> -->
 		<mmtf.version>1.0.6</mmtf.version>
 		<biojava.version>5.0.0-alpha8</biojava.version>
 		<spark.version>2.1.0</spark.version>
@@ -28,9 +24,9 @@
 					<artifactId>maven-surefire-plugin</artifactId>
 					<version>2.19.1</version>
 					<configuration>
-						<argLine>-Xmx1500M</argLine>
+						<argLine>-Xmx4g</argLine>
 						<reuseForks>false</reuseForks>
-						<forkCount>1</forkCount>
+						<forkCount>2</forkCount>
 
 						<excludes>
 							<!-- we exclude by default the long running tests, they will only 
