@@ -9,10 +9,12 @@
 	<properties>
 		<jdk.version>1.8</jdk.version>
 		<maven.enforcer.jdk-version>1.8</maven.enforcer.jdk-version>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.build.targetEncoding>UTF-8</project.build.targetEncoding>
 		<junit.version>4.12</junit.version>
-		<mmtf.version>1.0.6</mmtf.version>
+		<mmtf.version>1.0.7</mmtf.version>
 		<biojava.version>5.0.0-alpha8</biojava.version>
 		<spark.version>2.1.0</spark.version>
 	</properties>
@@ -83,6 +85,12 @@
 			<groupId>org.apache.spark</groupId>
 			<artifactId>spark-core_2.11</artifactId>
 			<version>${spark.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-log4j12</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.spark</groupId>
