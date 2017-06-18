@@ -1,7 +1,7 @@
 /**
  * 
  */
-package edu.sdsc.mmtf.datasets.demos;
+package edu.sdsc.mmtf.spark.datasets.demos;
 
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;

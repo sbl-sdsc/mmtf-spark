@@ -1,7 +1,7 @@
 /**
  * 
  */
-package edu.sdsc.mmtf.datasets.demos;
+package edu.sdsc.mmtf.spark.datasets.demos;
 
 import java.io.IOException;
 
