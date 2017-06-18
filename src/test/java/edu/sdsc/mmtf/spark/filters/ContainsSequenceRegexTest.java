@@ -48,7 +48,6 @@ public class ContainsSequenceRegexTest {
 	    assertFalse(results.contains("5VAI"));
 	}
 	
-	
 	@Test
 	public void test2() {
 		pdb = pdb.flatMapToPair(new StructureToPolymerChains());

@@ -18,8 +18,8 @@ import org.rcsb.mmtf.api.StructureDataInterface;
 import edu.sdsc.mmtf.spark.io.MmtfReader;
 
 public class WildTypeTest {
-	private JavaSparkContext sc;
-	private JavaPairRDD<String, StructureDataInterface> pdb;
+	private static JavaSparkContext sc;
+	private static JavaPairRDD<String, StructureDataInterface> pdb;
 	
 	@Before
 	public void setUp() throws Exception {

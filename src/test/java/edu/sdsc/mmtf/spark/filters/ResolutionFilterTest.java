@@ -28,7 +28,7 @@ public class ResolutionFilterTest {
 	    // 2ONX: 1.52 A x-ray resolution
 	    // 2OLX: 1.42 A x-ray resolution
 	    // 3REC: n/a NMR structure
-	    // 1LU3: n/a (16.8 A EM resolution)
+	    // 1LU3: 16.8 A EM resolution
 	    List<String> pdbIds = Arrays.asList("2ONX","2OLX","3REC","1LU3");
 	    pdb = MmtfReader.downloadMmtfFiles(pdbIds, sc);
 	}
@@ -61,16 +61,13 @@ public class ResolutionFilterTest {
 	}
 	
 	@Test
-	/**
-	 * The resolution is the x-ray resolution. Therefore, it should match EM resolution (5KHE)
-	 */
 	public void test3() {
-	    pdb = pdb.filter(new Resolution(34.99, 35.01));    
+	    pdb = pdb.filter(new Resolution(16.7, 16.9));    
 	    List<String> results = pdb.keys().collect();
 	    
 	    assertFalse(results.contains("2ONX"));
 	    assertFalse(results.contains("2OLX"));
 	    assertFalse(results.contains("3REC"));
-	    assertFalse(results.contains("1LU3"));
+	    assertTrue(results.contains("1LU3"));
 	}
 }

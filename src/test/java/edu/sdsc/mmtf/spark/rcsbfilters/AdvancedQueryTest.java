@@ -19,8 +19,8 @@ import edu.sdsc.mmtf.spark.io.MmtfReader;
 import edu.sdsc.mmtf.spark.mappers.StructureToPolymerChains;
 
 public class AdvancedQueryTest {
-	private JavaSparkContext sc;
-	private JavaPairRDD<String, StructureDataInterface> pdb;
+	private static JavaSparkContext sc;
+	private static JavaPairRDD<String, StructureDataInterface> pdb;
 
 	@Before
 	public void setUp() throws Exception {
@@ -110,7 +110,7 @@ public class AdvancedQueryTest {
 	
 	@Test
 	/**
-	 * This test runs a chain level query and compares the results at the PDB entry level
+	 * This test runs a chain level query and compares the results at the PDB chain level
 	 * @throws IOException
 	 */
 	public void test4() throws IOException {

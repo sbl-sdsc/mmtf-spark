@@ -17,7 +17,6 @@ import org.rcsb.mmtf.api.StructureDataInterface;
 
 import edu.sdsc.mmtf.spark.io.MmtfReader;
 import edu.sdsc.mmtf.spark.mappers.StructureToPolymerChains;
-import edu.sdsc.mmtf.spark.rcsbfilters.CustomReportQueryTest;
 
 public class CustomReportQueryTest {
 	private JavaSparkContext sc;

@@ -17,13 +17,13 @@ import org.rcsb.mmtf.api.StructureDataInterface;
 import edu.sdsc.mmtf.spark.io.MmtfReader;
 import edu.sdsc.mmtf.spark.mappers.StructureToPolymerChains;
 
-public class ContainsDnaChainTest {
+public class OrFilterTest {
 	private JavaSparkContext sc;
 	private JavaPairRDD<String, StructureDataInterface> pdb;
 	
 	@Before
 	public void setUp() throws Exception {
-		SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(ContainsDnaChainTest.class.getSimpleName());
+		SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(OrFilterTest.class.getSimpleName());
 	    sc = new JavaSparkContext(conf);
 	    
 	    // 2ONX: only L-protein chain
@@ -31,7 +31,10 @@ public class ContainsDnaChainTest {
 	    // 5X6H: L-protein and non-std. DNA chain
 	    // 5L2G: DNA chain
 	    // 2MK1: D-saccharide
-	    List<String> pdbIds = Arrays.asList("2ONX","1JLP","5X6H","5L2G","2MK1");
+	    // 5UZT: RNA chain (with std. nucleotides)
+	    // 1AA6: contains SEC, selenocysteine (21st amino acid)
+	    // 1NTH: contains PYL, pyrrolysine (22nd amino acid)
+	    List<String> pdbIds = Arrays.asList("2ONX","1JLP","5X6H","5L2G","2MK1","5UZT","1AA6","1NTH");
 	    pdb = MmtfReader.downloadMmtfFiles(pdbIds, sc);
 	}
 
@@ -42,33 +45,8 @@ public class ContainsDnaChainTest {
 
 	@Test
 	public void test1() {
-	    pdb = pdb.filter(new ContainsDnaChain());    
-	    List<String> results = pdb.keys().collect();
-	    
-	    assertFalse(results.contains("2ONX"));
-	    assertFalse(results.contains("1JLP"));
-	    assertTrue(results.contains("5X6H"));
-	    assertTrue(results.contains("5L2G"));
-	    assertFalse(results.contains("2MK1"));
-	}
-	
-	@Test
-	public void test2() {
-	    boolean exclusive = true;
-	    pdb = pdb.filter(new ContainsDnaChain(exclusive));   
-	    List<String> results = pdb.keys().collect();
-	    
-	    assertFalse(results.contains("2ONX"));
-	    assertFalse(results.contains("1JLP"));
-	    assertFalse(results.contains("5X6H"));
-	    assertTrue(results.contains("5L2G"));
-	    assertFalse(results.contains("2MK1"));
-	}
-	
-	@Test
-	public void test3() {
 		pdb = pdb.flatMapToPair(new StructureToPolymerChains());
-	    pdb = pdb.filter(new ContainsDnaChain());    
+	    pdb = pdb.filter(new OrFilter(new ContainsDnaChain(), new ContainsRnaChain()));    
 	    List<String> results = pdb.keys().collect();
 	    
 	    assertFalse(results.contains("2ONX.A"));
@@ -78,5 +56,8 @@ public class ContainsDnaChainTest {
 	    assertTrue(results.contains("5L2G.A"));
 	    assertTrue(results.contains("5L2G.B"));
 	    assertFalse(results.contains("2MK1.A"));
+	    assertTrue(results.contains("5UZT.A"));
+	    assertFalse(results.contains("1AA6.A"));
+	    assertFalse(results.contains("1NTH.A"));
 	}
 }

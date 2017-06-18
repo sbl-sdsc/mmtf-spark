@@ -18,7 +18,6 @@ import org.rcsb.mmtf.api.StructureDataInterface;
 
 import edu.sdsc.mmtf.spark.io.MmtfReader;
 import edu.sdsc.mmtf.spark.mappers.StructureToPolymerChains;
-import edu.sdsc.mmtf.spark.rcsbfilters.BlastClustersTest;
 
 public class BlastClustersTest {
 	private JavaSparkContext sc;
