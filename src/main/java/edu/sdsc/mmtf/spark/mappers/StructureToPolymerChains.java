@@ -51,24 +51,23 @@ public class StructureToPolymerChains implements PairFlatMapFunction<Tuple2<Stri
 	@Override
 	public Iterator<Tuple2<String, StructureDataInterface>> call(Tuple2<String, StructureDataInterface> t) throws Exception {
 		StructureDataInterface structure = t._2;
-		Set<String> seqSet = new HashSet<>();
-		
-		int numChains = structure.getChainsPerModel()[0];
-		
+
 		// precalculate indices
+		int numChains = structure.getChainsPerModel()[0];
 		int[] chainToEntityIndex = getChainToEntityIndex(structure);
 		int[] atomsPerChain = new int[numChains];
 		int[] bondsPerChain = new int[numChains];
-		getNumAtomsAndBond(structure, atomsPerChain, bondsPerChain);
+		getNumAtomsAndBonds(structure, atomsPerChain, bondsPerChain);
 		
 		List<Tuple2<String, StructureDataInterface>> chainList = new ArrayList<>();
-
+		Set<String> seqSet = new HashSet<>();
+		
 		for (int i = 0, atomCounter = 0, groupCounter = 0; i < numChains; i++){	
-			AdapterToStructureData adapterToStructureData = new AdapterToStructureData();
+			AdapterToStructureData polymerChain = new AdapterToStructureData();
 			
 			int entityToChainIndex = chainToEntityIndex[i];
 			boolean polymer = structure.getEntityType(entityToChainIndex).equals("polymer");
-			int polymerAtomCount = -1;
+			int polymerAtomCount = 0;
 
 			Map<Integer, Integer> atomMap = new HashMap<>();
 
@@ -79,25 +78,25 @@ public class StructureToPolymerChains implements PairFlatMapFunction<Tuple2<Stri
 						"." + structure.getChainIds()[i] + "." + (entityToChainIndex+1);
 				
 				// set header
-				adapterToStructureData.initStructure(bondsPerChain[i], atomsPerChain[i], 
+				polymerChain.initStructure(bondsPerChain[i], atomsPerChain[i], 
 						structure.getGroupsPerChain()[i], 1, 1, structureId);
-				DecoderUtils.addXtalographicInfo(structure, adapterToStructureData);
-				DecoderUtils.addHeaderInfo(structure, adapterToStructureData);	
+				DecoderUtils.addXtalographicInfo(structure, polymerChain);
+				DecoderUtils.addHeaderInfo(structure, polymerChain);	
 
 				// set model info (only one model: 0)
-				adapterToStructureData.setModelInfo(0, 1);
+				polymerChain.setModelInfo(0, 1);
 
 				// set entity and chain info
-				adapterToStructureData.setEntityInfo(new int[]{0}, structure.getEntitySequence(entityToChainIndex), 
+				polymerChain.setEntityInfo(new int[]{0}, structure.getEntitySequence(entityToChainIndex), 
 						structure.getEntityDescription(entityToChainIndex), structure.getEntityType(entityToChainIndex));
-				adapterToStructureData.setChainInfo(structure.getChainIds()[i], structure.getChainNames()[i], structure.getGroupsPerChain()[i]);
+				polymerChain.setChainInfo(structure.getChainIds()[i], structure.getChainNames()[i], structure.getGroupsPerChain()[i]);
 			}
 
 			for (int j = 0; j < structure.getGroupsPerChain()[i]; j++, groupCounter++){
 				int groupIndex = structure.getGroupTypeIndices()[groupCounter];
 				if (polymer) {
 					// set group info
-					adapterToStructureData.setGroupInfo(structure.getGroupName(groupIndex), structure.getGroupIds()[groupCounter], 
+					polymerChain.setGroupInfo(structure.getGroupName(groupIndex), structure.getGroupIds()[groupCounter], 
 							structure.getInsCodes()[groupCounter], structure.getGroupChemCompType(groupIndex), structure.getNumAtomsInGroup(groupIndex),
 							structure.getGroupBondOrders(groupIndex).length, structure.getGroupSingleLetterCode(groupIndex), structure.getGroupSequenceIndices()[groupCounter], 
 							structure.getSecStructList()[groupCounter]);
@@ -106,9 +105,10 @@ public class StructureToPolymerChains implements PairFlatMapFunction<Tuple2<Stri
 				for (int k = 0; k < structure.getNumAtomsInGroup(groupIndex); k++, atomCounter++){
 					if (polymer) {
 						// set atom info
+						atomMap.put(atomCounter, polymerAtomCount);
 						polymerAtomCount++;
-						atomMap.put(atomCounter,  polymerAtomCount);
-						adapterToStructureData.setAtomInfo(structure.getGroupAtomNames(groupIndex)[k], structure.getAtomIds()[atomCounter], structure.getAltLocIds()[atomCounter], 
+						
+						polymerChain.setAtomInfo(structure.getGroupAtomNames(groupIndex)[k], structure.getAtomIds()[atomCounter], structure.getAltLocIds()[atomCounter], 
 								structure.getxCoords()[atomCounter], structure.getyCoords()[atomCounter], structure.getzCoords()[atomCounter], 
 								structure.getOccupancies()[atomCounter], structure.getbFactors()[atomCounter], structure.getGroupElementNames(groupIndex)[k], structure.getGroupAtomCharges(groupIndex)[k]);
 					}
@@ -116,18 +116,18 @@ public class StructureToPolymerChains implements PairFlatMapFunction<Tuple2<Stri
 
 				if (polymer) {
 					// add intra-group bond info
-					for(int l=0; l<structure.getGroupBondOrders(groupIndex).length; l++){
-						int bondOrder = structure.getGroupBondOrders(groupIndex)[l];
+					for (int l = 0; l < structure.getGroupBondOrders(groupIndex).length; l++) {
 						int bondIndOne = structure.getGroupBondIndices(groupIndex)[l*2];
 						int bondIndTwo = structure.getGroupBondIndices(groupIndex)[l*2+1];
-						adapterToStructureData.setGroupBond(bondIndOne, bondIndTwo, bondOrder);
+						int bondOrder = structure.getGroupBondOrders(groupIndex)[l];
+						polymerChain.setGroupBond(bondIndOne, bondIndTwo, bondOrder);
 					}
 				}
 			}
 
 			if (polymer) {
 				// Add inter-group bond info
-				for(int ii=0; ii<structure.getInterGroupBondOrders().length;ii++){
+				for(int ii = 0; ii < structure.getInterGroupBondOrders().length; ii++){
 					int bondIndOne = structure.getInterGroupBondIndices()[ii*2];
 					int bondIndTwo = structure.getInterGroupBondIndices()[ii*2+1];
 					int bondOrder = structure.getInterGroupBondOrders()[ii];
@@ -135,12 +135,12 @@ public class StructureToPolymerChains implements PairFlatMapFunction<Tuple2<Stri
 					if (indexOne != null) {
 						Integer indexTwo = atomMap.get(bondIndTwo);
 						if (indexTwo != null) {
-							adapterToStructureData.setInterGroupBond(indexOne, indexTwo, bondOrder);
+							polymerChain.setInterGroupBond(indexOne, indexTwo, bondOrder);
 						}
 					}
 				}
 
-				adapterToStructureData.finalizeStructure();
+				polymerChain.finalizeStructure();
 				
 				String chId = structure.getChainNames()[i];
 				if (useChainIdInsteadOfChainName) {
@@ -154,7 +154,7 @@ public class StructureToPolymerChains implements PairFlatMapFunction<Tuple2<Stri
 	                seqSet.add(structure.getEntitySequence(chainToEntityIndex[i]));
 				}
 				
-				chainList.add(new Tuple2<String, StructureDataInterface>(structure.getStructureId() + "." + chId, adapterToStructureData));
+				chainList.add(new Tuple2<String, StructureDataInterface>(structure.getStructureId() + "." + chId, polymerChain));
 			}
 		}
 
@@ -164,7 +164,7 @@ public class StructureToPolymerChains implements PairFlatMapFunction<Tuple2<Stri
 	/**
 	 * Gets the number of atoms and bonds per chain.
 	 */
-	private static void getNumAtomsAndBond(StructureDataInterface structure, int[] atomsPerChain, int[] bondsPerChain) {
+	private static void getNumAtomsAndBonds(StructureDataInterface structure, int[] atomsPerChain, int[] bondsPerChain) {
 		int numChains = structure.getChainsPerModel()[0];
 
 		for (int i = 0, groupCounter = 0; i < numChains; i++){	

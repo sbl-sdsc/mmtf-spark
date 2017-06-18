@@ -29,10 +29,12 @@ public class FilterExclusivelyByLProteins {
 	    SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(FilterExclusivelyByLProteins.class.getSimpleName());
 	    JavaSparkContext sc = new JavaSparkContext(conf);
 	    		 
+	    boolean exclusive = true;
+	    
 	    long count = MmtfReader
 	    		.readSequenceFile(path, sc) // read MMTF hadoop sequence file
 	    		// retain pdb entries that exclusively (flag set to true) contain L-peptide chains
-	    		.filter(new ContainsLProteinChain(true)) 
+	    		.filter(new ContainsLProteinChain(exclusive)) 
 	    		.count();
 	    
 	    System.out.println("# L-proteins: " + count);
