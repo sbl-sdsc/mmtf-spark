@@ -25,7 +25,7 @@ import scala.Tuple2;
 public class StructureToPolymerChains implements PairFlatMapFunction<Tuple2<String,StructureDataInterface>,String, StructureDataInterface> {
 	private static final long serialVersionUID = -5979145207983266913L;
 	private boolean useChainIdInsteadOfChainName = false;
-	private boolean removeDuplicates = false;
+	private boolean excludeDuplicates = false;
 
 	/**
 	 * Extracts all polymer chains from a structure. A key is assigned to
@@ -40,12 +40,13 @@ public class StructureToPolymerChains implements PairFlatMapFunction<Tuple2<Stri
 	 * assigned to each molecular entity in an mmCIF file. This Chain ID corresponds to
 	 * <a href="http://mmcif.wwpdb.org/dictionaries/mmcif_mdb.dic/Items/_atom_site.label_asym_id.html">
 	 * _atom_site.label_asym_id</a> field in an mmCIF file.
+	 * 
 	 * @param useChainIdInsteadOfChainName if true, use the Chain Id in the key assignments
-	 * @param removeDuplicates if true, return only one chain for each unique sequence
+	 * @param excludeDuplicates if true, return only one chain for each unique sequence
 	 */
-	public StructureToPolymerChains(boolean useChainIdInsteadOfChainName, boolean removeDuplicates) {
+	public StructureToPolymerChains(boolean useChainIdInsteadOfChainName, boolean excludeDuplicates) {
 		this.useChainIdInsteadOfChainName = useChainIdInsteadOfChainName;
-		this.removeDuplicates = removeDuplicates;
+		this.excludeDuplicates = excludeDuplicates;
 	}
 	
 	@Override
@@ -147,7 +148,7 @@ public class StructureToPolymerChains implements PairFlatMapFunction<Tuple2<Stri
 					chId = structure.getChainIds()[i];
 				}
 
-				if (removeDuplicates) {
+				if (excludeDuplicates) {
 					if (seqSet.contains(structure.getEntitySequence(chainToEntityIndex[i]))) {
 						continue;
 					}

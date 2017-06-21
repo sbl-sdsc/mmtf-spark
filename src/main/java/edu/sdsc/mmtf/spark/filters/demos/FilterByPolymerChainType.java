@@ -3,7 +3,7 @@ package edu.sdsc.mmtf.spark.filters.demos;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
 
-import edu.sdsc.mmtf.spark.filters.ContainsDSaccharide;
+import edu.sdsc.mmtf.spark.filters.ContainsDSaccharideChain;
 import edu.sdsc.mmtf.spark.filters.ContainsLProteinChain;
 import edu.sdsc.mmtf.spark.filters.ContainsPolymerChainType;
 import edu.sdsc.mmtf.spark.filters.NotFilter;
@@ -37,7 +37,7 @@ public class FilterByPolymerChainType {
 	    	 // find chains that contain DNA, RNA, or both
 	    	.filter(new ContainsPolymerChainType("DNA LINKING","RNA LINKING")) 
 	    	.filter(new NotFilter(new ContainsLProteinChain()))
-	    	.filter(new NotFilter(new ContainsDSaccharide()))
+	    	.filter(new NotFilter(new ContainsDSaccharideChain()))
 	    .count();
 	    
 	    System.out.println("# pure DNA and RNA entries: " + count);

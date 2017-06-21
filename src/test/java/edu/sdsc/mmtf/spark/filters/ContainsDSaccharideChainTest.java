@@ -42,7 +42,7 @@ public class ContainsDSaccharideChainTest {
 
 	@Test
 	public void test1() {
-	    pdb = pdb.filter(new ContainsDSaccharide());    
+	    pdb = pdb.filter(new ContainsDSaccharideChain());    
 	    List<String> results = pdb.keys().collect();
 	    
 	    assertFalse(results.contains("2ONX"));
@@ -55,7 +55,7 @@ public class ContainsDSaccharideChainTest {
 	@Test
 	public void test2() {
 		pdb = pdb.flatMapToPair(new StructureToPolymerChains());
-	    pdb = pdb.filter(new ContainsDSaccharide());    
+	    pdb = pdb.filter(new ContainsDSaccharideChain());    
 	    List<String> results = pdb.keys().collect();
 	    
 	    assertFalse(results.contains("2ONX.A"));

@@ -15,7 +15,7 @@ import scala.Tuple2;
  * @author Peter Rose
  *
  */
-public class ContainsDSaccharide implements Function<Tuple2<String, StructureDataInterface>, Boolean> {
+public class ContainsDSaccharideChain implements Function<Tuple2<String, StructureDataInterface>, Boolean> {
 	private static final long serialVersionUID = -2323293283758321260L;
 	private ContainsPolymerChainType filter;
 
@@ -23,7 +23,7 @@ public class ContainsDSaccharide implements Function<Tuple2<String, StructureDat
 	 * Default constructor matches any entry that contains at least one chain made of D-saccharides.
 	 * As an example, a glycosylated protein complex passes this filter.
 	 */
-	public ContainsDSaccharide() {
+	public ContainsDSaccharideChain() {
 		this(false);
 	}
 	
@@ -32,7 +32,7 @@ public class ContainsDSaccharide implements Function<Tuple2<String, StructureDat
 	 * For example, with "exclusive" set to true, an D-saccharide/protein does not pass this filter.
 	 * @param exclusive if true, only return entries that are exclusively contain D-saccharide chains
 	 */
-	public ContainsDSaccharide(boolean exclusive) {
+	public ContainsDSaccharideChain(boolean exclusive) {
 		this.filter = new ContainsPolymerChainType(exclusive, 
 				ContainsPolymerChainType.D_SACCHARIDE, 
 				ContainsPolymerChainType.SACCHARIDE, // should this be excluded?

@@ -11,12 +11,13 @@ import scala.Tuple2;
  * This filter returns entries that contain polymer chain(s) with the specified fraction of
  * secondary structure assignments, obtained by DSSP. Note, DSSP secondary structure
  * in MMTF files is assigned by the BioJava implementation of DSSP. It may differ in some 
- * cases from the original DSSP implemetation.
+ * cases from the original DSSP implementation.
  * 
  * The default constructor returns entries that contain at least one 
  * polymer chain that matches the criteria. If the "exclusive" flag is set to true 
  * in the constructor, all polymer chains must match the criteria. For a multi-model structure,
  * this filter only checks the first model.
+ * 
  * @author Peter Rose
  *
  */
@@ -37,7 +38,7 @@ public class SecondaryStructure implements Function<Tuple2<String, StructureData
 				sheetFractionMin, sheetFractionMax,
 				coilFractionMin, coilFractionMax, false);
 	}
-	
+
 	public SecondaryStructure(double helixFractionMin, double helixFractionMax, 
 			double sheetFractionMin, double sheetFractionMax,
 			double coilFractionMin, double coilFractionMax, boolean exclusive) {
@@ -59,12 +60,13 @@ public class SecondaryStructure implements Function<Tuple2<String, StructureData
 		int numChains = structure.getChainsPerModel()[0]; // only check first model
 		int[] secStruct = structure.getSecStructList();	
 
-		
+
 		for (int i = 0, groupCounter = 0; i < numChains; i++) {		
 			double helix = 0;
 			double sheet = 0;
 			double coil = 0;
-		
+			int other = 0;
+
 			boolean match = true;	
 			String chainType = EncoderUtils.getTypeFromChainId(structure, i);
 			boolean polymer = chainType.equals("polymer");
@@ -75,12 +77,12 @@ public class SecondaryStructure implements Function<Tuple2<String, StructureData
 				match = false;
 			}
 
-		    for (int j = 0; j < structure.getGroupsPerChain()[i]; j++, groupCounter++) {	
-		    	
+			for (int j = 0; j < structure.getGroupsPerChain()[i]; j++, groupCounter++) {	
+
 				if (match && polymer) {
 					int code = secStruct[groupCounter];
 					switch (DsspSecondaryStructure.getQ3Code(code)) {
-					
+
 					case ALPHA_HELIX:
 						helix++;
 						break;
@@ -91,19 +93,22 @@ public class SecondaryStructure implements Function<Tuple2<String, StructureData
 						coil++;
 						break;
 					default:
+						other++;
 						break;
 					}
 				}
 			}
 
-		    if (match && polymer) {
-		    	helix /= structure.getGroupsPerChain()[i];
-		    	sheet /= structure.getGroupsPerChain()[i];
-		    	coil /= structure.getGroupsPerChain()[i];
+			if (match && polymer) {
+				int n = (structure.getGroupsPerChain()[i] - other);
+				helix /= n;
+				sheet /= n;
+				coil /= n;
 
-		    	match = helix >= helixFractionMin && helix <= helixFractionMax && sheet >= sheetFractionMin
-		    			&& sheet <= sheetFractionMax && coil >= coilFractionMin && coil <= coilFractionMax;
-		    }
+				match = helix >= helixFractionMin && helix <= helixFractionMax 
+						&& sheet >= sheetFractionMin && sheet <= sheetFractionMax 
+						&& coil >= coilFractionMin && coil <= coilFractionMax;
+			}
 
 			if (polymer && match && ! exclusive) {
 				return true;
@@ -111,7 +116,7 @@ public class SecondaryStructure implements Function<Tuple2<String, StructureData
 			if (polymer && ! match && exclusive) {
 				return false;
 			}
-			
+
 			if (match) {
 				globalMatch = true;
 			}

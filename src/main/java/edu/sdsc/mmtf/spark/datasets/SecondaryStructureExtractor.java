@@ -33,16 +33,19 @@ public class SecondaryStructureExtractor {
 	public static Dataset<Row> getDataset(JavaPairRDD<String, StructureDataInterface> structure) {
 		JavaRDD<Row> rows = structure.map(t -> getSecStructFractions(t));
         return JavaRDDToDataset.getDataset(rows,"structureChainId","sequence","alpha","beta","coil");
- //       return JavaRDDToDataset.getDataset(rows,"structureChainId","alpha","beta","coil");
 	}
 
 	private static Row getSecStructFractions(Tuple2<String, StructureDataInterface> t) {
 		String key = t._1;
 		StructureDataInterface structure = t._2;
 		
+		if (t._2.getNumChains() > 1) {
+			throw new IllegalArgumentException("This method can only be applied to single polymer chains.");
+		}
 		float helix = 0;
 		float sheet = 0;
 		float coil = 0;
+		int other = 0;
 
 		for (int code: structure.getSecStructList()) {
 			switch (DsspSecondaryStructure.getQ3Code(code)) {
@@ -57,17 +60,18 @@ public class SecondaryStructureExtractor {
 				coil++;
 				break;
 			default:
+				other++;
 				break;
 			}
 		}
 		
 		// TODO if a full structure is the input, the fraction is
 		// different from using just a chain??
-		helix /= structure.getSecStructList().length;
-		sheet /= structure.getSecStructList().length;
-		coil /= structure.getSecStructList().length;	
+		int n = structure.getSecStructList().length - other;
+		helix /= n;
+		sheet /= n;
+		coil /= n;	
 
 		return RowFactory.create(key, structure.getEntitySequence(0), helix, sheet, coil);
-//		return RowFactory.create(key, helix, sheet, coil);
 	}
 }
