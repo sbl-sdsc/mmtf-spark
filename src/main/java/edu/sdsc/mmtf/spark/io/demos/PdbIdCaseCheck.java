@@ -10,13 +10,12 @@ import org.rcsb.mmtf.api.StructureDataInterface;
 import edu.sdsc.mmtf.spark.io.MmtfReader;
 
 /**
- * Example reading a list of PDB IDs from a local 
- * reduced MMTF Hadoop sequence file into a JavaPairRDD.
+ * Check hadoop sequence file for lower case PDB IDs.
  * 
  * @author Peter Rose
  *
  */
-public class TestReduced {
+public class PdbIdCaseCheck {
 
 	public static void main(String[] args) {  
 
@@ -28,21 +27,28 @@ public class TestReduced {
 		}
 
 		// instantiate Spark. Each Spark application needs these two lines of code.
-		SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(TestReduced.class.getSimpleName());
+		SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(PdbIdCaseCheck.class.getSimpleName());
 		JavaSparkContext sc = new JavaSparkContext(conf);
 
 		JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.readSequenceFile(path, sc);
-		List<String> pdbIds = pdb.keys().collect();
+		List<String> idsInValue = pdb.map(t -> t._2.getStructureId()).collect();
+		List<String> idsInKey = pdb.keys().collect();
 
-		System.out.println("Number of structures: " + pdbIds.size());
+		System.out.println("Number of structures: " + idsInValue.size());
 
-		for (String id: pdbIds) {
+		for (String id: idsInValue) {
 			if (id.equals(id.toLowerCase())) {
-				System.err.println("lower case id: " + id);
+				System.err.println("lower case id in value: " + id);
 			}
-
-			// close Spark
-			sc.close();
 		}
+
+		for (String id: idsInKey) {
+			if (id.equals(id.toLowerCase())) {
+				System.err.println("lower case id in key: " + id);
+			}
+		}
+
+		// close Spark
+		sc.close();
 	}
 }
