@@ -36,7 +36,8 @@ public class GroupInteractionExtractor {
 	/**
 	 * Returns a dataset of residues that interact with the specified group within
 	 * a specified cutoff distance.
-	 * @param structures
+	 * 
+	 * @param structures a set of PDB structures
 	 * @return dataset with interacting residue and atom information
 	 */
 	public Dataset<Row> getDataset(JavaPairRDD<String, StructureDataInterface> structures) {

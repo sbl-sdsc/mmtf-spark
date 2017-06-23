@@ -59,10 +59,11 @@ public class ProteinFoldDatasetCreator {
 		JavaSparkContext sc = new JavaSparkContext(conf);
 		
 		// read MMTF Hadoop sequence file and create a non-redundant set (<=40% seq. identity)
-		// of L-protein chains with standard amino acids
+		// of L-protein chains
 		int sequenceIdentity = 40;
 		double fraction = 0.1;
 		long seed = 123;
+		
 		JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader
 				.readSequenceFile(path, fraction, seed, sc)
 				.filter(new BlastClusters(sequenceIdentity)) // this filters by pdb id using a non-redundant "BlastClust" subset

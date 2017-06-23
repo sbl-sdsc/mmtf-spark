@@ -25,7 +25,7 @@ import edu.sdsc.mmtf.spark.rcsbfilters.BlastClusters;
 public class AtpInteractionAnalysis {
 
 	/**
-	 * @param args
+	 * @param args input arguments
 	 * @throws IOException 
 	 */
 	public static void main(String[] args) throws IOException {
@@ -77,7 +77,7 @@ public class AtpInteractionAnalysis {
         System.out.println("Top interacting group/atoms types");
  
         Dataset<Row> topGroupsAndAtoms = interactions
-        		.filter("atom1 like('O%G')")
+ // TODO already filtered above       		.filter("atom1 like('O%G')")
         		.groupBy("residue2","atom2")
         		.count();
 

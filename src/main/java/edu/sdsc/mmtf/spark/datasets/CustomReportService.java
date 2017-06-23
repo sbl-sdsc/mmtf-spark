@@ -20,16 +20,18 @@ import org.apache.spark.sql.SparkSession;
  * and annotations for all current entries in the Protein Data Bank.
  * See <a href="http://www.rcsb.org/pdb/results/reportField.do">for list of supported
  * field names.</a>
- * Reference: The RCSB Protein Data Bank: redesigned web site and web services 2011
+ * <p>Reference: The RCSB Protein Data Bank: redesigned web site and web services 2011
  * Nucleic Acids Res. 39: D392-D401.
  * See <a href="https://dx.doi.org/10.1093/nar/gkq1021">doi:10.1093/nar/gkq1021</a>
  * 
- * Example: Retrieve PubMedCentral, PubMed ID, and Deposition date
- * 
- *		Dataset<Row> ds = CustomReportService.getDataset("pmc","pubmedId","depositionDate");
- *      ds.printSchema();
- *      ds.show(5);
- *
+ * <p>Example: Retrieve PubMedCentral, PubMed ID, and Deposition date
+ * <pre>
+ * {@code
+ * Dataset<Row> ds = CustomReportService.getDataset("pmc","pubmedId","depositionDate");
+ * ds.printSchema();
+ * ds.show(5);
+ * }
+ * </pre>
  * @author Peter Rose
  * 
  */
@@ -40,11 +42,11 @@ public class CustomReportService {
 	/**
 	 * Returns a dataset with the specified columns for all current PDB entries.
 	 * See <a href="https://www.rcsb.org/pdb/results/reportField.do"> for list of supported
-     * field names.
+     * field names</a>
      * 
-	 * @param columnNames
+	 * @param columnNames names of the columns for the dataset
 	 * @return dataset with the specified columns
-	 * @throws IOException
+	 * @throws IOException when temporary csv file cannot be created
 	 */
 	public static Dataset<Row> getDataset(String... columnNames) throws IOException {	
 		// form query URL
@@ -58,7 +60,6 @@ public class CustomReportService {
 		
 		SparkSession spark = SparkSession
 	    		.builder()
-//	    		.master("local[*]")
 	    		.getOrCreate();
 		
 		// load temporary CSV file into Spark dataset
@@ -91,7 +92,7 @@ public class CustomReportService {
 	* Posts PDB Ids and fields in a query string to the RESTful RCSB web service.
 	*
 	* @param url RESTful query URL
-	* @return InputStream 
+	* @return input stream to response
 	*/
    	private static InputStream postQuery(String url) throws IOException
 	{
@@ -124,9 +125,10 @@ public class CustomReportService {
    /** 
    	* Does a POST to a URL and returns the response stream for further processing elsewhere.
 	*
-	* @param url
-	* @return
-	* @throws IOException
+	* @param url RESTFul url
+	* @param data the data to be posted
+	* @return input stream to response
+	* @throws IOException if it cannot open connection
 	*/
 	public static InputStream doPOST(URL url, String data)
 		throws IOException
@@ -140,6 +142,7 @@ public class CustomReportService {
 
 		wr.write(data);
 		wr.flush();
+		wr.close();
 
 		// Get the response
 		return conn.getInputStream();

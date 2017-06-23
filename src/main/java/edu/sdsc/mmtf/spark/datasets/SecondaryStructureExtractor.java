@@ -16,14 +16,18 @@ import scala.Tuple2;
  * (alpha, beta, coil) derived from the DSSP secondary structure
  * assignment. The dataset consists of three columns
  * with the fraction of alpha, beta, and coil within
- * a chain. The input to this class should be a single protein chain.
+ * a chain. The input to this class must be a single protein chain.
  * 
- * Example: get dataset of secondary structure
+ * <p>Example: get dataset of secondary structure
+ * <pre>
+ * {@code
  * pdb.flatMapToPair(new StructureToPolymerChains())
  *    .filter(new ContainsLProteinChain());
  *    
  * Dataset<Row> secStruct = SecondaryStructureExtractor.getDataset(pdb);
- * protSeq.show(10);
+ * secStruct.show(10);
+ * }
+ * </pre>
  * 
  * @author Peter Rose
  *
@@ -65,8 +69,6 @@ public class SecondaryStructureExtractor {
 			}
 		}
 		
-		// TODO if a full structure is the input, the fraction is
-		// different from using just a chain??
 		int n = structure.getSecStructList().length - other;
 		helix /= n;
 		sheet /= n;

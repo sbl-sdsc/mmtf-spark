@@ -12,7 +12,9 @@ import org.rcsb.mmtf.api.StructureDataInterface;
 import scala.Tuple2;
 
 /**
- * Convert a full format of the file to a reduced format.
+ * Finds interactions of a specified group within a specified
+ * cutoff distance.
+ * 
  * @author Peter Rose
  *
  */
@@ -31,21 +33,23 @@ public class StructureToAllInteractions implements  FlatMapFunction<Tuple2<Strin
 		String structureId = t._1;
 		StructureDataInterface structure = t._2;
 		
+		// get index to first atom in each group and group name
 		List<Integer> groupIndices = new ArrayList<>();
 		List<String> groupNames = new ArrayList<>();		
 		getGroupIndices(structure, groupIndices, groupNames);		
 
-		List<Row> neighbors = new ArrayList<>();
+		List<Row> interactions = new ArrayList<>();
+		
 		for (int i = 0; i < groupNames.size(); i++) {
 			if (groupNames.get(i).equals(groupName)) {
 				List<Integer> matches = new ArrayList<>();
 				float[] boundingBox = calcBoundingBox(structure, groupIndices, i, cutoffDistance);
 				matches.addAll(findNeighbors(structure, i, boundingBox, groupIndices));
-				neighbors.addAll(getDistanceProfile(structureId, matches, i, groupIndices, groupNames, structure));
+				interactions.addAll(getDistanceProfile(structureId, matches, i, groupIndices, groupNames, structure));
 			}
 		}
 		
-		return neighbors.iterator();
+		return interactions.iterator();
 	}
 	
 	private List<Row> getDistanceProfile(String structureId, List<Integer> matches, int index, List<Integer> groupIndices, List<String> groupNames, StructureDataInterface structure) {
@@ -62,6 +66,7 @@ public class StructureToAllInteractions implements  FlatMapFunction<Tuple2<Strin
 		
 		List<Row> rows = new ArrayList<>();
 		for (int i: matches) {
+			// exclude self interactions
 			if (i == index) {
 				continue;
 			}
@@ -151,22 +156,30 @@ public class StructureToAllInteractions implements  FlatMapFunction<Tuple2<Strin
 
 	}
 
+	/**
+	 * Creates an atom index to the first atom of each group
+	 * 
+	 * @param structure
+	 * @param groupIndices index to first atom in group
+	 * @param groupNames group name
+	 */
 	private void getGroupIndices(StructureDataInterface structure, List<Integer> groupIndices,
 			List<String> groupNames) {
-		int atomCounter= 0;
-		int groupCounter= 0;
+		
+		// consider only first model
 		int numChains = structure.getChainsPerModel()[0];
 		
 		// add start index for first group
 		groupIndices.add(0);
 
-		for (int i = 0; i < numChains; i++) {			
-			for (int j = 0; j < structure.getGroupsPerChain()[i]; j++) {
+		// loop over all chains
+		for (int i = 0, atomCounter = 0, groupCounter = 0; i < numChains; i++) {
+			// loop over all groups in chain
+			for (int j = 0; j < structure.getGroupsPerChain()[i]; j++, groupCounter++) {
 				int groupIndex = structure.getGroupTypeIndices()[groupCounter];
 				groupNames.add(structure.getGroupName(groupIndex));
-				atomCounter+= structure.getNumAtomsInGroup(groupIndex);
+				atomCounter += structure.getNumAtomsInGroup(groupIndex);
 				groupIndices.add(atomCounter);
-				groupCounter++;	
 			}
 		}
 	}

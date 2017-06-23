@@ -23,7 +23,7 @@ import edu.sdsc.mmtf.spark.rcsbfilters.BlastClusters;
  * @author Peter Rose
  *
  */
-public class MetalInteractionAnalysis {
+public class InteractionAnalysisAdvanced {
 
 	/**
 	 * @param args
@@ -39,7 +39,7 @@ public class MetalInteractionAnalysis {
 	     
 	    long start = System.nanoTime();
 	    
-	    SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(MetalInteractionAnalysis.class.getSimpleName());
+	    SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(InteractionAnalysisAdvanced.class.getSimpleName());
 	    JavaSparkContext sc = new JavaSparkContext(conf);
 	    
 	    // read PDB in MMTF format
