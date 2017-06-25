@@ -47,7 +47,7 @@ public class AtpInteractionAnalysis {
 	    // filter by sequence identity subset
 	    pdb = pdb.filter(new BlastClusters(40));
 	    
-	    // find Zinc interactions within 3 Angstroms
+	    // find ATP interactions within 3 Angstroms
 	    GroupInteractionExtractor finder = new GroupInteractionExtractor("ATP", 3);
 	    Dataset<Row> interactions = finder.getDataset(pdb).cache();
 	    
@@ -77,7 +77,6 @@ public class AtpInteractionAnalysis {
         System.out.println("Top interacting group/atoms types");
  
         Dataset<Row> topGroupsAndAtoms = interactions
- // TODO already filtered above       		.filter("atom1 like('O%G')")
         		.groupBy("residue2","atom2")
         		.count();
 
