@@ -25,8 +25,8 @@ import edu.sdsc.mmtf.spark.rcsbfilters.BlastClusters;
 public class InteractionAnalysisSimple {
 
 	/**
-	 * @param args
-	 * @throws IOException 
+	 * @param args no input arguments
+	 * @throws IOException if MmtfReader fails
 	 */
 	public static void main(String[] args) throws IOException {
 

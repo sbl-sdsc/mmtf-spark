@@ -1,8 +1,7 @@
 /**
+ * Demos of file reading and writing.
  * 
- */
-/**
- * @author peter
+ * @author Peter Rose
  *
  */
 package edu.sdsc.mmtf.spark.io.demos;

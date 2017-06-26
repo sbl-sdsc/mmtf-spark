@@ -1,8 +1,7 @@
 /**
+ * Demos of filter functions.
  * 
- */
-/**
- * @author peter
+ * @author Peter Rose
  *
  */
 package edu.sdsc.mmtf.spark.filters.demos;

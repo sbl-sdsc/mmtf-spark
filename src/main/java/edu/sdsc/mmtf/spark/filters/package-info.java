@@ -1,8 +1,7 @@
 /**
+ * Classes to filter structures.
  * 
- */
-/**
- * @author peter
+ * @author Peter Rose
  *
  */
 package edu.sdsc.mmtf.spark.filters;

@@ -1,8 +1,7 @@
 /**
+ * Classes that perform mapping transformations.
  * 
- */
-/**
- * @author peter
+ * @author Peter Rose
  *
  */
 package edu.sdsc.mmtf.spark.mappers;

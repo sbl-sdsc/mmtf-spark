@@ -1,8 +1,7 @@
 /**
+ * Classes that use Spark Machine Learning methods.
  * 
- */
-/**
- * @author peter
+ * @author Peter Rose
  *
  */
 package edu.sdsc.mmtf.spark.ml;

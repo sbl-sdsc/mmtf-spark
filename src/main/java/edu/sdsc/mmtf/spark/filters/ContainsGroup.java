@@ -23,7 +23,7 @@ public class ContainsGroup implements Function<Tuple2<String, StructureDataInter
 
 	/**
 	 * This constructor accepts a comma separated list of group names, e.g., "ATP","ADP"
-	 * @param groups
+	 * @param groups list of group names
 	 */
 	public ContainsGroup(String...groups) {
 		this.groupQuery = new HashSet<>(Arrays.asList(groups));

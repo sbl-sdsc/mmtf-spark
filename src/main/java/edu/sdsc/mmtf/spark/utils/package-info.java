@@ -1,8 +1,7 @@
 /**
+ * Utility classes.
  * 
- */
-/**
- * @author peter
+ * @author Peter Rose
  *
  */
 package edu.sdsc.mmtf.spark.utils;

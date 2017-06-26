@@ -1,8 +1,7 @@
 /**
+ * Demos of datasets.
  * 
- */
-/**
- * @author peter
+ * @author Peter Rose
  *
  */
 package edu.sdsc.mmtf.spark.datasets.demos;

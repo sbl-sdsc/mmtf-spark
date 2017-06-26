@@ -26,8 +26,8 @@ import edu.sdsc.mmtf.spark.rcsbfilters.BlastClusters;
 public class InteractionAnalysisAdvanced {
 
 	/**
-	 * @param args
-	 * @throws IOException 
+	 * @param args no input arguments
+	 * @throws IOException if reading of BlastClusters fails
 	 */
 	public static void main(String[] args) throws IOException {
 

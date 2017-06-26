@@ -89,6 +89,7 @@ public class ContainsPolymerChainType implements Function<Tuple2<String, Structu
 	/**
 	 * Optional constructor that can be used to filter entries that exclusively match all chains.
 	 * @param exclusive if true, all chains must match the specified monomer types.
+	 * @param monomerTypes list of monomer types
 	 */
 	public ContainsPolymerChainType(boolean exclusive, String...monomerType) {
 		this.exclusive = exclusive;

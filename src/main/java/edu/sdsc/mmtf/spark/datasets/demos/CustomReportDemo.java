@@ -24,8 +24,8 @@ import edu.sdsc.mmtf.spark.datasets.CustomReportService;
 public class CustomReportDemo {
 
 	/**
-	 * @param args
-	 * @throws IOException 
+	 * @param args no input arguments
+	 * @throws IOException if custom report web service fails
 	 */
 	public static void main(String[] args) throws IOException {    
 	    long start = System.nanoTime();

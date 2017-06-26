@@ -1,7 +1,6 @@
 /**
+ * Demos for Spark Machine Learning.
  * 
- */
-/**
  * @author Peter Rose
  *
  */

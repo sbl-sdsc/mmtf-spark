@@ -1,8 +1,7 @@
 /**
+ * Demos of mapper functions.
  * 
- */
-/**
- * @author peter
+ * @author Peter Rose
  *
  */
 package edu.sdsc.mmtf.spark.mappers.demos;
