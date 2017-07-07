@@ -36,13 +36,14 @@ public class SecondaryStructureExtractor {
 
 	public static Dataset<Row> getDataset(JavaPairRDD<String, StructureDataInterface> structure) {
 		JavaRDD<Row> rows = structure.map(t -> getSecStructFractions(t));
-        return JavaRDDToDataset.getDataset(rows,"structureChainId","sequence","alpha","beta","coil");
+        return JavaRDDToDataset.getDataset(rows,"structureChainId","sequence","alpha","beta","coil", "dsspQ8Code", "dsspQ3Code");
 	}
 
 	private static Row getSecStructFractions(Tuple2<String, StructureDataInterface> t) {
 		String key = t._1;
 		StructureDataInterface structure = t._2;
-		
+		StringBuilder dsspQ8 = new StringBuilder(structure.getEntitySequence(0).length());
+		StringBuilder dsspQ3 = new StringBuilder(structure.getEntitySequence(0).length());
 		if (t._2.getNumChains() > 1) {
 			throw new IllegalArgumentException("This method can only be applied to single polymer chains.");
 		}
@@ -50,23 +51,44 @@ public class SecondaryStructureExtractor {
 		float sheet = 0;
 		float coil = 0;
 		int other = 0;
-
+		int dsspIndex = 0;
+		int structureIndex = 0;
+		int seqIndex;
+		
 		for (int code: structure.getSecStructList()) {
+			seqIndex = structure.getGroupSequenceIndices()[structureIndex++];
+			while(dsspIndex<seqIndex)
+			{
+				dsspQ8.append("X");
+				dsspQ3.append("X");
+				dsspIndex++;
+			}
+			dsspQ8.append(DsspSecondaryStructure.getDsspCode(code).getOneLetterCode());
+			dsspIndex++;
 			switch (DsspSecondaryStructure.getQ3Code(code)) {
 
 			case ALPHA_HELIX:
 				helix++;
+				dsspQ3.append("H");
 				break;
 			case EXTENDED:
 				sheet++;
+				dsspQ3.append("E");
 				break;
 			case COIL:
 				coil++;
+				dsspQ3.append(" ");
 				break;
 			default:
 				other++;
 				break;
 			}
+		}
+		while(dsspIndex < structure.getEntitySequence(0).length())
+		{
+			dsspQ8.append("X");
+			dsspQ3.append("X");
+			dsspIndex++;
 		}
 		
 		int n = structure.getSecStructList().length - other;
@@ -74,6 +96,6 @@ public class SecondaryStructureExtractor {
 		sheet /= n;
 		coil /= n;	
 
-		return RowFactory.create(key, structure.getEntitySequence(0), helix, sheet, coil);
+		return RowFactory.create(key, structure.getEntitySequence(0), helix, sheet, coil, dsspQ8.toString(), dsspQ3.toString());
 	}
 }
