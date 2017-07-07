@@ -21,7 +21,7 @@ import scala.Tuple2;
  */
 public class Pisces implements Function<Tuple2<String, StructureDataInterface>, Boolean> {
 	
-	private static final long serialVersionUID = -4794067375376198086L;
+	private static final long serialVersionUID = -3962877268210540994L;
 	private Set<String> pdbIds;
 
 	
