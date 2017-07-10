@@ -74,7 +74,10 @@ public class PiscesDownloader implements Serializable {
 	{
 		String fileURL = getFileName();
 		if( fileURL.equals("") ) {
-			throw new IllegalArgumentException("File Not Found: " + fileURL);
+			throw new IllegalArgumentException("\nThe combination of parameters [sequenceIdentity="
+					+ sequenceIdentity + ", resolution=" + resolution + ", rValue=" + rFactor
+					+ "] is unavailable.\nPlease check http://dunbrack.fccc.edu/Guoli/pisces_download.php "
+					+ "for more information.");
 	    }
 		URL u = new URL(fileURL);
 		URLConnection conn = u.openConnection();
