@@ -77,7 +77,7 @@ public class SecondaryStructureExtractor {
 				break;
 			case COIL:
 				coil++;
-				dsspQ3.append(" ");
+				dsspQ3.append("C");
 				break;
 			default:
 				other++;

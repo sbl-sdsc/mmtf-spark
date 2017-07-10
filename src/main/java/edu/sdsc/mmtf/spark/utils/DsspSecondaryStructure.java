@@ -16,7 +16,7 @@ public enum DsspSecondaryStructure {
 	THREE_TEN_HELIX('G', 4),
 	BRIDGE('B', 5),
 	TURN('T', 6),
-	COIL(' ', 7);
+	COIL('C', 7);
 	
 	private final char oneLetterCode;
 	private final int numericCode;
