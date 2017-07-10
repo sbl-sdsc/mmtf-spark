@@ -29,6 +29,7 @@ public class TraverseStructureHierarchy {
 //	    List<String> pdbIds = Arrays.asList("5UTV"); // multiple models
 //	    List<String> pdbIds = Arrays.asList("1BZ1"); // multiple protein chains
 	    List<String> pdbIds = Arrays.asList("1STP"); // single protein chain
+//	    List<String> pdbIds = Arrays.asList("2NBK"); // single protein chain
 	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.downloadMmtfFiles(pdbIds, sc).cache(); 
 	    
 	    pdb.foreach(t -> TraverseStructureHierarchy.demo(t._2));      

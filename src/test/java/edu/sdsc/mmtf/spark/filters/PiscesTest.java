@@ -26,7 +26,7 @@ public class PiscesTest {
 	public void setUp() throws Exception {
 		SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(PolymerCompositionTest.class.getSimpleName());
 	    sc = new JavaSparkContext(conf);
-	    // this file should contain "4X42.A" and "5X42.B"
+	    // "4R4X.A" and "5X42.B" should pass filter
 	    List<String> pdbIds = Arrays.asList("5X42","4R4X","2ONX","1JLP");
 	    pdb = MmtfReader.downloadMmtfFiles(pdbIds, sc);
 	}
@@ -59,5 +59,4 @@ public class PiscesTest {
 	    assertFalse(results.contains("2ONX.A"));
 	    assertFalse(results.contains("1JLP.A"));
 	}
-
 }
