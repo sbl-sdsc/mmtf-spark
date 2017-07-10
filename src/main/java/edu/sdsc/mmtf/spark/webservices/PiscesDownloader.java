@@ -15,7 +15,7 @@ import java.net.URLConnection;
 /**
  * This class downloads representative protein chains from the PISCES 
  * CulledPDB sets. A CulledPDB set is selected by specifying
- * sequenceIdentity, resolution, and rValue cutoff values from the following
+ * sequenceIdentity and resolution cutoff values from the following
  * list:
  * <p> sequenceIdentity = 20, 25, 30, 40, 50, 60, 70, 80, 90
  * <p> resolution = 1.6, 1.8, 2.0, 2.2, 2.5, 3.0
@@ -41,9 +41,9 @@ public class PiscesDownloader implements Serializable {
 	/**
 	 * <p> sequenceIdentity = 20, 25, 30, 40, 50, 60, 70, 80, 90
 	 * <p> resolution = 1.6, 1.8, 2.0, 2.2, 2.5, 3.0
+	 * 
 	 * @param sequenceIdentity sequence identity cutoff value
 	 * @param resolution resolution cutoff value
-	 * @param rValue rValue cutoff value
 	 */
 	public PiscesDownloader(int sequenceIdentity, double resolution)
 	{
