@@ -38,7 +38,7 @@ public class PiscesTest {
 
 	@Test
 	public void test1() throws IOException {
-	    pdb = pdb.filter(new Pisces(20, 2.0, 0.25));    
+	    pdb = pdb.filter(new Pisces(20, 2.0));    
 	    List<String> results = pdb.keys().collect();
 	    
 	    assertTrue(results.contains("5X42"));
@@ -50,7 +50,7 @@ public class PiscesTest {
 	
 	public void test2() throws IOException {
 	    pdb = pdb.flatMapToPair(new StructureToPolymerChains());
-		pdb = pdb.filter(new Pisces(20, 2.0, 0.25));    
+		pdb = pdb.filter(new Pisces(20, 2.0));    
 	    List<String> results = pdb.keys().collect();
 	    
 	    assertTrue(results.contains("5X42.B"));

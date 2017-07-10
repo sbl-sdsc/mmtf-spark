@@ -19,7 +19,6 @@ import java.net.URLConnection;
  * list:
  * <p> sequenceIdentity = 20, 25, 30, 40, 50, 60, 70, 80, 90
  * <p> resolution = 1.6, 1.8, 2.0, 2.2, 2.5, 3.0
- * <p> rValue = 0.25, 1.0
  * 
  * <p> See <a href="http://dunbrack.fccc.edu/PISCES.php">PISCES</a>.
  * Please cite the following in any work that uses lists provided by PISCES
@@ -35,18 +34,18 @@ public class PiscesDownloader implements Serializable {
 	private static final String URL = "http://dunbrack.fccc.edu/Guoli/culledpdb_hh";
 	private static final List<Integer> SEQ_ID_LIST = Arrays.asList(20,25,30,40,50,60,70,80,90);
 	private static final List<Double> RESOLUTION_LIST = Arrays.asList(1.6,1.8,2.0,2.2,2.5,3.0);
-	private static final List<Double> R_VALUE_LIST = Arrays.asList(0.25,1.0);
-	
+
 	private int sequenceIdentity = 0;
 	private double resolution = 0.0;
-	private double rFactor = 0.0;
-
+	
 	/**
+	 * <p> sequenceIdentity = 20, 25, 30, 40, 50, 60, 70, 80, 90
+	 * <p> resolution = 1.6, 1.8, 2.0, 2.2, 2.5, 3.0
 	 * @param sequenceIdentity sequence identity cutoff value
 	 * @param resolution resolution cutoff value
 	 * @param rValue rValue cutoff value
 	 */
-	public PiscesDownloader(int sequenceIdentity, double resolution, double rFactor)
+	public PiscesDownloader(int sequenceIdentity, double resolution)
 	{
 		//check input for validity
 		if( !SEQ_ID_LIST.contains(sequenceIdentity) ) {
@@ -55,12 +54,9 @@ public class PiscesDownloader implements Serializable {
 		if( !RESOLUTION_LIST.contains(resolution) ) {
 			throw new IllegalArgumentException("Invalid resolution value");
 	    }
-		if( !R_VALUE_LIST.contains(rFactor) ) {
-			throw new IllegalArgumentException("Invalid rFactor value");
-	    }
+
 		this.sequenceIdentity = sequenceIdentity;
 		this.resolution = resolution;
-		this.rFactor = rFactor;
 	}
 	
 	/**
@@ -73,12 +69,6 @@ public class PiscesDownloader implements Serializable {
 	public List<String> getStructureChainIds() throws IOException
 	{
 		String fileURL = getFileName();
-		if( fileURL.equals("") ) {
-			throw new IllegalArgumentException("\nThe combination of parameters [sequenceIdentity="
-					+ sequenceIdentity + ", resolution=" + resolution + ", rValue=" + rFactor
-					+ "] is unavailable.\nPlease check http://dunbrack.fccc.edu/Guoli/pisces_download.php "
-					+ "for more information.");
-	    }
 		URL u = new URL(fileURL);
 		URLConnection conn = u.openConnection();
 		List<String> structureChainId = new ArrayList<String>();
@@ -100,7 +90,7 @@ public class PiscesDownloader implements Serializable {
 		URLConnection conn = u.openConnection();
 		InputStream in = conn.getInputStream();
 		String fileName = "";
-		String cs = "pc" + Integer.toString(sequenceIdentity) + "_res" + Double.toString(resolution) + "_R" + Double.toString(rFactor);
+		String cs = "pc" + Integer.toString(sequenceIdentity) + "_res" + Double.toString(resolution);
 
 		BufferedReader rd = new BufferedReader(new InputStreamReader(in));
 		String line;

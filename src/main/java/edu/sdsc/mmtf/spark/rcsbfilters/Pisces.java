@@ -17,7 +17,6 @@ import scala.Tuple2;
  * list:
  * <p> sequenceIdentity = 20, 25, 30, 40, 50, 60, 70, 80, 90
  * <p> resolution = 1.6, 1.8, 2.0, 2.2, 2.5, 3.0
- * <p> rValue = 0.25, 1.0
  * 
  * <p> See <a href="http://dunbrack.fccc.edu/PISCES.php">PISCES</a>.
  * Please cite the following in any work that uses lists provided by PISCES
@@ -33,24 +32,17 @@ public class Pisces implements Function<Tuple2<String, StructureDataInterface>, 
 	/**
 	 * Filters representative PDB structures and polymer chains based
 	 * on the specified criteria using PISCES CulledPDB sets.
-	 * <pre>
-	 *            sequenceIdentity    resolution    rValue
-	 *  20,25,30,40,50,60,70,80,90           1.6      0.25
-	 *  20,25,30,40,50,60,70,80,90           1.8      0.25
-	 *  20,25,30,40,50,60,70,80,90           2.0      0.25		
-	 *  20,25,30,40,50,60,70,80,90           2.2       1.0		
-	 *  20,25,30,40,50,60,70,80,90           2.5       1.0		
-	 *  20,25,30,40,50,60,70,80,90           3.0       1.0		
-	 * </pre>
+	 * <p> sequenceIdentity = 20, 25, 30, 40, 50, 60, 70, 80, 90
+	 * <p> resolution = 1.6, 1.8, 2.0, 2.2, 2.5, 3.0
 	 * @param sequenceIdentity sequence identity cutoff value
 	 * @param resolution resolution cutoff value
 	 * @param rValue rValue cutoff value
 	 * @throws IOException if data set cannot be downloaded from PISCES server.
 	 */
-	public Pisces(int sequenceIdentity, double resolution, double rValue) throws IOException {
+	public Pisces(int sequenceIdentity, double resolution) throws IOException {
 		pdbIds = new HashSet<>();
 		
-		PiscesDownloader pD = new PiscesDownloader(sequenceIdentity, resolution, rValue);
+		PiscesDownloader pD = new PiscesDownloader(sequenceIdentity, resolution);
 		for (String pdbId: pD.getStructureChainIds()) {
 			pdbIds.add(pdbId); // add PDB ID.ChainId
 			pdbIds.add(pdbId.substring(0,4)); // add PDB ID
