@@ -1,4 +1,4 @@
-package edu.sdsc.mmtf.spark.filters;
+package edu.sdsc.mmtf.spark.rcsbfilters;
 
 import static org.junit.Assert.*;
 
@@ -14,6 +14,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.rcsb.mmtf.api.StructureDataInterface;
 
+import edu.sdsc.mmtf.spark.filters.PolymerCompositionTest;
 import edu.sdsc.mmtf.spark.io.MmtfReader;
 import edu.sdsc.mmtf.spark.mappers.StructureToPolymerChains;
 import edu.sdsc.mmtf.spark.rcsbfilters.Pisces;
