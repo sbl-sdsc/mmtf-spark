@@ -39,6 +39,10 @@ public class SecondaryStructureExtractor {
         return JavaRDDToDataset.getDataset(rows,"structureChainId","sequence","alpha","beta","coil", "dsspQ8Code", "dsspQ3Code");
 	}
 
+	public static JavaRDD<Row> getJavaRDD(JavaPairRDD<String, StructureDataInterface> structure){
+		return structure.map(t -> getSecStructFractions(t));
+	}
+	
 	private static Row getSecStructFractions(Tuple2<String, StructureDataInterface> t) {
 		String key = t._1;
 		StructureDataInterface structure = t._2;
