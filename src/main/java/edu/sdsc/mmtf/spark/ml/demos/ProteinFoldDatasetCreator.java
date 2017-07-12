@@ -87,6 +87,7 @@ public class ProteinFoldDatasetCreator {
 		int windowSize = 25; // 25-amino residue window size for Word2Vector
 		int vectorSize = 50; // dimension of feature vector	
 		data = SequenceWord2Vector.addFeatureVector(data, n, windowSize, vectorSize).cache();
+		data.printSchema();
 		data.show(25);
 		
 		// keep only a subset of relevant fields for further processing

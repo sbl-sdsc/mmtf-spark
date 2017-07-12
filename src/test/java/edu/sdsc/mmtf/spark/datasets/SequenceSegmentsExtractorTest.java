@@ -39,7 +39,7 @@ public class SequenceSegmentsExtractorTest {
 	@Test
 	public void test1() {
 		pdb = pdb.flatMapToPair(new StructureToPolymerChains());
-		Dataset<Row> seq = SequenceSegmentsExtractor.getDataset(pdb,25);
+		Dataset<Row> seq = SecondaryStructureSegmentExtractor.getDataset(pdb,25);
 		assertEquals("DPSKDSKAQVSAAEAGITGTWYNQL",seq.head().get(1));
 	}
 }

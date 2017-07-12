@@ -30,6 +30,14 @@ import edu.sdsc.mmtf.spark.ml.JavaRDDToDataset;
  */
 public class PolymerSequenceExtractor {
 
+/**
+ * Returns a dataset of polymer sequences contained in PDB entries
+ * using the full sequence used in the experiment 
+ * (i.e., the "SEQRES" record in PDB files). 
+ * 
+ * @param structureRDD structure
+ * @return dataset with sequence information
+ */
 	public static Dataset<Row> getDataset(JavaPairRDD<String, StructureDataInterface> structureRDD) {
 		JavaRDD<Row> rows = structureRDD
 				.flatMapToPair(new StructureToPolymerSequences())

@@ -106,7 +106,7 @@ public class SparkMultiClassClassifier {
         metrics.put("Recall", Float.toString((float)m.weightedRecall()));
         metrics.put("False Positive Rate", Float.toString((float)m.weightedFalsePositiveRate()));
         metrics.put("True Positive Rate", Float.toString((float)m.weightedTruePositiveRate()));
-
+        m.confusionMatrix().toString();
         return metrics;
 	}
 }
