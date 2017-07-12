@@ -33,7 +33,7 @@ import edu.sdsc.mmtf.spark.rcsbfilters.Pisces;
 public class SecondaryStructureWord2VecEncoder {
 
 	/**
-	 * @param args args[0] path of the output file
+	 * @param args outputFilePath outputFormat (json|parquet)
 	 * @throws IOException 
 	 * @throws StructureException 
 	 */
@@ -83,9 +83,11 @@ public class SecondaryStructureWord2VecEncoder {
 		data = SequenceWord2VecEncoder.encode(data, n, windowSize, vectorSize).cache();
 		data.show(25, false);
 		
-		// coalesce data to write a single json file
-		data = data.coalesce(1);
-		data.write().mode("overwrite").format("json").save(args[0]);
+		if (args[1].equals("json")) {
+			// coalesce data into a single file
+		    data = data.coalesce(1);
+		}
+		data.write().mode("overwrite").format(args[1]).save(args[0]);
 		
 		long end = System.nanoTime();
 

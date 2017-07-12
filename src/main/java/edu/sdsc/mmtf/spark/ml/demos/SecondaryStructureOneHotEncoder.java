@@ -86,9 +86,10 @@ public class SecondaryStructureOneHotEncoder {
 		data.printSchema();
 		data.show(25, false);
 		
-		// coalesce data to write a single file
-		if (args[1].equals("json"))
-		data = data.coalesce(1);
+		if (args[1].equals("json")) {
+			// coalesce data into a single file
+		    data = data.coalesce(1);
+		}
 		data.write().mode("overwrite").format(args[1]).save(args[0]);
 		
 		long end = System.nanoTime();
