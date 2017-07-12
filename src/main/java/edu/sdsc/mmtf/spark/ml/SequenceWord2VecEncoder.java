@@ -31,7 +31,7 @@ public class SequenceWord2VecEncoder implements Serializable {
 	 * @param vectorSize dimension of the feature vector
 	 * @return dataset with "features" vector added to original dataset
 	 */
-	public static Dataset<Row> addFeatureVector(Dataset<Row> data, int n, int windowSize, int vectorSize) {
+	public static Dataset<Row> encode(Dataset<Row> data, int n, int windowSize, int vectorSize) {
 
 		// split sequence into an array of one-letter "words"
 		// e.g. IDCGH... => [I, D, C, G, H, ...

@@ -18,12 +18,12 @@ import edu.sdsc.mmtf.spark.datasets.SecondaryStructureSegmentExtractor;
 import edu.sdsc.mmtf.spark.filters.ContainsLProteinChain;
 import edu.sdsc.mmtf.spark.io.MmtfReader;
 import edu.sdsc.mmtf.spark.mappers.StructureToPolymerChains;
-import edu.sdsc.mmtf.spark.ml.SequenceWord2Vector;
+import edu.sdsc.mmtf.spark.ml.SequenceWord2VecEncoder;
 import edu.sdsc.mmtf.spark.rcsbfilters.Pisces;
 
 /**
  * This class creates a dataset of sequence segments derived
- * from a non-redundant. The dataset contains the sequence segment,
+ * from a non-redundant set. The dataset contains the sequence segment,
  * the DSSP Q8 and DSSP Q3 code of the center residue in a sequence
  * segment, and a Word2Vec encoding of the sequence segment.
  * The dataset is saved in JSON file specified by the user.
@@ -80,7 +80,7 @@ public class SecondaryStructureWord2VecEncoder {
 		int windowSize = segmentLength;
 		int vectorSize = 50; // dimension of feature vector	(50)
 		
-		data = SequenceWord2Vector.addFeatureVector(data, n, windowSize, vectorSize).cache();
+		data = SequenceWord2VecEncoder.encode(data, n, windowSize, vectorSize).cache();
 		data.show(25, false);
 		
 		// coalesce data to write a single json file

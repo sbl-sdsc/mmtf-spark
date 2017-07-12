@@ -44,7 +44,7 @@ public class SecondaryStructureExtractorTest2 {
 		String dsspQ8 = (String) secStruct.first().get(secStruct.first().fieldIndex("dsspQ8Code"));
 		String dsspQ3 = (String) secStruct.first().get(secStruct.first().fieldIndex("dsspQ3Code"));
         assertEquals(38, dsspQ8.split("X", -1).length - 1);//"X" appears 38 times.
-        assertEquals(24, dsspQ8.split(" ", -1).length - 1);//" " appears 24 times in dsspQ8
-        assertEquals(44, dsspQ3.split(" ", -1).length - 1);//" " appears 44 times in dsspQ3
+        assertEquals(24, dsspQ8.split("C", -1).length - 1);//"C" appears 24 times in dsspQ8
+        assertEquals(44, dsspQ3.split("C", -1).length - 1);//"C" appears 44 times in dsspQ3
 	}
 }
