@@ -10,12 +10,18 @@ import org.apache.spark.sql.types.DataTypes;
 import org.apache.spark.sql.types.StructField;
 import org.apache.spark.sql.types.StructType;
 
+/**
+ * This class converts a JavaRDD<Row> to a Dataset<Row>. This method only
+ * supports simple data types and all data need to be not null.
+ * @author Peter Rose
+ *
+ */
 public class JavaRDDToDataset implements Serializable {
 	private static final long serialVersionUID = 4930832444212067031L;
 
 	/**
 	 * Converts a JavaRDD<Row> to a Dataset<Row>. This method only
-	 * support simple data types and all data need to be not null.
+	 * supports simple data types and all data need to be not null.
 	 * 
 	 * @param data JavaRDD of Row objects
 	 * @param colNames names of the columns in a row
@@ -27,7 +33,7 @@ public class JavaRDDToDataset implements Serializable {
 		int length = row.length();
 		
 		if (length != colNames.length) {
-			System.out.println("colNames length does not match row length");
+			throw new IllegalArgumentException("colNames length does not match row length");
 		}
 		
 		StructField[] sf = new StructField[length];

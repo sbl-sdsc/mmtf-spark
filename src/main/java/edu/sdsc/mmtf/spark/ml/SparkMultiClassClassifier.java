@@ -3,6 +3,7 @@
  */
 package edu.sdsc.mmtf.spark.ml;
 
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -46,7 +47,7 @@ public class SparkMultiClassClassifier {
 	 */
 	public Map<String,String> fit(Dataset<Row> data) {
 		int classCount = (int)data.select(label).distinct().count();
-		
+
 		StringIndexerModel labelIndexer = new StringIndexer()
 		  .setInputCol(label)
 		  .setOutputCol("indexedLabel")
@@ -56,7 +57,17 @@ public class SparkMultiClassClassifier {
 		Dataset<Row>[] splits = data.randomSplit(new double[] {1.0-testFraction, testFraction}, seed);
 		Dataset<Row> trainingData = splits[0];
 		Dataset<Row> testData = splits[1];
-
+		
+		String[] labels = labelIndexer.labels();
+		
+		System.out.println();
+		System.out.println("Class\tTrain\tTest");
+		for (String l: labels) {
+			System.out.println(l + "\t" + trainingData.select(label).filter(label + " = '" + l + "'").count()
+					+ "\t" 
+					+ testData.select(label).filter(label + " = '" + l + "'").count());
+		}
+		
 		// Set input columns
 		predictor
 		.setLabelCol("indexedLabel")
@@ -106,7 +117,10 @@ public class SparkMultiClassClassifier {
         metrics.put("Recall", Float.toString((float)m.weightedRecall()));
         metrics.put("False Positive Rate", Float.toString((float)m.weightedFalsePositiveRate()));
         metrics.put("True Positive Rate", Float.toString((float)m.weightedTruePositiveRate()));
-
+        metrics.put("", "\nConfusion Matrix\n" 
+            + Arrays.toString(labels) +"\n" 
+        		+ m.confusionMatrix().toString());
+        
         return metrics;
 	}
 }

@@ -43,25 +43,27 @@ public class SecondaryStructureExtractor {
 		return structure.map(t -> getSecStructFractions(t));
 	}
 	
-	private static Row getSecStructFractions(Tuple2<String, StructureDataInterface> t) {
+	private static Row getSecStructFractions(Tuple2<String, StructureDataInterface> t) throws Exception {
 		String key = t._1;
 		StructureDataInterface structure = t._2;
+		if (t._2.getNumChains() != 1) {
+			throw new IllegalArgumentException("This method can only be applied to single polymer chain.");
+		}
+		
 		StringBuilder dsspQ8 = new StringBuilder(structure.getEntitySequence(0).length());
 		StringBuilder dsspQ3 = new StringBuilder(structure.getEntitySequence(0).length());
-		if (t._2.getNumChains() > 1) {
-			throw new IllegalArgumentException("This method can only be applied to single polymer chains.");
-		}
+		
 		float helix = 0;
 		float sheet = 0;
 		float coil = 0;
-		int other = 0;
+		
 		int dsspIndex = 0;
 		int structureIndex = 0;
 		int seqIndex;
 		
 		for (int code: structure.getSecStructList()) {
 			seqIndex = structure.getGroupSequenceIndices()[structureIndex++];
-			while(dsspIndex<seqIndex)
+			while (dsspIndex < seqIndex)
 			{
 				dsspQ8.append("X");
 				dsspQ3.append("X");
@@ -84,7 +86,6 @@ public class SecondaryStructureExtractor {
 				dsspQ3.append("C");
 				break;
 			default:
-				other++;
 				break;
 			}
 		}
@@ -95,7 +96,7 @@ public class SecondaryStructureExtractor {
 			dsspIndex++;
 		}
 		
-		int n = structure.getSecStructList().length - other;
+		int n = structure.getSecStructList().length;
 		helix /= n;
 		sheet /= n;
 		coil /= n;	

@@ -39,6 +39,9 @@ public class PiscesDownloader implements Serializable {
 	private double resolution = 0.0;
 	
 	/**
+	 * Downloads representative protein chains from the PISCES 
+     * CulledPDB sets. A CulledPDB set is selected by specifying
+     * sequenceIdentity and resolution cutoff values from the following lists:
 	 * <p> sequenceIdentity = 20, 25, 30, 40, 50, 60, 70, 80, 90
 	 * <p> resolution = 1.6, 1.8, 2.0, 2.2, 2.5, 3.0
 	 * 
@@ -98,7 +101,7 @@ public class PiscesDownloader implements Serializable {
 		{
 			line = line.substring(line.indexOf("\"") + 1);
 			line = line.substring(0, line.lastIndexOf("\""));
-			if(line.contains(cs) && !line.contains("fasta") )
+			if (line.contains(cs) && !line.contains("fasta") )
 			{
 				fileName = line;
 			}
