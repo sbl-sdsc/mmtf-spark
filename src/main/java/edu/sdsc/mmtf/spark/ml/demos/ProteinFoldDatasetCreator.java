@@ -22,8 +22,8 @@ import edu.sdsc.mmtf.spark.datasets.SecondaryStructureExtractor;
 import edu.sdsc.mmtf.spark.filters.ContainsLProteinChain;
 import edu.sdsc.mmtf.spark.io.MmtfReader;
 import edu.sdsc.mmtf.spark.mappers.StructureToPolymerChains;
-import edu.sdsc.mmtf.spark.ml.SequenceWord2VecEncoder;
-import edu.sdsc.mmtf.spark.rcsbfilters.BlastClusters;
+import edu.sdsc.mmtf.spark.ml.ProteinSequenceEncoder;
+import edu.sdsc.mmtf.spark.rcsbfilters.Pisces;
 
 /**
  * This class is a simple example of using Dataset operations to create a dataset
@@ -60,15 +60,15 @@ public class ProteinFoldDatasetCreator {
 		
 		// read MMTF Hadoop sequence file and create a non-redundant set (<=40% seq. identity)
 		// of L-protein chains
-		int sequenceIdentity = 40;
-		double fraction = 0.1;
+		int sequenceIdentity = 20;
+		double resolution = 3.0;
+		double fraction = 1.0;
 		long seed = 123;
 		
 		JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader
 				.readSequenceFile(path, fraction, seed, sc)
-				.filter(new BlastClusters(sequenceIdentity)) // this filters by pdb id using a non-redundant "BlastClust" subset
 				.flatMapToPair(new StructureToPolymerChains())
-				.filter(new BlastClusters(sequenceIdentity)) // this filters is more selective by including chain ids
+                .filter(new Pisces(sequenceIdentity, resolution))
 				.filter(new ContainsLProteinChain()); // filter out for example D-proteins
 
 		// get secondary structure content
@@ -82,11 +82,16 @@ public class ProteinFoldDatasetCreator {
      	// create a binary classification dataset
 		data = data.filter("foldType = 'alpha' OR foldType = 'beta'").cache();
 
-		// create a Word2Vector representation of the protein sequences
-		int n = 2; // create 2-grams
-		int windowSize = 25; // 25-amino residue window size for Word2Vector
-		int vectorSize = 50; // dimension of feature vector	
-		data = SequenceWord2VecEncoder.encode(data, n, windowSize, vectorSize).cache();
+		// create a three-state classification model (alpha, beta, alpha+beta)
+		//		data = data.filter("foldType != 'other'").cache();
+
+		// add Word2Vec encoded feature vector
+		ProteinSequenceEncoder encoder = new ProteinSequenceEncoder(data);
+		int n = 2;
+		int windowSize = 11;
+		int vectorSize = 50;
+		data = encoder.overlappingNgramWord2VecEncode(n, windowSize, vectorSize);	
+
 		data.printSchema();
 		data.show(25);
 		

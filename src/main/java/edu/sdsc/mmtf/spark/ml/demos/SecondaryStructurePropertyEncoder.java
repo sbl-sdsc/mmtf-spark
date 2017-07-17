@@ -25,12 +25,12 @@ import edu.sdsc.mmtf.spark.rcsbfilters.Pisces;
  * This class creates a dataset of sequence segments derived
  * from a non-redundant set. The dataset contains the sequence segment,
  * the DSSP Q8 and DSSP Q3 code of the center residue in a sequence
- * segment, and a Word2Vec encoding of the sequence segment.
- * The dataset is saved in JSON file specified by the user.
+ * segment, and a property encoding of the sequence segment.
+ * The dataset is saved in a file specified by the user.
  * 
- * @author Yue Yu
+ * @author Peter Rose
  */
-public class SecondaryStructureWord2VecEncoder {
+public class SecondaryStructurePropertyEncoder {
 
 	/**
 	 * @param args outputFilePath outputFormat (json|parquet)
@@ -46,7 +46,7 @@ public class SecondaryStructureWord2VecEncoder {
 	    }
 	    
 		if (args.length != 2) {
-			System.err.println("Usage: " + SecondaryStructureWord2VecEncoder.class.getSimpleName() + " <outputFilePath> + <fileFormat>");
+			System.err.println("Usage: " + SecondaryStructurePropertyEncoder.class.getSimpleName() + " <outputFilePath> + <fileFormat>");
 			System.exit(1);
 		}
 
@@ -54,14 +54,14 @@ public class SecondaryStructureWord2VecEncoder {
 
 		SparkConf conf = new SparkConf()
 				.setMaster("local[*]")
-				.setAppName(SecondaryStructureWord2VecEncoder.class.getSimpleName());
+				.setAppName(SecondaryStructurePropertyEncoder.class.getSimpleName());
 		JavaSparkContext sc = new JavaSparkContext(conf);
 		
 		// read MMTF Hadoop sequence file and create a non-redundant set (<=20% seq. identity)
 		// of L-protein chains
 		int sequenceIdentity = 20;
 		double resolution = 2.0;
-		double fraction = 0.1;
+		double fraction = 1.0;
 		long seed = 123;
 		
 		JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader
@@ -69,18 +69,21 @@ public class SecondaryStructureWord2VecEncoder {
 				.flatMapToPair(new StructureToPolymerChains())
 				.filter(new Pisces(sequenceIdentity, resolution)) // The pisces filter
 				.filter(new ContainsLProteinChain()) // filter out for example D-proteins
-                .sample(false,  fraction, seed);
+                .sample(false, fraction, seed);
 		
 		// get content
-		int segmentLength = 11; 
-		Dataset<Row> data = SecondaryStructureSegmentExtractor.getDataset(pdb, segmentLength);
-	
-		// add Word2Vec encoded feature vector
+		int segmentLength = 25;
+		Dataset<Row> data = SecondaryStructureSegmentExtractor.getDataset(pdb, segmentLength).cache();
+
+		System.out.println("original data     : " + data.count());
+		data = data.dropDuplicates("labelQ3", "sequence").cache();
+		System.out.println("- duplicate Q3/seq: " + data.count());
+		data = data.dropDuplicates("sequence").cache();
+		System.out.println("- duplicate seq   : " + data.count());
+		
+		// add a property encoded feature vector
 		ProteinSequenceEncoder encoder = new ProteinSequenceEncoder(data);
-		int n = 2;
-		int windowSize = (segmentLength-1)/2;
-		int vectorSize = 50;
-		data = encoder.overlappingNgramWord2VecEncode(n, windowSize, vectorSize);	
+		data = encoder.propertyEncode();
 		
 		data.printSchema();
 		data.show(25, false);

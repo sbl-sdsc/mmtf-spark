@@ -30,7 +30,7 @@ import edu.sdsc.mmtf.spark.rcsbfilters.Pisces;
  * 
  * @author Yue Yu
  */
-public class SecondaryStructureWord2VecEncoder {
+public class SecondaryStructureWord2VecModelEncoder {
 
 	/**
 	 * @param args outputFilePath outputFormat (json|parquet)
@@ -45,8 +45,8 @@ public class SecondaryStructureWord2VecEncoder {
 	        System.exit(-1);
 	    }
 	    
-		if (args.length != 2) {
-			System.err.println("Usage: " + SecondaryStructureWord2VecEncoder.class.getSimpleName() + " <outputFilePath> + <fileFormat>");
+		if (args.length != 3) {
+			System.err.println("Usage: " + SecondaryStructureWord2VecModelEncoder.class.getSimpleName() + " <outputFilePath> + <fileFormat> + <modelFile>");
 			System.exit(1);
 		}
 
@@ -54,14 +54,14 @@ public class SecondaryStructureWord2VecEncoder {
 
 		SparkConf conf = new SparkConf()
 				.setMaster("local[*]")
-				.setAppName(SecondaryStructureWord2VecEncoder.class.getSimpleName());
+				.setAppName(SecondaryStructureWord2VecModelEncoder.class.getSimpleName());
 		JavaSparkContext sc = new JavaSparkContext(conf);
 		
 		// read MMTF Hadoop sequence file and create a non-redundant set (<=20% seq. identity)
 		// of L-protein chains
 		int sequenceIdentity = 20;
 		double resolution = 2.0;
-		double fraction = 0.1;
+		double fraction = 1.0;
 		long seed = 123;
 		
 		JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader
@@ -75,12 +75,12 @@ public class SecondaryStructureWord2VecEncoder {
 		int segmentLength = 11; 
 		Dataset<Row> data = SecondaryStructureSegmentExtractor.getDataset(pdb, segmentLength);
 	
-		// add Word2Vec encoded feature vector
+		// add Word2Vec encoded feature vector using
+		// a pre-trained Word2Vec model read from file
 		ProteinSequenceEncoder encoder = new ProteinSequenceEncoder(data);
 		int n = 2;
-		int windowSize = (segmentLength-1)/2;
-		int vectorSize = 50;
-		data = encoder.overlappingNgramWord2VecEncode(n, windowSize, vectorSize);	
+		String modelFileName = args[2];
+		data = encoder.overlappingNgramWord2VecEncode(modelFileName, n).cache();
 		
 		data.printSchema();
 		data.show(25, false);

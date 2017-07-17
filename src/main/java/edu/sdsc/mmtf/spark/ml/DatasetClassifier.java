@@ -11,6 +11,7 @@ import org.apache.spark.ml.classification.LogisticRegression;
 import org.apache.spark.ml.classification.MultilayerPerceptronClassifier;
 import org.apache.spark.ml.classification.RandomForestClassifier;
 import org.apache.spark.ml.linalg.DenseVector;
+import org.apache.spark.ml.linalg.SparseVector;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
@@ -55,7 +56,14 @@ public class DatasetClassifier {
 
 		Dataset<Row> data = spark.read().parquet(args[0]).cache();
 		
-		int featureCount = ((DenseVector)data.first().getAs("features")).numActives();
+		int featureCount = 0;
+		Object vector = data.first().getAs("features");
+		if (vector instanceof DenseVector) {
+		   featureCount = ((DenseVector)vector).numActives();
+		} else if (vector instanceof SparseVector) {
+		   featureCount = ((SparseVector)vector).numActives();
+		}
+		
 		System.out.println("Feature count            : "  + featureCount);
 		
 		int classCount = (int)data.select(label).distinct().count();

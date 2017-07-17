@@ -18,7 +18,7 @@ import edu.sdsc.mmtf.spark.datasets.SecondaryStructureSegmentExtractor;
 import edu.sdsc.mmtf.spark.filters.ContainsLProteinChain;
 import edu.sdsc.mmtf.spark.io.MmtfReader;
 import edu.sdsc.mmtf.spark.mappers.StructureToPolymerChains;
-import edu.sdsc.mmtf.spark.ml.SequenceOneHotEncoder;
+import edu.sdsc.mmtf.spark.ml.ProteinSequenceEncoder;
 import edu.sdsc.mmtf.spark.rcsbfilters.Pisces;
 
 /**
@@ -45,8 +45,8 @@ public class SecondaryStructureOneHotEncoder {
 	        System.exit(-1);
 	    }
 	    
-		if (args.length != 2) {
-			System.err.println("Usage: " + SecondaryStructureOneHotEncoder.class.getSimpleName() + " <outputFilePath> + <fileFormat>");
+		if (args.length < 2) {
+			System.err.println("Usage: " + SecondaryStructureOneHotEncoder.class.getSimpleName() + " <outputFilePath> + <fileFormat> + [<modelFileName>]");
 			System.exit(1);
 		}
 
@@ -72,7 +72,7 @@ public class SecondaryStructureOneHotEncoder {
                 .sample(false, fraction, seed);
 		
 		// get content
-		int segmentLength = 7;
+		int segmentLength = 11;
 		Dataset<Row> data = SecondaryStructureSegmentExtractor.getDataset(pdb, segmentLength).cache();
 
 		System.out.println("original data     : " + data.count());
@@ -82,7 +82,9 @@ public class SecondaryStructureOneHotEncoder {
 		System.out.println("- duplicate seq   : " + data.count());
 		
 		// add one-hot encoded sequence feature vector to dataset
-		data = SequenceOneHotEncoder.encode(data);
+		ProteinSequenceEncoder encoder = new ProteinSequenceEncoder(data);
+		data = encoder.oneHotEncode();
+		
 		data.printSchema();
 		data.show(25, false);
 		
