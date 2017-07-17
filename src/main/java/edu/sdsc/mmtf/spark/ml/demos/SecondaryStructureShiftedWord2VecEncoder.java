@@ -25,12 +25,12 @@ import edu.sdsc.mmtf.spark.rcsbfilters.Pisces;
  * This class creates a dataset of sequence segments derived
  * from a non-redundant set. The dataset contains the sequence segment,
  * the DSSP Q8 and DSSP Q3 code of the center residue in a sequence
- * segment, and a Word2Vec encoding of the sequence segment.
+ * segment, and a 3-gram shifted Word2Vec encoding of the sequence segment.
  * The dataset is saved in JSON file specified by the user.
  * 
- * @author Yue Yu
+ * @author Peter Rose
  */
-public class SecondaryStructureWord2VecEncoder {
+public class SecondaryStructureShiftedWord2VecEncoder {
 
 	/**
 	 * @param args outputFilePath outputFormat (json|parquet)
@@ -46,7 +46,7 @@ public class SecondaryStructureWord2VecEncoder {
 	    }
 	    
 		if (args.length != 2) {
-			System.err.println("Usage: " + SecondaryStructureWord2VecEncoder.class.getSimpleName() + " <outputFilePath> + <fileFormat>");
+			System.err.println("Usage: " + SecondaryStructureShiftedWord2VecEncoder.class.getSimpleName() + " <outputFilePath> + <fileFormat>");
 			System.exit(1);
 		}
 
@@ -54,7 +54,7 @@ public class SecondaryStructureWord2VecEncoder {
 
 		SparkConf conf = new SparkConf()
 				.setMaster("local[*]")
-				.setAppName(SecondaryStructureWord2VecEncoder.class.getSimpleName());
+				.setAppName(SecondaryStructureShiftedWord2VecEncoder.class.getSimpleName());
 		JavaSparkContext sc = new JavaSparkContext(conf);
 		
 		// read MMTF Hadoop sequence file and create a non-redundant set (<=20% seq. identity)
@@ -72,16 +72,15 @@ public class SecondaryStructureWord2VecEncoder {
                 .sample(false,  fraction, seed);
 		
 		// get content
-		int segmentLength = 11; 
+		int segmentLength = 25; 
 		Dataset<Row> data = SecondaryStructureSegmentExtractor.getDataset(pdb, segmentLength);
 	
-		// add Word2Vec encoded feature vector
+		// create a Word2Vector representation of the protein sequences
 		ProteinSequenceEncoder encoder = new ProteinSequenceEncoder(data);
-		int n = 2;
 		int windowSize = (segmentLength-1)/2;
-		int vectorSize = 50;
-		data = encoder.overlappingNgramWord2VecEncode(n, windowSize, vectorSize);	
-		
+		int vectorSize = 50; // dimension of feature vector	(50)
+		data = encoder.shifted3GramWord2VecEncode(windowSize, vectorSize).cache();
+	
 		data.printSchema();
 		data.show(25, false);
 		
