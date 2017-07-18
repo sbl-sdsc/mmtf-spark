@@ -285,9 +285,12 @@ public class ProteinSequenceEncoder {
 				double[] f1 = v1.toArray();
 				double[] f2 = v2.toArray();
 				double[] f3 = v3.toArray();
-				double[] average = new double[f1.length];
+				
+				// arrays may be of different length
+				int len = Math.min(Math.min(f1.length, f2.length), f3.length);
+				double[] average = new double[len];
 
-				for (int i = 0; i < f1.length; i++) {
+				for (int i = 0; i < len; i++) {
 					average[i] = (f1[i] + f2[i] + f3[i]) / 3.0;
 				}
 				return Vectors.dense(average);
