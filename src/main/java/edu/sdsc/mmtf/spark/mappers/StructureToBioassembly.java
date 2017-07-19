@@ -1,6 +1,7 @@
 package edu.sdsc.mmtf.spark.mappers;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -16,53 +17,111 @@ import org.rcsb.mmtf.encoder.AdapterToStructureData;
 import scala.Tuple2;
 
 /**
- * Maps a structure to its individual polymer chains. Polymer chains
- * include polypeptides, polynucleotides, and linear and branched polysaccharides.
- * For a multi-model structure, only the first model is considered.
- * 
- * @author Peter Rose
+ * TODO 
+ * @author Yue Yu
  */
 public class StructureToBioassembly implements PairFlatMapFunction<Tuple2<String,StructureDataInterface>,String, StructureDataInterface> {
-	private static final long serialVersionUID = -5979145207983266913L;
-	private boolean useChainIdInsteadOfChainName = false;
-	private boolean excludeDuplicates = false;
+
+	private static final long serialVersionUID = 5878672539252588124L;
 
 	/**
-	 * Extracts all polymer chains from a structure. A key is assigned to
-	 * each polymer: <PDB ID.Chain Name>, e.g., 4HHB.A. Here Chain 
-	 * Name is the name of the chain as found in the corresponding pdb file.
+	 * TODO
+	 *	 
 	 */
-	public StructureToBioassembly() {}
-	
-	/**
-	 * Extracts all polymer chains from a structure. If the argument is set to true,
-	 * the assigned key is: <PDB ID.Chain ID>, where Chain ID is the unique identifier
-	 * assigned to each molecular entity in an mmCIF file. This Chain ID corresponds to
-	 * <a href="http://mmcif.wwpdb.org/dictionaries/mmcif_mdb.dic/Items/_atom_site.label_asym_id.html">
-	 * _atom_site.label_asym_id</a> field in an mmCIF file.
-	 * 
-	 * @param useChainIdInsteadOfChainName if true, use the Chain Id in the key assignments
-	 * @param excludeDuplicates if true, return only one chain for each unique sequence
-	 */
-	public StructureToBioassembly(boolean useChainIdInsteadOfChainName, boolean excludeDuplicates) {
-		this.useChainIdInsteadOfChainName = useChainIdInsteadOfChainName;
-		this.excludeDuplicates = excludeDuplicates;
+	public StructureToBioassembly() {
+		
 	}
-	
+		
 	@Override
 	public Iterator<Tuple2<String, StructureDataInterface>> call(Tuple2<String, StructureDataInterface> t) throws Exception {
 		StructureDataInterface structure = t._2;
-
-		// precalculate indices
-		int numChains = structure.getChainsPerModel()[0];
-		int[] chainToEntityIndex = getChainToEntityIndex(structure);
-		int[] atomsPerChain = new int[numChains];
-		int[] bondsPerChain = new int[numChains];
-		getNumAtomsAndBonds(structure, atomsPerChain, bondsPerChain);
+		System.out.println("*** BIOASSEMBLY DATA ***");
+		System.out.println("Number bioassemblies: " + structure.getNumBioassemblies());
+		
+		for (int i = 0; i < structure.getNumBioassemblies(); i++) {
+			AdapterToStructureData bioAssembly = new AdapterToStructureData();
+			String structureId = structure.getStructureId() + "-BioAssembly" + structure.getBioassemblyName(i);
+			
+			int totAtoms = 0, totBonds = 0, totGroups = 0, totChains = 0, totModels = 0;
+			int numTrans = structure.getNumTransInBioassembly(i);
+			totModels = structure.getNumModels();
+			int[][] bioChainList;
+			double[][] transMatrix;
+			for(int ii = 0; ii < numTrans; ii++)
+			{
+				bioChainList[ii] = structure.getChainIndexListForTransform(i, ii);
+				transMatrix[ii] = structure.getMatrixForTransform(i, ii);
+				for (int j = 0; j < totModels; j++)
+				{
+					totChains += bioChainList.length;
+					for (int k = 0, groupCounter = 0; k < structure.getChainsPerModel()[j]; k++)
+					{
+						if(Arrays.asList(bioChainList).contains(k))
+							totGroups += structure.getGroupsPerChain()[k];
+						for (int h = 0; h < structure.getGroupsPerChain()[k]; h++, groupCounter++){
+							if(Arrays.asList(bioChainList).contains(k))
+							{
+								int groupIndex = structure.getGroupTypeIndices()[groupCounter];	
+								totAtoms += structure.getNumAtomsInGroup(groupIndex);
+								totBonds += structure.getGroupBondOrders(groupIndex).length;
+							}
+						}
+					}
+				}
+			}
+			bioAssembly.initStructure(totBonds * numTrans, totAtoms * numTrans,
+					totGroups * numTrans, totChains * numTrans, totModels * numTrans, structureId);
+			DecoderUtils.addXtalographicInfo(structure, bioAssembly);
+			DecoderUtils.addHeaderInfo(structure, bioAssembly);	
+			
+			System.out.println("bioassembly: " + structure.getBioassemblyName(i));
+			int numTransformations = structure.getNumTransInBioassembly(i);
+			System.out.println("  Number transformations: " + numTransformations);
+			
+			int modelIndex = 0;
+			int chainIndex = 0;
+			int groupIndex = 0;
+			int atomIndex = 0;
+			
+			// loop through models
+			for(int ii = 0; ii < structure.getNumModels(); ii++)
+			{
+				// precalculate indices
+				int numChainsPerModel = structure.getChainsPerModel()[ii] * numTrans;
+				bioAssembly.setModelInfo(ii, numChainsPerModel);
+				int[] chainToEntityIndex = getChainToEntityIndex(structure);
+				//loop through chains
+				for(int j = 0; j < structure.getChainsPerModel()[ii]; j++)
+				{
+					for (int k = 0; k < numTrans; k++)
+					{
+						int[] currChainList = bioChainList[k];
+						double[] currMatrix = transMatrix[k];
+					}
+					
+					int entityToChainIndex = chainToEntityIndex[chainIndex];
+					bioAssembly.setEntityInfo(new int[]{chainIndex}, structure.getEntitySequence(entityToChainIndex), 
+							structure.getEntityDescription(entityToChainIndex), structure.getEntityType(entityToChainIndex));
+					bioAssembly.setChainInfo(structure.getChainIds()[chainIndex], structure.getChainNames()[chainIndex],
+							structure.getGroupsPerChain()[chainIndex]);
+					chainIndex++;
+				} 	
+				modelIndex++;
+//				for (int j = 0; j < numTransformations; j++) {
+//					System.out.println("    transformation: " + j);
+//					System.out.println("    chains:         " + Arrays.toString(structure.getChainIndexListForTransform(i, j)));
+//					System.out.println("    rotTransMatrix: " + Arrays.toString(structure.getMatrixForTransform(i, j)));
+//				}
+			}	
+			
+		}
 		
 		List<Tuple2<String, StructureDataInterface>> chainList = new ArrayList<>();
 		Set<String> seqSet = new HashSet<>();
-		
+//		int[] atomsPerChain = new int[numChains];
+//		int[] bondsPerChain = new int[numChains];
+//		getNumAtomsAndBonds(structure, atomsPerChain, bondsPerChain);
+			
 		for (int i = 0, atomCounter = 0, groupCounter = 0; i < numChains; i++){	
 			AdapterToStructureData polymerChain = new AdapterToStructureData();
 			
@@ -144,16 +203,6 @@ public class StructureToBioassembly implements PairFlatMapFunction<Tuple2<String
 				polymerChain.finalizeStructure();
 				
 				String chId = structure.getChainNames()[i];
-				if (useChainIdInsteadOfChainName) {
-					chId = structure.getChainIds()[i];
-				}
-
-				if (excludeDuplicates) {
-					if (seqSet.contains(structure.getEntitySequence(chainToEntityIndex[i]))) {
-						continue;
-					}
-	                seqSet.add(structure.getEntitySequence(chainToEntityIndex[i]));
-				}
 				
 				chainList.add(new Tuple2<String, StructureDataInterface>(structure.getStructureId() + "." + chId, polymerChain));
 			}
