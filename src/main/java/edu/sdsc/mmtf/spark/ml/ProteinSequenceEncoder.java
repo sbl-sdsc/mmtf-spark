@@ -1,5 +1,6 @@
 package edu.sdsc.mmtf.spark.ml;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -26,7 +27,8 @@ import org.apache.spark.sql.api.java.UDF3;
  * @author Peter Rose
  *
  */
-public class ProteinSequenceEncoder {
+public class ProteinSequenceEncoder implements Serializable {
+	private static final long serialVersionUID = 8420996420243386694L;
 	private Dataset<Row> data;
 	private String inputCol = "sequence";
 	private String outputCol = "features";
@@ -35,7 +37,7 @@ public class ProteinSequenceEncoder {
 	private static final List<Character> AMINO_ACIDS21 = Arrays.asList('A', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K', 'L',
 			'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'V', 'W', 'X', 'Y');
 	
-	private static final Map<Character,double[]> properties = new HashMap<>(20);
+	private static final Map<Character,double[]> properties = new HashMap<>(21);
 	static {
 		properties.put('A', new double[]{1.28,0.05,1.00,0.31,6.11,0.42,0.23});
 		properties.put('G', new double[]{0.00,0.00,0.00,0.00,6.07,0.13,0.15});
@@ -58,6 +60,33 @@ public class ProteinSequenceEncoder {
 		properties.put('P', new double[]{2.67,0.00,2.72,0.72,6.80,0.13,0.34});
 		properties.put('C', new double[]{1.77,0.13,2.43,1.54,6.35,0.17,0.41});
 		properties.put('X', new double[]{0.00,0.00,0.00,0.00,0.00,0.00,0.00});
+	}
+	
+	// Source: https://ftp.ncbi.nih.gov/repository/blocks/unix/blosum/BLOSUM/blosum62.blast.new
+	private static final Map<Character,double[]> blosum62 = new HashMap<>(21);
+	static {
+	    //                             A  R  N  D  C  Q  E  G  H  I  L  K  M  F  P  S  T  W  Y  V   
+	   blosum62.put('A', new double[]{ 4,-1,-2,-2, 0,-1,-1, 0,-2,-1,-1,-1,-1,-2,-1, 1, 0,-3,-2, 0});
+	   blosum62.put('R', new double[]{-1, 5, 0,-2,-3, 1, 0,-2, 0,-3,-2, 2,-1,-3,-2,-1,-1,-3,-2,-3});
+	   blosum62.put('N', new double[]{-2, 0, 6, 1,-3, 0, 0, 0, 1,-3,-3, 0,-2,-3,-2, 1, 0,-4,-2,-3}); 
+	   blosum62.put('D', new double[]{-2,-2, 1, 6,-3, 0, 2,-1,-1,-3,-4,-1,-3,-3,-1, 0,-1,-4,-3,-3}); 
+	   blosum62.put('C', new double[]{ 0,-3,-3,-3, 9,-3,-4,-3,-3,-1,-1,-3,-1,-2,-3,-1,-1,-2,-2,-1}); 
+	   blosum62.put('Q', new double[]{-1, 1, 0, 0,-3, 5, 2,-2, 0,-3,-2, 1, 0,-3,-1, 0,-1,-2,-1,-2});
+	   blosum62.put('E', new double[]{-1, 0, 0, 2,-4, 2, 5,-2, 0,-3,-3, 1,-2,-3,-1, 0,-1,-3,-2,-2});
+	   blosum62.put('G', new double[]{ 0,-2, 0,-1,-3,-2,-2, 6,-2,-4,-4,-2,-3,-3,-2, 0,-2,-2,-3,-3});
+	   blosum62.put('H', new double[]{-2, 0, 1,-1,-3, 0, 0,-2, 8,-3,-3,-1,-2,-1,-2,-1,-2,-2, 2,-3});
+	   blosum62.put('I', new double[]{-1,-3,-3,-3,-1,-3,-3,-4,-3, 4, 2,-3, 1, 0,-3,-2,-1,-3,-1, 3});
+	   blosum62.put('L', new double[]{-1,-2,-3,-4,-1,-2,-3,-4,-3, 2, 4,-2, 2, 0,-3,-2,-1,-2,-1, 1});
+	   blosum62.put('K', new double[]{-1, 2, 0,-1,-3, 1, 1,-2,-1,-3,-2, 5,-1,-3,-1, 0,-1,-3,-2,-2});
+	   blosum62.put('M', new double[]{-1,-1,-2,-3,-1, 0,-2,-3,-2, 1, 2,-1, 5, 0,-2,-1,-1,-1,-1, 1});
+	   blosum62.put('F', new double[]{-2,-3,-3,-3,-2,-3,-3,-3,-1, 0, 0,-3, 0, 6,-4,-2,-2, 1, 3,-1});
+	   blosum62.put('P', new double[]{-1,-2,-2,-1,-3,-1,-1,-2,-2,-3,-3,-1,-2,-4, 7,-1,-1,-4,-3,-2});
+	   blosum62.put('S', new double[]{ 1,-1, 1, 0,-1, 0, 0, 0,-1,-2,-2, 0,-1,-2,-1, 4, 1,-3,-2,-2});
+	   blosum62.put('T', new double[]{ 0,-1, 0,-1,-1,-1,-1,-2,-2,-1,-1,-1,-1,-2,-1, 1, 5,-2,-2, 0});
+	   blosum62.put('W', new double[]{-3,-3,-4,-4,-2,-2,-3,-2,-2,-3,-2,-3,-1, 1,-4,-3,-2,11, 2,-3});
+	   blosum62.put('Y', new double[]{-2,-2,-2,-3,-2,-1,-2,-3, 2,-1,-1,-2,-1, 3,-3,-2,-2, 2, 7,-1});
+	   blosum62.put('V', new double[]{ 0,-3,-3,-3,-1,-2,-2,-3,-3, 3, 1,-2, 1,-1,-2,-2, 0,-3,-1, 4});
+	   blosum62.put('X', new double[]{-4,-4,-4,-4,-4,-4,-4,-4,-4,-4,-4,-4,-4,-4,-4,-4,-4,-4,-4,-4});
 	}
 	
 	public ProteinSequenceEncoder(Dataset<Row> data) {
@@ -131,6 +160,43 @@ public class ProteinSequenceEncoder {
 				double[] values = new double[7*s.length()];
 				for (int i = 0, k = 0; i < s.length(); i++) {
 					double[] property = properties.get(s.charAt(i));
+					if (property != null) {
+						for (double p: property) {
+							values[k++] = p;
+						}
+					}	
+				}
+				return Vectors.dense(values);
+			}
+		}, new VectorUDT());
+
+		// append feature column
+				data.createOrReplaceTempView("table");
+				data = session.sql("SELECT *, encoder(" 
+				+ inputCol + ") AS " 
+						+ outputCol + " from table");
+				
+				return data;
+	}
+	
+	/**
+	 * Encodes a protein sequence by a Blosum62 matrix.
+	 * 
+	 * <p> See: <a href="https://ftp.ncbi.nih.gov/repository/blocks/unix/blosum/BLOSUM/blosum62.blast.new">BLOSUM62 Matrix</a>
+     *
+	 * @return dataset with feature vector appended
+	 */
+	public Dataset<Row> blosum62Encode() {
+		SparkSession session = data.sparkSession();
+
+		session.udf().register("encoder", new UDF1<String, Vector>(){
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public Vector call(String s) throws Exception {
+				double[] values = new double[20*s.length()];
+				for (int i = 0, k = 0; i < s.length(); i++) {
+					double[] property = blosum62.get(s.charAt(i));
 					if (property != null) {
 						for (double p: property) {
 							values[k++] = p;
