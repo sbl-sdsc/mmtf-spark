@@ -38,8 +38,12 @@ public class StructureToBioassembly implements PairFlatMapFunction<Tuple2<String
 		System.out.println("*** BIOASSEMBLY DATA ***");
 		System.out.println("Number bioassemblies: " + structure.getNumBioassemblies());
 		
+		//get the number of bioassemblies that the structure has.
+		//for each of them, create one structure.
 		for (int i = 0; i < structure.getNumBioassemblies(); i++) {
+			//initiate the bioassembly structure.
 			AdapterToStructureData bioAssembly = new AdapterToStructureData();
+			//set the structureID.
 			String structureId = structure.getStructureId() + "-BioAssembly" + structure.getBioassemblyName(i);
 			
 			int totAtoms = 0, totBonds = 0, totGroups = 0, totChains = 0, totModels = 0;
@@ -47,6 +51,8 @@ public class StructureToBioassembly implements PairFlatMapFunction<Tuple2<String
 			totModels = structure.getNumModels();
 			int[][] bioChainList;
 			double[][] transMatrix;
+			//loop through all the trans current bioassembly structure has.
+			//calculate the total data we will use to initialize the structure.
 			for(int ii = 0; ii < numTrans; ii++)
 			{
 				bioChainList[ii] = structure.getChainIndexListForTransform(i, ii);
@@ -69,6 +75,7 @@ public class StructureToBioassembly implements PairFlatMapFunction<Tuple2<String
 					}
 				}
 			}
+			//init
 			bioAssembly.initStructure(totBonds * numTrans, totAtoms * numTrans,
 					totGroups * numTrans, totChains * numTrans, totModels * numTrans, structureId);
 			DecoderUtils.addXtalographicInfo(structure, bioAssembly);
@@ -78,34 +85,89 @@ public class StructureToBioassembly implements PairFlatMapFunction<Tuple2<String
 			int numTransformations = structure.getNumTransInBioassembly(i);
 			System.out.println("  Number transformations: " + numTransformations);
 			
+			/*
+			 * Now we have bioChainList and transMatrix.
+			 * bioChainList[i] is the ith trans' list of chains it has.  
+			 * transMatrix[i] is the matrix that is going to be applied on those chains.
+			 */
+			
+			//initialize the indices.
 			int modelIndex = 0;
 			int chainIndex = 0;
 			int groupIndex = 0;
 			int atomIndex = 0;
+			int chainCounter = 0;
+			int groupCounter = 0;
+			int atomCounter = 0;
+			
 			
 			// loop through models
 			for(int ii = 0; ii < structure.getNumModels(); ii++)
 			{
 				// precalculate indices
-				int numChainsPerModel = structure.getChainsPerModel()[ii] * numTrans;
-				bioAssembly.setModelInfo(ii, numChainsPerModel);
+				int numChainsPerModel = structure.getChainsPerModel()[modelIndex] * numTrans;
+				bioAssembly.setModelInfo(modelIndex, numChainsPerModel);
 				int[] chainToEntityIndex = getChainToEntityIndex(structure);
 				//loop through chains
-				for(int j = 0; j < structure.getChainsPerModel()[ii]; j++)
+				for(int j = 0; j < structure.getChainsPerModel()[modelIndex]; j++)
 				{
+					//loop through each trans
+					int currGroupIndex = groupIndex;
+					int currAtomIndex = atomIndex;
+					
 					for (int k = 0; k < numTrans; k++)
 					{
+						groupIndex = currGroupIndex;
+						atomIndex = currAtomIndex;
+						
+						//get the currChainList that needs to be added
 						int[] currChainList = bioChainList[k];
 						double[] currMatrix = transMatrix[k];
+						boolean addThisChain = Arrays.asList(currChainList).contains(chainIndex);
+						
+						if(addThisChain){	
+							int entityToChainIndex = chainToEntityIndex[chainIndex];
+							
+							//TODO
+							//not sure
+							bioAssembly.setEntityInfo(new int[]{chainCounter}, structure.getEntitySequence(entityToChainIndex), 
+									structure.getEntityDescription(entityToChainIndex), structure.getEntityType(entityToChainIndex));
+							bioAssembly.setChainInfo(structure.getChainIds()[chainIndex], structure.getChainNames()[chainIndex],
+									structure.getGroupsPerChain()[chainIndex]);
+							chainCounter ++;
+							
+						}
+						
+						//loop through the groups in the chain
+						for(int jj = 0; jj < structure.getGroupsPerChain()[chainIndex]; jj++)
+						{
+							if(addThisChain)
+							{
+								
+								
+								groupCounter++;
+							}
+							for(int kk = 0; kk < structure.getNumAtomsInGroup(groupIndex); kk++)
+							{
+								if(addThisChain)
+								{
+									
+									atomeCounter++;
+								}
+								//inc the atomIndex
+								atomIndex++;
+							}
+							//inc the groupIndex
+							groupIndex++;
+						}
+					
 					}
 					
-					int entityToChainIndex = chainToEntityIndex[chainIndex];
-					bioAssembly.setEntityInfo(new int[]{chainIndex}, structure.getEntitySequence(entityToChainIndex), 
-							structure.getEntityDescription(entityToChainIndex), structure.getEntityType(entityToChainIndex));
-					bioAssembly.setChainInfo(structure.getChainIds()[chainIndex], structure.getChainNames()[chainIndex],
-							structure.getGroupsPerChain()[chainIndex]);
+					
+					//inc the chainIndex
 					chainIndex++;
-				} 	
+				}
+				//inc the modelIndex
 				modelIndex++;
 //				for (int j = 0; j < numTransformations; j++) {
 //					System.out.println("    transformation: " + j);
