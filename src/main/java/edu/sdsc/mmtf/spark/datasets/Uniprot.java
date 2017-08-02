@@ -64,9 +64,8 @@ public class Uniprot {
 		InputStream in = conn.getInputStream();
 		BufferedReader rd = new BufferedReader(new InputStreamReader(new GZIPInputStream(in)));
 		
-		String db = "", uniqueIdentifier= "", entryName= "", proteinName= "", organismName= "", geneName= "";
-		int proteinExistence=0, sequenceVersion=0;
-		String sequence = "", line;
+		String db = "", uniqueIdentifier= "", entryName= "", proteinName= "", organismName= "",
+				geneName= "", proteinExistence= "", sequenceVersion="", sequence = "", line;
 		String[] tmp;
 		boolean firstTime = true;
 		while((line = rd.readLine()) != null)
@@ -86,15 +85,15 @@ public class Uniprot {
 				if(tmp[0].indexOf(" SV=") != -1)
 				{
 					tmp = tmp[0].split(" SV=");
-					sequenceVersion = Integer.parseInt(tmp[1]);
+					sequenceVersion = tmp[1];
 				}
-				else sequenceVersion = -1;
+				else sequenceVersion = "";
 				if(tmp[0].indexOf(" PE=") != -1)
 				{
 					tmp = tmp[0].split(" PE=");
-					proteinExistence = Integer.parseInt(tmp[1]);
+					proteinExistence = tmp[1];
 				}
-				else proteinExistence = -1;				
+				else proteinExistence = "";				
 				if(tmp[0].indexOf(" GN=") != -1)
 				{
 					tmp = tmp[0].split(" GN=");
