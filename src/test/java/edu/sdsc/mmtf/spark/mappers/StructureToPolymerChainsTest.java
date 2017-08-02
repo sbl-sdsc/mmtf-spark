@@ -39,11 +39,11 @@ public class StructureToPolymerChainsTest {
 	    // 1JLP: 1 L-protein chains with non-polymer capping group (NH2)
 	    // 5X6H: 1 L-protein and 1 DNA chain
 	    // 5L2G: 2 DNA chain
-	    // 2MK1: 1 D-saccharide
+	    // 2MK1: 0 polymer chains
 	    // --------------------
-	    /// tot: 11 chains
+	    /// tot: 10 chains
 	    
 	    JavaPairRDD<String, StructureDataInterface> polymers = pdb.flatMapToPair(new StructureToPolymerChains());
-        assertEquals(11, polymers.count());
+        assertEquals(10, polymers.count());
 	}
 }

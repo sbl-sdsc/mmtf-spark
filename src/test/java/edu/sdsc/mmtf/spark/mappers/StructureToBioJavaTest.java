@@ -41,16 +41,16 @@ public class StructureToBioJavaTest {
 		// 1JLP: 1 L-protein chains with non-polymer capping group (NH2)
 		// 5X6H: 1 L-protein and 1 DNA chain
 		// 5L2G: 2 DNA chains
-		// 2MK1: 1 D-saccharide
+		// 2MK1: 0 polymer chains
 		// --------------------
-		// tot : 11 polymer chains
+		// tot : 10 polymer chains
 
 		JavaDoubleRDD chainCounts = pdb
 				.mapValues(new StructureToBioJava())
 				.values()
 				.mapToDouble(v -> v.getPolyChains().size());
 
-		assertEquals(11, Math.round(chainCounts.sum()));
+		assertEquals(10, Math.round(chainCounts.sum()));
 
 		// extract polymer chains and count chains again
 		chainCounts = pdb
@@ -59,6 +59,6 @@ public class StructureToBioJavaTest {
 				.values()
 				.mapToDouble(v -> v.getChains().size());
 				
-		assertEquals(11, Math.round(chainCounts.sum()));
+		assertEquals(10, Math.round(chainCounts.sum()));
 	}
 }
