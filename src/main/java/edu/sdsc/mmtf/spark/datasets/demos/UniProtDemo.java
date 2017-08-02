@@ -15,7 +15,7 @@ public class UniProtDemo {
 	    
 	    SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(CustomReportDemo.class.getSimpleName());
 	    JavaSparkContext sc = new JavaSparkContext(conf);
-	    Dataset<Row> ds = Uniprot.getDataset(sc);
+	    Dataset<Row> ds = Uniprot.getDataset(sc, "UniRef50");
 	    
 	    // show the schema of this dataset
 	    ds.printSchema();
