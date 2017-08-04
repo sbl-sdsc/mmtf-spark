@@ -8,18 +8,12 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.zip.GZIPInputStream;
 
-import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
-import org.apache.spark.sql.RowFactory;
 import org.apache.spark.sql.SparkSession;
-
-import edu.sdsc.mmtf.spark.ml.JavaRDDToDataset;
 
 /**
  * @author Yue Yu
@@ -58,9 +52,13 @@ public class Uniprot {
 		}
 	}
 	private static Dataset<Row> getUniprotDataset(JavaSparkContext sc, UniDataset dataType) throws IOException {
+		File tempFile = File.createTempFile("tmp", ".csv");
+		PrintWriter pw = new PrintWriter(tempFile);
+		pw.println("db,uniqueIdentifier,entryName,proteinName,organismName,geneName,"
+				+ "proteinExistence,sequenceVersion,sequence");
+
 		URL u = new URL(dataType.getUrl());
 		URLConnection conn = u.openConnection();
-		List<Row> res = new ArrayList<Row>();
 		InputStream in = conn.getInputStream();
 		BufferedReader rd = new BufferedReader(new InputStreamReader(new GZIPInputStream(in)));
 		
@@ -72,16 +70,23 @@ public class Uniprot {
 		{
 			if(line.contains(">"))
 			{
-				//System.out.println(line);
 				if(!firstTime)
-					res.add(RowFactory.create(db, uniqueIdentifier, entryName, proteinName,
-							organismName, geneName, proteinExistence, sequenceVersion, sequence));
+					pw.println(db + "," + uniqueIdentifier + "," + entryName + "," + proteinName
+							 + "," + organismName + "," + geneName + "," +  proteinExistence + "," + sequenceVersion + "," + sequence);
 				firstTime = false;
 				sequence = "";
 				tmp = (line.substring(1)).split("\\|");
 				db = tmp[0];
 				uniqueIdentifier = tmp[1];
 				tmp[0] = tmp[2];
+				
+				if(tmp[0].split(" OS=").length > 2)
+				{
+					//System.out.println(tmp[0] + " ! ");
+					tmp[0] = tmp[0].substring(0, tmp[0].split(" OS=")[0].length() + tmp[0].split(" OS=")[1].length() + 4);
+					//System.out.println(tmp[0]);
+				}
+				
 				if(tmp[0].indexOf(" SV=") != -1)
 				{
 					tmp = tmp[0].split(" SV=");
@@ -113,11 +118,18 @@ public class Uniprot {
 				sequence = sequence.concat(line);
 			}
 		}
-		res.add(RowFactory.create(db, uniqueIdentifier, entryName, proteinName,
-				organismName, geneName, proteinExistence, sequenceVersion, sequence));
-		JavaRDD<Row> data =  sc.parallelize(res);
-		return JavaRDDToDataset.getDataset(data, "db", "uniqueIdentifier", "entryName",
-				"proteinName", "organismName", "geneName", "proteinExistence", "sequenceVersion", "sequence");
+		pw.println(db + "," + uniqueIdentifier + "," + entryName + "," + proteinName + "," + organismName
+				+ "," + geneName + "," +  proteinExistence + "," + sequenceVersion + "," + sequence);
+		pw.close();
+		SparkSession spark = SparkSession
+	    		.builder()
+	    		.getOrCreate();
+		Dataset<Row> dataset = spark.read()
+	    		.format("csv")
+	    		.option("header", "true")
+	    		.option("inferSchema", "true")
+	    		.load(tempFile.toString());
+		return dataset;
 	}
 	private static Dataset<Row> getUnirefDataset(JavaSparkContext sc, UniDataset dataType) throws IOException {
 		File tempFile = File.createTempFile("tmp", ".csv");
