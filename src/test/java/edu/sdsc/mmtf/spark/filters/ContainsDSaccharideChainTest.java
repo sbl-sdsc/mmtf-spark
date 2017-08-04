@@ -30,7 +30,8 @@ public class ContainsDSaccharideChainTest {
 	    // 1JLP: single L-protein chains with non-polymer capping group (NH2)
 	    // 5X6H: L-protein and L-DNA chain
 	    // 5L2G: L-DNA chain
-	    // 2MK1: D-saccharide
+	    // 2MK1: As of V5 of PDBx/mmCIF, saccharides seem to be represented as monomers,
+	    //       instead of polysaccharides, so none of these tests returns true anymore.
 	    List<String> pdbIds = Arrays.asList("2ONX","1JLP","5X6H","5L2G","2MK1");
 	    pdb = MmtfReader.downloadMmtfFiles(pdbIds, sc);
 	}
@@ -49,7 +50,7 @@ public class ContainsDSaccharideChainTest {
 	    assertFalse(results.contains("1JLP"));
 	    assertFalse(results.contains("5X6H"));
 	    assertFalse(results.contains("5L2G"));
-	    assertTrue(results.contains("2MK1"));
+	    assertFalse(results.contains("2MK1"));
 	}
 	
 	@Test
@@ -63,7 +64,7 @@ public class ContainsDSaccharideChainTest {
 	    assertFalse(results.contains("5X6H.B"));
 	    assertFalse(results.contains("5L2G.A"));
 	    assertFalse(results.contains("5L2G.B"));
-	    assertTrue(results.contains("2MK1.A"));
+	    assertFalse(results.contains("2MK1.A"));
 	}
 	
 }

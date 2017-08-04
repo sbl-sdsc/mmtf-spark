@@ -25,9 +25,9 @@ public class ReleaseDateFilterTest {
 		SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(ReleaseDateFilterTest.class.getSimpleName());
 	    sc = new JavaSparkContext(conf);
 	    
-	    // 1O6Y: released on 2017-05-24
-	    // 4MYA: released on 2017-05-17
-	    // 3VCO: released on 2017-05-24
+	    // 1O6Y: released on 2003-01-30
+	    // 4MYA: released on 2014-01-01
+	    // 3VCO: released on 2013-03-06
 	    // 5N0Y: released on 2017-05-24
 	    List<String> pdbIds = Arrays.asList("1O6Y","4MYA","3VCO","5N0Y");
 	    pdb = MmtfReader.downloadMmtfFiles(pdbIds, sc);
@@ -43,7 +43,7 @@ public class ReleaseDateFilterTest {
 	    pdb = pdb.filter(new ReleaseDate("2000-01-01", "2010-01-01"));    
 	    List<String> results = pdb.keys().collect();
 	    
-	    assertFalse(results.contains("1O6Y"));
+	    assertTrue(results.contains("1O6Y"));
 	    assertFalse(results.contains("4MYA"));
 	    assertFalse(results.contains("3VCO"));
 	    assertFalse(results.contains("5N0Y"));
@@ -54,7 +54,7 @@ public class ReleaseDateFilterTest {
 	    pdb = pdb.filter(new ReleaseDate("2010-01-01", "2020-01-01"));    
 	    List<String> results = pdb.keys().collect();
 	    
-	    assertTrue(results.contains("1O6Y"));
+	    assertFalse(results.contains("1O6Y"));
 	    assertTrue(results.contains("4MYA"));
 	    assertTrue(results.contains("3VCO"));
 	    assertTrue(results.contains("5N0Y"));
@@ -62,12 +62,12 @@ public class ReleaseDateFilterTest {
 	
 	@Test
 	public void test3() {
-	    pdb = pdb.filter(new ReleaseDate("2017-05-17", "2017-05-17"));    
+	    pdb = pdb.filter(new ReleaseDate("2013-03-06", "2013-03-06"));    
 	    List<String> results = pdb.keys().collect();
 	    
 	    assertFalse(results.contains("1O6Y"));
-	    assertTrue(results.contains("4MYA"));
-	    assertFalse(results.contains("3VCO"));
+	    assertFalse(results.contains("4MYA"));
+	    assertTrue(results.contains("3VCO"));
 	    assertFalse(results.contains("5N0Y"));
 	}
 	
@@ -76,9 +76,9 @@ public class ReleaseDateFilterTest {
 	    pdb = pdb.filter(new ReleaseDate("2017-05-24", "2017-05-24"));    
 	    List<String> results = pdb.keys().collect();
 	    
-	    assertTrue(results.contains("1O6Y"));
+	    assertFalse(results.contains("1O6Y"));
 	    assertFalse(results.contains("4MYA"));
-	    assertTrue(results.contains("3VCO"));
+	    assertFalse(results.contains("3VCO"));
 	    assertTrue(results.contains("5N0Y"));
 	}
 }
