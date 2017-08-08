@@ -11,8 +11,6 @@ import org.rcsb.mmtf.api.StructureDataInterface;
 import edu.sdsc.mmtf.spark.datasets.demos.CustomReportDemo;
 import edu.sdsc.mmtf.spark.io.MmtfReader;
 import edu.sdsc.mmtf.spark.io.MmtfWriter;
-import edu.sdsc.mmtf.spark.mappers.StructureToBioassembly;
-import edu.sdsc.mmtf.spark.mappers.StructureToPolymerChains;
 import edu.sdsc.mmtf.spark.mappers.StructureToProteinDimers;
 
 /**

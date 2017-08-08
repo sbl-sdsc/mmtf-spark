@@ -225,6 +225,18 @@ public class StructureToProteinDimers implements PairFlatMapFunction<Tuple2<Stri
 		return resList.iterator();
 	}
 
+	private static Tuple2<String, StructureDataInterface> combineStructure(StructureDataInterface s1, StructureDataInterface s2)
+	{
+		String structureId = s1.getStructureId() + "_append_" + s2.getStructureId();
+		AdapterToStructureData combinedStructure = new AdapterToStructureData(); 
+		combinedStructure.initStructure(s1.getNumBonds() + s2.getNumBonds(), s1.getNumAtoms() + s2.getNumAtoms(),
+				s1.getNumGroups() + s2.getNumGroups(), 2, s1.getNumModels(), structureId);
+		DecoderUtils.addXtalographicInfo(s1, combinedStructure);
+		DecoderUtils.addHeaderInfo(s1, combinedStructure);	
+		
+		return (new Tuple2<String, StructureDataInterface>(structureId, combinedStructure));
+	}
+	
 	/**
 	 * Returns an array that maps a chain index to an entity index.
 	 * @param structureDataInterface
