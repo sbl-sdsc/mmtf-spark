@@ -44,7 +44,7 @@ public class UniProt {
 		TREMBL(baseUrl + "current_release/knowledgebase/complete/uniprot_trembl.fasta.gz"), 
 		UNIREF50(baseUrl + "uniref/uniref50/uniref50.fasta.gz"), 
 		UNIREF90(baseUrl + "uniref/uniref90/uniref90.fasta.gz"), 
-		UNIREF100(baseUrl + "uniref100/uniref100.fasta.gz");
+		UNIREF100(baseUrl + "uniref/uniref100/uniref100.fasta.gz");
 	
 		private final String url;
 
@@ -178,7 +178,6 @@ public class UniProt {
 
 		while ((line = rd.readLine()) != null) {
 			if (line.contains(">")) {
-
 				if (!firstTime) {
 					pw.println(uniqueIdentifier + "," + clusterName + "," + members + "," + taxon + "," + taxonID + ","
 							+ representativeMember + "," + sequence);
@@ -187,26 +186,26 @@ public class UniProt {
 				
 				sequence = "";
 				tmp[0] = line.substring(1);
-				if (tmp[0].split(" RepID=").length > 1) {
-					tmp = tmp[0].split(" RepID=");
+				tmp = tmp[0].split(" RepID=");
+				if (tmp.length > 1) {	
 					representativeMember = tmp[1];
 				} else {
 					representativeMember = "";
 				}
-				if (tmp[0].split(" TaxID=").length > 1) {
-					tmp = tmp[0].split(" TaxID=");
+				tmp = tmp[0].split(" TaxID=");
+				if (tmp.length > 1) {
 					taxonID = tmp[1];
 				} else {
 					taxonID = "";
 				}
-				if (tmp[0].split(" Tax=").length > 1) {
-					tmp = tmp[0].split(" Tax=");
+				tmp = tmp[0].split(" Tax=");
+				if (tmp.length > 1) {
 					taxon = tmp[1];
 				} else {
 					taxon = "";
 				}
-				if (tmp[0].split(" n=").length > 1) {
-					tmp = tmp[0].split(" n=");
+				tmp = tmp[0].split(" n=");
+				if (tmp.length > 1) {
 					members = tmp[1];
 				} else {
 					members = "";
