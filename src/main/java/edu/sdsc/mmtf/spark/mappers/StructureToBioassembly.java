@@ -1,11 +1,8 @@
 package edu.sdsc.mmtf.spark.mappers;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Point3f;
@@ -23,18 +20,8 @@ import scala.Tuple2;
  * @author Yue Yu
  */
 public class StructureToBioassembly implements PairFlatMapFunction<Tuple2<String,StructureDataInterface>,String, StructureDataInterface> {
-
 	private static final long serialVersionUID = -9098891849038187334L;
 
-
-	/**
-	 * TODO
-	 * comments
-	 */
-	public StructureToBioassembly() {
-		
-	}
-		
 	@Override
 	public Iterator<Tuple2<String, StructureDataInterface>> call(Tuple2<String, StructureDataInterface> t) throws Exception {
 		StructureDataInterface structure = t._2;
@@ -106,7 +93,7 @@ public class StructureToBioassembly implements PairFlatMapFunction<Tuple2<String
 			int groupIndex = 0;
 			int atomIndex = 0;
 			int chainCounter = 0;
-			int gbIndex = 0;
+//			int gbIndex = 0;
 			// loop through models
 			for(int ii = 0; ii < structure.getNumModels(); ii++)
 			{

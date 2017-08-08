@@ -27,12 +27,23 @@ import org.apache.spark.sql.RowFactory;
 import edu.sdsc.mmtf.spark.ml.JavaRDDToDataset;
 
 /**
+ * This class downloads the dataset used to train the
+ * <a href="http://www.compbio.dundee.ac.uk/jpred/about_RETR_JNetv231_details.shtml">JPred 4/JNet (v.2.3.1)</a>
+ * secondary structure predictor. It can be used as a reference
+ * dataset for machine learning applications.
+ * This dataset includes the ScopID, sequence, DSSP secondary
+ * structure assignment, and a flag that indicates if data point
+ * was part of the training set.
+ * 
  * @author Yue Yu
  * 
  */
 public class JpredDataset {
 	/**
-	 * 
+	 * Gets JPred 4/JNet (v.2.3.1) secondary structure dataset.
+	 * @param sc JavaSparkContext
+	 * @return secondary structure dataset
+	 * @throws IOException if file cannot be downloaded or read
 	 */
 	public static Dataset<Row> getDataset(JavaSparkContext sc) throws IOException {	
 		List<Row> res = new ArrayList<Row>();
@@ -85,6 +96,5 @@ public class JpredDataset {
 		
 		JavaRDD<Row> data = sc.parallelize(res);
 		return JavaRDDToDataset.getDataset(data, "scopID", "sequence", "secondaryStructure", "trained");
-	
 	}
 }
