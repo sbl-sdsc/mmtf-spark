@@ -92,25 +92,37 @@ public class Uniprot {
 					tmp = tmp[0].split(" SV=");
 					sequenceVersion = tmp[1];
 				}
-				else sequenceVersion = "";
+				else{
+					tmp = tmp[0].split(" SV=");
+					sequenceVersion = "";
+				}
 				if(tmp[0].indexOf(" PE=") != -1)
 				{
 					tmp = tmp[0].split(" PE=");
 					proteinExistence = tmp[1];
 				}
-				else proteinExistence = "";				
+				else {
+					tmp = tmp[0].split(" PE=");
+					proteinExistence = "";				
+				}
 				if(tmp[0].indexOf(" GN=") != -1)
 				{
 					tmp = tmp[0].split(" GN=");
 					geneName = tmp[1];
 				}
-				else geneName = "";	
+				else {
+					tmp = tmp[0].split(" GN=");
+					geneName = "";	
+				}
 				if(tmp[0].indexOf(" OS=") != -1)
 				{
 					tmp = tmp[0].split(" OS=");
 					organismName = tmp[1];
 				}
-				else organismName = "";					
+				else {
+					tmp = tmp[0].split(" OS=");
+					organismName = "";					
+				}
 				entryName = tmp[0].split(" ")[0];
 				proteinName = tmp[0].substring(tmp[0].split(" ")[0].length() + 1);
 			}
@@ -149,7 +161,7 @@ public class Uniprot {
 		{
 			if(line.contains(">"))
 			{
-				//if(uniqueIdentifier.equals("UniRef50_Q6GZW3")) break;
+				//if(uniqueIdentifier.equals("UniRef100_Q6GZW3")) break;
 				//System.out.println(line);
 				if(!firstTime)
 					pw.println(uniqueIdentifier + "," + clusterName + "," + members + "," + taxon
@@ -162,26 +174,38 @@ public class Uniprot {
 					tmp = tmp[0].split(" RepID=");
 					representativeMember = tmp[1];
 				}
-				else representativeMember = "";
+				else {
+					tmp = tmp[0].split(" RepID=");
+					representativeMember = "";
+				}
 				if(tmp[0].split(" TaxID=").length > 1)
 				{
 					tmp = tmp[0].split(" TaxID=");
 					taxonID = tmp[1];
 				}
-				else taxonID = "";	
+				else {
+					tmp = tmp[0].split(" TaxID=");
+					taxonID = "";	
+				}
 				if(tmp[0].split(" Tax=").length > 1)
 				{
 					tmp = tmp[0].split(" Tax=");
 					taxon = tmp[1];
 				}
-				else taxon = "";
+				else {
+					tmp = tmp[0].split(" Tax=");
+					taxon = "";
+				}
 				if(tmp[0].split(" n=").length > 1)
 				{
 					
 					tmp = tmp[0].split(" n=");
 					members = tmp[1];
 				}
-				else members = "";					
+				else {
+					tmp = tmp[0].split(" n=");
+					members = "";					
+				}
 				uniqueIdentifier = tmp[0].split(" ")[0];
 				clusterName = tmp[0].substring(tmp[0].split(" ")[0].length() + 1);
 			}
