@@ -61,7 +61,7 @@ public class SecondaryStructureShiftedWord2VecEncoder {
 		// of L-protein chains
 		int sequenceIdentity = 20;
 		double resolution = 2.0;
-		double fraction = 0.1;
+		double fraction = 1.0;
 		long seed = 123;
 		
 		JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader
