@@ -225,14 +225,93 @@ public class StructureToProteinDimers implements PairFlatMapFunction<Tuple2<Stri
 		return resList.iterator();
 	}
 
-	private static Tuple2<String, StructureDataInterface> combineStructure(StructureDataInterface s1, StructureDataInterface s2)
+	private static List<StructureDataInterface> splitToChains(StructureDataInterface s)
 	{
+		int modelIndex = 0;
+		int chainIndex = 0;
+		List<StructureDataInterface> chains = new ArrayList<StructureDataInterface>();
+		
+		for(int i = 0; i < s.getNumModels(); i++ , modelIndex ++ )
+		{
+			int[] chainToEntityIndex = getChainToEntityIndex(s);
+			for(int j = 0; j < s.getChainsPerModel()[modelIndex]; j++, chainIndex ++)
+			{
+				AdapterToStructureData newChain = new AdapterToStructureData();
+			}
+		}
+		return chains;
+	}
+	
+	private static Tuple2<String, StructureDataInterface> combineChains(StructureDataInterface s1, StructureDataInterface s2)
+	{
+		int groupCounter = 0;
+		int atomCounter = 0;
+		
 		String structureId = s1.getStructureId() + "_append_" + s2.getStructureId();
 		AdapterToStructureData combinedStructure = new AdapterToStructureData(); 
 		combinedStructure.initStructure(s1.getNumBonds() + s2.getNumBonds(), s1.getNumAtoms() + s2.getNumAtoms(),
-				s1.getNumGroups() + s2.getNumGroups(), 2, s1.getNumModels(), structureId);
+				s1.getNumGroups() + s2.getNumGroups(), 2, 1, structureId);
 		DecoderUtils.addXtalographicInfo(s1, combinedStructure);
 		DecoderUtils.addHeaderInfo(s1, combinedStructure);	
+		
+		combinedStructure.setModelInfo(0, 2);
+
+		// set entity and chain info
+		combinedStructure.setEntityInfo(new int[]{0}, s1.getEntitySequence(getChainToEntityIndex(s1)[0]), 
+				s1.getEntityDescription(getChainToEntityIndex(s1)[0]), s1.getEntityType(getChainToEntityIndex(s1)[0]));
+		combinedStructure.setChainInfo(s1.getChainIds()[0], s1.getChainNames()[0], s1.getGroupsPerChain()[0]);
+		
+		for (int i = 0; i < s1.getGroupsPerChain()[0]; i++, groupCounter++){
+			int groupIndex = s1.getGroupTypeIndices()[groupCounter];
+			// set group info
+			combinedStructure.setGroupInfo(s1.getGroupName(groupIndex), s1.getGroupIds()[groupCounter], 
+					s1.getInsCodes()[groupCounter], s1.getGroupChemCompType(groupIndex), s1.getNumAtomsInGroup(groupIndex),
+					s1.getGroupBondOrders(groupIndex).length, s1.getGroupSingleLetterCode(groupIndex),
+					s1.getGroupSequenceIndices()[groupCounter], s1.getSecStructList()[groupCounter]);
+
+			for (int j = 0; j < s1.getNumAtomsInGroup(groupIndex); j++, atomCounter++){
+				combinedStructure.setAtomInfo(s1.getGroupAtomNames(groupIndex)[j], s1.getAtomIds()[atomCounter],
+						s1.getAltLocIds()[atomCounter], s1.getxCoords()[atomCounter], s1.getyCoords()[atomCounter], 
+						s1.getzCoords()[atomCounter], s1.getOccupancies()[atomCounter], s1.getbFactors()[atomCounter],
+						s1.getGroupElementNames(groupIndex)[j], s1.getGroupAtomCharges(groupIndex)[j]);
+			}
+
+//			for (int j = 0; j < s1.getGroupBondOrders(groupIndex).length; j++) {
+//				int bondIndOne = s1.getGroupBondIndices(groupIndex)[j*2];
+//				int bondIndTwo = s1.getGroupBondIndices(groupIndex)[j*2+1];
+//				int bondOrder = s1.getGroupBondOrders(groupIndex)[j];
+//				combinedStructure.setGroupBond(bondIndOne, bondIndTwo, bondOrder);
+//			}
+		}
+		// set entity and chain info
+		combinedStructure.setEntityInfo(new int[]{1}, s1.getEntitySequence(getChainToEntityIndex(s2)[0]), 
+				s2.getEntityDescription(getChainToEntityIndex(s2)[0]), s2.getEntityType(getChainToEntityIndex(s2)[0]));
+		combinedStructure.setChainInfo(s2.getChainIds()[0], s2.getChainNames()[0], s2.getGroupsPerChain()[0]);
+		groupCounter = 0;
+		atomCounter = 0;
+		for (int i = 0; i < s2.getGroupsPerChain()[0]; i++, groupCounter++){
+			int groupIndex = s2.getGroupTypeIndices()[groupCounter];
+			// set group info
+			combinedStructure.setGroupInfo(s2.getGroupName(groupIndex), s2.getGroupIds()[groupCounter], 
+					s2.getInsCodes()[groupCounter], s2.getGroupChemCompType(groupIndex), s2.getNumAtomsInGroup(groupIndex),
+					s2.getGroupBondOrders(groupIndex).length, s2.getGroupSingleLetterCode(groupIndex),
+					s2.getGroupSequenceIndices()[groupCounter], s2.getSecStructList()[groupCounter]);
+
+			for (int j = 0; j < s2.getNumAtomsInGroup(groupIndex); j++, atomCounter++){
+				combinedStructure.setAtomInfo(s2.getGroupAtomNames(groupIndex)[j], s2.getAtomIds()[atomCounter],
+						s2.getAltLocIds()[atomCounter], s2.getxCoords()[atomCounter], s2.getyCoords()[atomCounter], 
+						s2.getzCoords()[atomCounter], s2.getOccupancies()[atomCounter], s2.getbFactors()[atomCounter],
+						s2.getGroupElementNames(groupIndex)[j], s2.getGroupAtomCharges(groupIndex)[j]);
+			}
+
+//			for (int j = 0; j < s2.getGroupBondOrders(groupIndex).length; j++) {
+//				int bondIndOne = s2.getGroupBondIndices(groupIndex)[j*2];
+//				int bondIndTwo = s2.getGroupBondIndices(groupIndex)[j*2+1];
+//				int bondOrder = s2.getGroupBondOrders(groupIndex)[j];
+//				combinedStructure.setGroupBond(bondIndOne, bondIndTwo, bondOrder);
+//			}
+		}
+		combinedStructure.finalizeStructure();
 		
 		return (new Tuple2<String, StructureDataInterface>(structureId, combinedStructure));
 	}
