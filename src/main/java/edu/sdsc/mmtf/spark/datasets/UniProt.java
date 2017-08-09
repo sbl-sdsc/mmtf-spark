@@ -100,6 +100,7 @@ public class UniProt {
 
 		while ((line = rd.readLine()) != null) {
 			if (line.contains(">")) {
+				line = line.replace(",", ";");
 				if (!firstTime) {
 					pw.println(db + "," + uniqueIdentifier + "," + entryName + "," + proteinName + "," + organismName
 							+ "," + geneName + "," + proteinExistence + "," + sequenceVersion + "," + sequence);
@@ -112,34 +113,16 @@ public class UniProt {
 				tmp[0] = tmp[2];
 
 				if (tmp[0].split(" OS=").length > 2) {
-					tmp[0] = tmp[0].substring(0,
-							tmp[0].split(" OS=")[0].length() + tmp[0].split(" OS=")[1].length() + 4);
+					tmp[0] = tmp[0].substring(0, tmp[0].split(" OS=")[0].length() + tmp[0].split(" OS=")[1].length() + 4);
 				}
-
-				if (tmp[0].indexOf(" SV=") != -1) {
-					tmp = tmp[0].split(" SV=");
-					sequenceVersion = tmp[1];
-				} else {
-					sequenceVersion = "";
-				}
-				if (tmp[0].indexOf(" PE=") != -1) {
-					tmp = tmp[0].split(" PE=");
-					proteinExistence = tmp[1];
-				} else {
-					proteinExistence = "";
-				}
-				if (tmp[0].indexOf(" GN=") != -1) {
-					tmp = tmp[0].split(" GN=");
-					geneName = tmp[1];
-				} else {
-					geneName = "";
-				}
-				if (tmp[0].indexOf(" OS=") != -1) {
-					tmp = tmp[0].split(" OS=");
-					organismName = tmp[1];
-				} else {
-					organismName = "";
-				}
+				tmp = tmp[0].split(" SV=", -1);
+				sequenceVersion = tmp.length > 1 ? tmp[1] : "";
+				tmp = tmp[0].split(" PE=", -1);
+				proteinExistence = tmp.length > 1 ? tmp[1] : "";
+				tmp = tmp[0].split(" GN=", -1);
+				geneName = tmp.length > 1 ? tmp[1] : "";
+				tmp = tmp[0].split(" OS=", -1);
+				organismName = tmp.length > 1 ? tmp[1] : "";
 				entryName = tmp[0].split(" ")[0];
 				proteinName = tmp[0].substring(tmp[0].split(" ")[0].length() + 1);
 			} else {
@@ -178,6 +161,7 @@ public class UniProt {
 
 		while ((line = rd.readLine()) != null) {
 			if (line.contains(">")) {
+				line = line.replace(",", ";");
 				if (!firstTime) {
 					pw.println(uniqueIdentifier + "," + clusterName + "," + members + "," + taxon + "," + taxonID + ","
 							+ representativeMember + "," + sequence);
@@ -186,30 +170,14 @@ public class UniProt {
 				
 				sequence = "";
 				tmp[0] = line.substring(1);
-				tmp = tmp[0].split(" RepID=");
-				if (tmp.length > 1) {	
-					representativeMember = tmp[1];
-				} else {
-					representativeMember = "";
-				}
-				tmp = tmp[0].split(" TaxID=");
-				if (tmp.length > 1) {
-					taxonID = tmp[1];
-				} else {
-					taxonID = "";
-				}
-				tmp = tmp[0].split(" Tax=");
-				if (tmp.length > 1) {
-					taxon = tmp[1];
-				} else {
-					taxon = "";
-				}
-				tmp = tmp[0].split(" n=");
-				if (tmp.length > 1) {
-					members = tmp[1];
-				} else {
-					members = "";
-				}
+				tmp = tmp[0].split(" RepID=", -1);
+				representativeMember = tmp.length > 1 ? tmp[1] : "";
+				tmp = tmp[0].split(" TaxID=", -1);
+				taxonID = tmp.length > 1 ? tmp[1] : "";
+				tmp = tmp[0].split(" Tax=", -1);
+				taxon = tmp.length > 1 ? tmp[1] : "";
+				tmp = tmp[0].split(" n=", -1);
+				members = tmp.length > 1 ? tmp[1] : "";
 				uniqueIdentifier = tmp[0].split(" ")[0];
 				clusterName = tmp[0].substring(tmp[0].split(" ")[0].length() + 1);
 			} else {
