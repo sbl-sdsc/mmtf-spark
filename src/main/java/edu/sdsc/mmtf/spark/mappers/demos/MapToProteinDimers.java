@@ -11,6 +11,7 @@ import org.rcsb.mmtf.api.StructureDataInterface;
 import edu.sdsc.mmtf.spark.datasets.demos.CustomReportDemo;
 import edu.sdsc.mmtf.spark.io.MmtfReader;
 import edu.sdsc.mmtf.spark.io.MmtfWriter;
+import edu.sdsc.mmtf.spark.mappers.StructureToBioassembly;
 import edu.sdsc.mmtf.spark.mappers.StructureToProteinDimers;
 
 /**
@@ -32,10 +33,10 @@ public class MapToProteinDimers {
 		
 	    SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(CustomReportDemo.class.getSimpleName());
 	    JavaSparkContext sc = new JavaSparkContext(conf);
-	    List<String> pdbIds = Arrays.asList("5KNL"); // single protein chain
+	    List<String> pdbIds = Arrays.asList("1STP"); // single protein chain
 	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.downloadMmtfFiles(pdbIds, sc).cache(); 
 	   
-	    pdb = pdb.flatMapToPair(new StructureToProteinDimers());
+	    pdb = pdb.flatMapToPair(new StructureToBioassembly()).flatMapToPair(new StructureToProteinDimers(8, 20, false, true));
 	    long count = pdb.count();
 	    pdb = pdb.coalesce(1);
 	    System.out.println("# structures: " + count);
