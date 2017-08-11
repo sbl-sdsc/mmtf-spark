@@ -75,9 +75,9 @@ public class StructureToBioassembly implements PairFlatMapFunction<Tuple2<String
 				}
 			}
 			//init
-			System.out.println("Initializing the structure with\n"
-					+ " totModel = " + totModels + ", totChains = " + totChains + ", totGroups = " + totGroups + ", totAtoms = " 
-					+ totAtoms + ", totBonds = " + totBonds + ", name : " + structureId);
+//			System.out.println("Initializing the structure with\n"
+//					+ " totModel = " + totModels + ", totChains = " + totChains + ", totGroups = " + totGroups + ", totAtoms = " 
+//					+ totAtoms + ", totBonds = " + totBonds + ", name : " + structureId);
 			bioAssembly.initStructure(totBonds, totAtoms, totGroups, totChains, totModels, structureId);
 			DecoderUtils.addXtalographicInfo(structure, bioAssembly);
 			DecoderUtils.addHeaderInfo(structure, bioAssembly);	
@@ -132,7 +132,7 @@ public class StructureToBioassembly implements PairFlatMapFunction<Tuple2<String
 						
 						if(addThisChain){	
 							int entityToChainIndex = chainToEntityIndex[chainIndex];
-							System.out.println("adding chain : " + chainIndex);
+							//System.out.println("adding chain : " + chainIndex);
 							//TODO
 							//not sure
 							bioAssembly.setEntityInfo(new int[]{chainCounter}, structure.getEntitySequence(entityToChainIndex), 
