@@ -331,11 +331,63 @@ public class ProteinSequenceEncoder implements Serializable {
 	}
 	
 	/**
+	 * Encodes a protein sequence as three non-overlapping 3-grams, 
+	 * then transforming it using a pre-trained Word2Vec model read
+	 * from a file.
+	 * 
+	 * <P> Asgari E, Mofrad MRK (2015) Continuous Distributed Representation 
+	 * of Biological Sequences for Deep Proteomics and Genomics. 
+	 * PLOS ONE 10(11): e0141287. doi:
+	 * <a href="https://doi.org/10.1371/journal.pone.0141287">10.1371/journal.pone.0141287</a>
+     *
+     * @param fileName 
+     *            filename of Word2Vec model
+	 * @param windowSize
+	 *            width of the window used to slide across the sequence, context
+	 *            words from [-window, window]).
+	 * @param vectorSize
+	 *            dimension of the feature vector
+	 *            
+	 * @return dataset with features vector added to original dataset
+	 */
+	public Dataset<Row> shifted3GramWord2VecEncode(String fileName) {
+		 Word2VecModelReader reader = new Word2VecModelReader();
+	     model = reader.load(fileName);
+	        
+	     System.out.println("model file  : " + fileName);
+	     System.out.println("  inputCol  : " + model.getInputCol());
+	     System.out.println("  windowSize: " + model.getWindowSize());
+	     System.out.println("  vectorSize: " + model.getVectorSize());
+		
+		// create n-grams out of the sequence
+		// e.g., 2-gram [IDCGH, ... => [ID, DC, CG, GH, ...
+		// TODO set input column
+		data = SequenceNgrammer.shiftedNgram(data, 3, 0, "ngram0");
+		data = SequenceNgrammer.shiftedNgram(data, 3, 1, "ngram1");
+		data = SequenceNgrammer.shiftedNgram(data, 3, 2, "ngram2");
+
+		model.setInputCol("ngram0");
+		model.setOutputCol("features0");
+		data = model.transform(data);
+
+		model.setInputCol("ngram1");
+		model.setOutputCol("features1");
+		data = model.transform(data);
+
+		model.setInputCol("ngram2");
+		model.setOutputCol("features2");
+		data = model.transform(data);
+
+		data = averageFeatureVectors(data, outputCol);
+
+		return data;
+	}
+	
+	/**
 	 * Returns a Word2VecModel created by overlappingNgramWord2VecEncode().
      *
 	 * @return overlapping Ngram Word2VecModel if available, otherwise null
 	 */
-	//
 	public Word2VecModel getWord2VecModel() {
 		return model;
 	}

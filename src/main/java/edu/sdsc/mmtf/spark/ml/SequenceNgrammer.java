@@ -34,6 +34,9 @@ public class SequenceNgrammer {
 
 			@Override
 			public String[] call(String s) throws Exception {
+				if (s == null) {
+					return new String[0];
+				}
 				int t = s.length() - n + 1;
 				String[] ngram = new String[t];
 				for (int i = 0; i < t; i++) {
@@ -77,8 +80,12 @@ public class SequenceNgrammer {
 
 			@Override
 			public String[] call(String s) throws Exception {
+				if (shift > s.length()) {
+					return new String[0];
+				}
 				s = s.substring(shift);
 				int t = s.length() / n;
+				
 				String[] ngram = new String[t];
 
 				for (int i = 0, j = 0; j < t; i += n) {

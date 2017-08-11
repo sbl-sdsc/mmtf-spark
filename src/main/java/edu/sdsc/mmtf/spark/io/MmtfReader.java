@@ -31,6 +31,8 @@ import scala.Tuple2;
  */
 public class MmtfReader {
 
+	// TODO read local mmtf and mmtf.gz files
+	
 	/**
 	 * Reads an MMTF Hadoop Sequence file.
 	 * See <a href="http://mmtf.rcsb.org/download.html"> for file download information</a>
