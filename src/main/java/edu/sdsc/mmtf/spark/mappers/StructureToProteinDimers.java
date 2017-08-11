@@ -1,22 +1,22 @@
 package edu.sdsc.mmtf.spark.mappers;
 
-	import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.vecmath.Matrix4f;
-import javax.vecmath.Point3f;
+import javax.vecmath.Point3d;
 
 import org.apache.spark.api.java.function.PairFlatMapFunction;
+import org.biojava.nbio.structure.symmetry.geometry.DistanceBox;
 import org.rcsb.mmtf.api.StructureDataInterface;
 import org.rcsb.mmtf.decoder.DecoderUtils;
 import org.rcsb.mmtf.encoder.AdapterToStructureData;
-import org.spark_project.guava.primitives.Doubles;
-import org.spark_project.guava.primitives.Floats;
+import org.rcsb.mmtf.encoder.EncoderUtils;
 
+import edu.sdsc.mmtf.spark.filters.ContainsPolymerChainType;
 import scala.Tuple2;
 /**
  * TODO 
@@ -24,224 +24,250 @@ import scala.Tuple2;
  */
 public class StructureToProteinDimers implements PairFlatMapFunction<Tuple2<String,StructureDataInterface>,String, StructureDataInterface> {
 
-	private static final long serialVersionUID = -9098891849038187334L;
 
-
+	private static final long serialVersionUID = 590629701792189982L;
+	private double cutoffDistance = 8.0;
+	private int contacts = 20;
+	private boolean useAllAtoms = false;
+	
 	/**
-	 * TODO
-	 * comments
+	 * 
+	 * 
 	 */
-	public StructureToProteinDimers() {
-		
+	public StructureToProteinDimers() {}
+	
+	/**
+	 * 
+	 * 
+	 */
+	public StructureToProteinDimers(double cutoffDistance, int contacts) {
+		this.cutoffDistance = cutoffDistance;
+		this.contacts = contacts;
+	}
+	
+	/**
+	 * 
+	 * 
+	 */
+	public StructureToProteinDimers(double cutoffDistance, int contacts, boolean useAllAtoms) {
+		this.cutoffDistance = cutoffDistance;
+		this.contacts = contacts;
+		this.useAllAtoms = useAllAtoms;
 	}
 		
 	@Override
 	public Iterator<Tuple2<String, StructureDataInterface>> call(Tuple2<String, StructureDataInterface> t) throws Exception {
 		StructureDataInterface structure = t._2;
-		//Map<Integer, Integer> atomMap = new HashMap<>();
 		List<Tuple2<String, StructureDataInterface>> resList = new ArrayList<>();
-		//get the number of bioassemblies that the structure has.
-		//for each of them, create one structure.
-		for (int i = 0; i < structure.getNumBioassemblies(); i++) {
-			//initiate the bioassembly structure.
-			AdapterToStructureData bioAssembly = new AdapterToStructureData();
-			//set the structureID.
-			String structureId = structure.getStructureId() + "-BioAssembly" + structure.getBioassemblyName(i);
-			
-			int totAtoms = 0, totBonds = 0, totGroups = 0, totChains = 0, totModels = 0;
-			int numTrans = structure.getNumTransInBioassembly(i);
-			totModels = structure.getNumModels();
-			
-			int[][] bioChainList = new int[numTrans][];
-			double[][] transMatrix = new double[numTrans][];
-			//loop through all the trans current bioassembly structure has.
-			//calculate the total data we will use to initialize the structure.
-			for(int ii = 0; ii < numTrans; ii++)
-			{
-				bioChainList[ii] = structure.getChainIndexListForTransform(i, ii);
-				transMatrix[ii] = structure.getMatrixForTransform(i, ii);
-				for (int j = 0; j < totModels; j++)
-				{
-					totChains += bioChainList[ii].length;
-					//System.out.println(bioChainList[ii].length);
-					for (int k = 0, groupCounter = 0; k < structure.getChainsPerModel()[j]; k++)
-					{
-						boolean adding = false;
-						for(int currChain : bioChainList[ii])
-						{
-							if(currChain == k) adding = true;
-						}
-						if(adding)
-						{
-							//System.out.println("adding groups");
-							totGroups += structure.getGroupsPerChain()[k];
-						}
-						for (int h = 0; h < structure.getGroupsPerChain()[k]; h++, groupCounter++){
-							if(adding)
-							{
-								int groupIndex = structure.getGroupTypeIndices()[groupCounter];	
-								totAtoms += structure.getNumAtomsInGroup(groupIndex);
-								totBonds += structure.getGroupBondOrders(groupIndex).length;
-							}
-						}
-					}
-				}
+		
+		//split the structure into a list of structure of chains
+		List<StructureDataInterface> chains = splitToChains(structure);
+		//for each chain, create a distance box
+		List<DistanceBox<Integer>> boxes;
+		if(useAllAtoms == true)
+			boxes = getAllAtomsDistanceBoxes(chains, cutoffDistance);
+		else boxes = getCBetaAtomsDistanceBoxes(chains, cutoffDistance);
+		
+		//loop through chains
+		for(int i = 0; i < chains.size(); i++)
+		{
+			for(int j = 0; j < i; j++)
+			{		
+				//for each pair of chains, check if they are in contact or not
+				if(checkPair(boxes.get(i), boxes.get(j), chains.get(i), chains.get(j), cutoffDistance, contacts))
+					resList.add(combineChains(chains.get(i), chains.get(j)));
 			}
-			//init
-			System.out.println("Initializing the structure with\n"
-					+ " totModel = " + totModels + ", totChains = " + totChains + ", totGroups = " + totGroups + ", totAtoms = " 
-					+ totAtoms + ", totBonds = " + totBonds + ", name : " + structureId);
-			bioAssembly.initStructure(totBonds, totAtoms, totGroups, totChains, totModels, structureId);
-			DecoderUtils.addXtalographicInfo(structure, bioAssembly);
-			DecoderUtils.addHeaderInfo(structure, bioAssembly);	
-			
-			/*
-			 * Now we have bioChainList and transMatrix.
-			 * bioChainList[i] is the ith trans' list of chains it has.  
-			 * transMatrix[i] is the matrix that is going to be applied on those chains.
-			 */	
-			//initialize the indices.
-			int modelIndex = 0;
-			int chainIndex = 0;
-			int groupIndex = 0;
-			int atomIndex = 0;
-			int chainCounter = 0;
-			int gbIndex = 0;
-			// loop through models
-			for(int ii = 0; ii < structure.getNumModels(); ii++)
-			{
-				
-				// precalculate indices
-				int numChainsPerModel = structure.getChainsPerModel()[modelIndex] * numTrans;
-				bioAssembly.setModelInfo(modelIndex, numChainsPerModel);
-				int[] chainToEntityIndex = getChainToEntityIndex(structure);
-				//loop through chains
-				for(int j = 0; j < structure.getChainsPerModel()[modelIndex]; j++)
-				{
-					
-					//loop through each trans
-					int currGroupIndex = groupIndex;
-					int currAtomIndex = atomIndex;
-					
-					for (int k = 0; k < numTrans; k++)
-					{
-						
-						//get the currChainList that needs to be added
-						int[] currChainList = bioChainList[k];
-						double[] currMatrix = transMatrix[k];
-						boolean addThisChain = false;
-						for(int currChain : currChainList)
-						{
-							if(currChain == j) addThisChain = true;
-						}
-
-						groupIndex = currGroupIndex;
-						atomIndex = currAtomIndex;
-						float[] xCoords = structure.getxCoords();
-						float[] yCoords = structure.getyCoords();
-						float[] zCoords = structure.getzCoords();
-						float[] floatMatrix = Floats.toArray(Doubles.asList(currMatrix));
-						Matrix4f m = new Matrix4f(floatMatrix);
-						
-						if(addThisChain){	
-							int entityToChainIndex = chainToEntityIndex[chainIndex];
-							System.out.println("adding chain : " + chainIndex);
-							//TODO
-							//not sure
-							bioAssembly.setEntityInfo(new int[]{chainCounter}, structure.getEntitySequence(entityToChainIndex), 
-									structure.getEntityDescription(entityToChainIndex), structure.getEntityType(entityToChainIndex));
-							bioAssembly.setChainInfo(structure.getChainIds()[chainIndex], structure.getChainNames()[chainIndex],
-									structure.getGroupsPerChain()[chainIndex]);
-							chainCounter ++;			
-						}
-						//loop through the groups in the chain
-						for(int jj = 0; jj < structure.getGroupsPerChain()[chainIndex]; jj++)
-						{
-							int currgroup = structure.getGroupTypeIndices()[groupIndex];
-							
-							if(addThisChain)
-							{					
-								bioAssembly.setGroupInfo(structure.getGroupName(currgroup), structure.getGroupIds()[groupIndex], 
-										structure.getInsCodes()[groupIndex], structure.getGroupChemCompType(currgroup),
-										structure.getNumAtomsInGroup(currgroup),structure.getGroupBondOrders(currgroup).length, 
-										structure.getGroupSingleLetterCode(currgroup), structure.getGroupSequenceIndices()[groupIndex], 
-										structure.getSecStructList()[groupIndex]);								
-							}
-							for(int kk = 0; kk < structure.getNumAtomsInGroup(currgroup); kk++)
-							{
-								//System.out.println("currgroup : " + currgroup + " curratom : " + kk);
-								if(addThisChain)
-								{
-									Point3f p1 = new Point3f(xCoords[atomIndex], yCoords[atomIndex], zCoords[atomIndex]);
-									m.transform(p1);
-									//System.out.println(kk + " " + currgroup);
-									bioAssembly.setAtomInfo(structure.getGroupAtomNames(currgroup)[kk], structure.getAtomIds()[atomIndex], 
-											structure.getAltLocIds()[atomIndex],p1.x, p1.y, p1.z, 
-											structure.getOccupancies()[atomIndex], structure.getbFactors()[atomIndex],
-											structure.getGroupElementNames(currgroup)[kk], structure.getGroupAtomCharges(currgroup)[kk]);
-								}
-								//inc the atomIndex
-								atomIndex++;
-							}							
-							if(addThisChain)
-							{
-								for (int l = 0; l < structure.getGroupBondOrders(currgroup).length; l++) {
-								//	System.out.println(structure.getGroupBondOrders(currgroup).length + " " + l);
-									int bondIndOne = structure.getGroupBondIndices(currgroup)[l*2];
-									int bondIndTwo = structure.getGroupBondIndices(currgroup)[l*2+1];
-									int bondOrder = structure.getGroupBondOrders(currgroup)[l];
-									bioAssembly.setGroupBond(bondIndOne, bondIndTwo, bondOrder);
-								}
-							}
-							//inc the groupIndex
-							groupIndex++;
-						}
-						if (addThisChain) {
-							// Add inter-group bond info
-//							for(int l = 0;  l < structure.getInterGroupBondOrders().length; l++){
-//								int bondIndOne = structure.getInterGroupBondIndices()[l*2];
-//								int bondIndTwo = structure.getInterGroupBondIndices()[l*2+1];
-//								int bondOrder = structure.getInterGroupBondOrders()[l];
-//								Integer indexOne = atomMap.get(bondIndOne);
-//								if (indexOne != null) {
-//									Integer indexTwo = atomMap.get(bondIndTwo);
-//									if (indexTwo != null) {
-//										bioAssembly.setInterGroupBond(indexOne, indexTwo, bondOrder);
-//									}
-//								}
-							}
-					}
-					//inc the chainIndex
-					chainIndex++;
-				}
-				//inc the modelIndex
-				modelIndex++;
-			}
-			
-			
-			bioAssembly.finalizeStructure();
-			resList.add(new Tuple2<String, StructureDataInterface>(structureId, bioAssembly));
 		}
 		return resList.iterator();
 	}
 
+	private static double distance(StructureDataInterface s1, StructureDataInterface s2, Integer index1, Integer index2 )
+	{
+		double xCoord = s1.getxCoords()[index1];
+		double yCoord = s1.getyCoords()[index1];
+		double zCoord = s1.getzCoords()[index1];
+		Point3d newPoint1 = new Point3d(xCoord, yCoord, zCoord);
+		xCoord = s2.getxCoords()[index2];
+		yCoord = s2.getyCoords()[index2];
+		zCoord = s2.getzCoords()[index2];
+		Point3d newPoint2 = new Point3d(xCoord, yCoord, zCoord);
+		return newPoint1.distance(newPoint2);
+	}
+	
+	private static boolean checkPair(DistanceBox<Integer> box1, DistanceBox<Integer> box2,
+			StructureDataInterface s1, StructureDataInterface s2, double cutoffDistance, int contacts)
+	{
+		List<Integer> pointsInBox2= box1.getIntersection(box2);		
+		List<Integer> pointsInBox1= box2.getIntersection(box1);	
+		HashSet<Integer> hs1 = new HashSet<Integer>();
+		HashSet<Integer> hs2 = new HashSet<Integer>();		
+		int num = 0;
+		for(int i = 0; i < pointsInBox2.size(); i++)
+		{
+			for(int j = 0; j < pointsInBox1.size(); j++)
+			{
+				if(hs1.contains(i) || hs2.contains(j)) continue;
+				System.out.println(i + "" + j);
+				if(distance(s1, s2, pointsInBox2.get(i), pointsInBox1.get(j)) < cutoffDistance)
+				{
+					num++;
+					hs1.add(i);
+					hs2.add(j);
+				}
+				if(num > contacts)	return true;
+			}
+		}
+		return false;
+	}
+	
+	private static List<DistanceBox<Integer>> getAllAtomsDistanceBoxes(List<StructureDataInterface> chains, double cutoffDistance)
+	{
+		List<DistanceBox<Integer>> distanceBoxes = new ArrayList<DistanceBox<Integer>>();
+		for(int i = 0; i < chains.size(); i++)
+		{
+			StructureDataInterface tmp = chains.get(i);
+			DistanceBox<Integer> newBox = new DistanceBox<Integer>(cutoffDistance);
+			//System.out.println(tmp.getNumAtoms());
+			for(int j = 0; j <tmp.getNumAtoms(); j++)
+			{
+				double xCoord = tmp.getxCoords()[j];
+				double yCoord = tmp.getyCoords()[j];
+				double zCoord = tmp.getzCoords()[j];
+				Point3d newPoint = new Point3d(xCoord, yCoord, zCoord);
+				//System.out.println(newPoint);
+				newBox.addPoint(newPoint, j);
+			}
+			distanceBoxes.add(newBox);
+		}
+		return distanceBoxes;
+	}
+	
+	private static List<DistanceBox<Integer>> getCBetaAtomsDistanceBoxes(List<StructureDataInterface> chains, double cutoffDistance)
+	{
+		List<DistanceBox<Integer>> distanceBoxes = new ArrayList<DistanceBox<Integer>>();
+		for(int i = 0; i < chains.size(); i++)
+		{
+			StructureDataInterface tmp = chains.get(i);
+			DistanceBox<Integer> newBox = new DistanceBox<Integer>(cutoffDistance);
+			int groupIndex = 0;
+			int atomIndex = 0;
+			for (int k = 0; k < tmp.getGroupsPerChain()[0]; k++) {		
+				int groupType = tmp.getGroupTypeIndices()[groupIndex];	
+				for (int m = 0; m < tmp.getNumAtomsInGroup(groupType); m++)
+				{
+					String atomName = tmp.getGroupAtomNames(groupType)[m];
+					if(atomName.equals("CB"))
+					{
+						double xCoord = tmp.getxCoords()[atomIndex];
+						double yCoord = tmp.getyCoords()[atomIndex];
+						double zCoord =tmp.getzCoords()[atomIndex]; 
+						Point3d newPoint = new Point3d(xCoord, yCoord, zCoord);
+						newBox.addPoint(newPoint, atomIndex);
+					}
+					atomIndex++;
+				}
+				groupIndex++;
+			}
+			distanceBoxes.add(newBox);
+		}
+		return distanceBoxes;
+	}
+	
 	private static List<StructureDataInterface> splitToChains(StructureDataInterface s)
 	{
-		int modelIndex = 0;
-		int chainIndex = 0;
 		List<StructureDataInterface> chains = new ArrayList<StructureDataInterface>();
-		
-		for(int i = 0; i < s.getNumModels(); i++ , modelIndex ++ )
-		{
-			int[] chainToEntityIndex = getChainToEntityIndex(s);
-			for(int j = 0; j < s.getChainsPerModel()[modelIndex]; j++, chainIndex ++)
+		int numChains = s.getChainsPerModel()[0];
+		int[] chainToEntityIndex = getChainToEntityIndex(s);
+		int[] atomsPerChain = new int[numChains];
+		int[] bondsPerChain = new int[numChains];
+		getNumAtomsAndBonds(s, atomsPerChain, bondsPerChain);
+		for (int i = 0, atomCounter = 0, groupCounter = 0; i < numChains; i++){	
+			AdapterToStructureData newChain = new AdapterToStructureData();
+			int entityToChainIndex = chainToEntityIndex[i];
+			Map<Integer, Integer> atomMap = new HashMap<>();
+
+	        // to avoid of information loss, add chainName/IDs and entity id
+			// this required by some queries
+			String structureId = s.getStructureId() + "." + s.getChainNames()[i] +
+					"." + s.getChainIds()[i] + "." + (entityToChainIndex+1);
+			
+			// set header
+			newChain.initStructure(bondsPerChain[i], atomsPerChain[i], 
+					s.getGroupsPerChain()[i], 1, 1, structureId);
+			DecoderUtils.addXtalographicInfo(s, newChain);
+			DecoderUtils.addHeaderInfo(s, newChain);	
+
+			// set model info (only one model: 0)
+			newChain.setModelInfo(0, 1);
+
+			// set entity and chain info
+			newChain.setEntityInfo(new int[]{0}, s.getEntitySequence(entityToChainIndex), 
+					s.getEntityDescription(entityToChainIndex), s.getEntityType(entityToChainIndex));
+			newChain.setChainInfo(s.getChainIds()[i], s.getChainNames()[i], s.getGroupsPerChain()[i]);
+
+			for (int j = 0; j < s.getGroupsPerChain()[i]; j++, groupCounter++){
+				int groupIndex = s.getGroupTypeIndices()[groupCounter];
+				// set group info
+				newChain.setGroupInfo(s.getGroupName(groupIndex), s.getGroupIds()[groupCounter], 
+						s.getInsCodes()[groupCounter], s.getGroupChemCompType(groupIndex),
+						s.getNumAtomsInGroup(groupIndex), s.getGroupBondOrders(groupIndex).length,
+						s.getGroupSingleLetterCode(groupIndex), s.getGroupSequenceIndices()[groupCounter], 
+						s.getSecStructList()[groupCounter]);
+
+				for (int k = 0; k < s.getNumAtomsInGroup(groupIndex); k++, atomCounter++){		
+					newChain.setAtomInfo(s.getGroupAtomNames(groupIndex)[k], s.getAtomIds()[atomCounter], 
+							s.getAltLocIds()[atomCounter], s.getxCoords()[atomCounter], s.getyCoords()[atomCounter],
+							s.getzCoords()[atomCounter], s.getOccupancies()[atomCounter], s.getbFactors()[atomCounter],
+							s.getGroupElementNames(groupIndex)[k], s.getGroupAtomCharges(groupIndex)[k]);
+
+				}
+
+				// add intra-group bond info
+				for (int l = 0; l < s.getGroupBondOrders(groupIndex).length; l++) {
+					int bondIndOne = s.getGroupBondIndices(groupIndex)[l*2];
+					int bondIndTwo = s.getGroupBondIndices(groupIndex)[l*2+1];
+					int bondOrder = s.getGroupBondOrders(groupIndex)[l];
+					newChain.setGroupBond(bondIndOne, bondIndTwo, bondOrder);
+					
+				}
+			}
+
+			// Add inter-group bond info
+			for(int ii = 0; ii < s.getInterGroupBondOrders().length; ii++){
+				int bondIndOne = s.getInterGroupBondIndices()[ii*2];
+				int bondIndTwo = s.getInterGroupBondIndices()[ii*2+1];
+				int bondOrder = s.getInterGroupBondOrders()[ii];
+				Integer indexOne = atomMap.get(bondIndOne);
+				if (indexOne != null) {
+					Integer indexTwo = atomMap.get(bondIndTwo);
+					if (indexTwo != null) {
+						newChain.setInterGroupBond(indexOne, indexTwo, bondOrder);
+					}
+				}
+			}
+			newChain.finalizeStructure();
+			
+			if(EncoderUtils.getTypeFromChainId(newChain, 0).equals("polymer"))
 			{
-				AdapterToStructureData newChain = new AdapterToStructureData();
+				boolean match = true;
+				for (int j = 0; j < newChain.getGroupsPerChain()[0]; j++) {			
+					if (match) {
+						int groupIndex = newChain.getGroupTypeIndices()[j];
+						String type = newChain.getGroupChemCompType(groupIndex);
+						//System.out.println(j + " " + type);
+						match = type.equals(ContainsPolymerChainType.L_PEPTIDE_LINKING) || 
+								type.equals(ContainsPolymerChainType.PEPTIDE_LINKING);
+					}
+				}
+				if(match) chains.add(newChain);
 			}
 		}
 		return chains;
 	}
 	
+	/**
+	 * A method that takes two structure of chains and return a single structur of two chains.
+	 */
 	private static Tuple2<String, StructureDataInterface> combineChains(StructureDataInterface s1, StructureDataInterface s2)
 	{
 		int groupCounter = 0;
@@ -275,13 +301,13 @@ public class StructureToProteinDimers implements PairFlatMapFunction<Tuple2<Stri
 						s1.getzCoords()[atomCounter], s1.getOccupancies()[atomCounter], s1.getbFactors()[atomCounter],
 						s1.getGroupElementNames(groupIndex)[j], s1.getGroupAtomCharges(groupIndex)[j]);
 			}
-
-//			for (int j = 0; j < s1.getGroupBondOrders(groupIndex).length; j++) {
-//				int bondIndOne = s1.getGroupBondIndices(groupIndex)[j*2];
-//				int bondIndTwo = s1.getGroupBondIndices(groupIndex)[j*2+1];
-//				int bondOrder = s1.getGroupBondOrders(groupIndex)[j];
-//				combinedStructure.setGroupBond(bondIndOne, bondIndTwo, bondOrder);
-//			}
+			//TODO : not sure if we should add bonds like this.
+			for (int j = 0; j < s1.getGroupBondOrders(groupIndex).length; j++) {
+				int bondIndOne = s1.getGroupBondIndices(groupIndex)[j*2];
+				int bondIndTwo = s1.getGroupBondIndices(groupIndex)[j*2+1];
+				int bondOrder = s1.getGroupBondOrders(groupIndex)[j];
+				combinedStructure.setGroupBond(bondIndOne, bondIndTwo, bondOrder);
+			}
 		}
 		// set entity and chain info
 		combinedStructure.setEntityInfo(new int[]{1}, s1.getEntitySequence(getChainToEntityIndex(s2)[0]), 
@@ -303,17 +329,31 @@ public class StructureToProteinDimers implements PairFlatMapFunction<Tuple2<Stri
 						s2.getzCoords()[atomCounter], s2.getOccupancies()[atomCounter], s2.getbFactors()[atomCounter],
 						s2.getGroupElementNames(groupIndex)[j], s2.getGroupAtomCharges(groupIndex)[j]);
 			}
-
-//			for (int j = 0; j < s2.getGroupBondOrders(groupIndex).length; j++) {
-//				int bondIndOne = s2.getGroupBondIndices(groupIndex)[j*2];
-//				int bondIndTwo = s2.getGroupBondIndices(groupIndex)[j*2+1];
-//				int bondOrder = s2.getGroupBondOrders(groupIndex)[j];
-//				combinedStructure.setGroupBond(bondIndOne, bondIndTwo, bondOrder);
-//			}
+			//TODO : not sure if we should add bonds like this.
+			for (int j = 0; j < s2.getGroupBondOrders(groupIndex).length; j++) {
+				int bondIndOne = s2.getGroupBondIndices(groupIndex)[j*2];
+				int bondIndTwo = s2.getGroupBondIndices(groupIndex)[j*2+1];
+				int bondOrder = s2.getGroupBondOrders(groupIndex)[j];
+				combinedStructure.setGroupBond(bondIndOne, bondIndTwo, bondOrder);
+			}
 		}
 		combinedStructure.finalizeStructure();
-		
 		return (new Tuple2<String, StructureDataInterface>(structureId, combinedStructure));
+	}
+
+	/**
+	 * Gets the number of atoms and bonds per chain.
+	 */
+	private static void getNumAtomsAndBonds(StructureDataInterface structure, int[] atomsPerChain, int[] bondsPerChain) {
+		int numChains = structure.getChainsPerModel()[0];
+
+		for (int i = 0, groupCounter = 0; i < numChains; i++){	
+			for (int j = 0; j < structure.getGroupsPerChain()[i]; j++, groupCounter++){
+				int groupIndex = structure.getGroupTypeIndices()[groupCounter];
+				atomsPerChain[i] += structure.getNumAtomsInGroup(groupIndex);
+				bondsPerChain[i] += structure.getGroupBondOrders(groupIndex).length;
+			}
+		}
 	}
 	
 	/**

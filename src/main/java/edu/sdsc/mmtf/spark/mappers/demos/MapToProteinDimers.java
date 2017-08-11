@@ -25,18 +25,21 @@ public class MapToProteinDimers {
 
 	public static void main(String[] args) {
 
+		if (args.length != 1) {
+			System.err.println("Usage: " + MapToProteinDimers.class.getSimpleName() + " <outputFilePath>");
+			System.exit(1);
+		}
+		
 	    SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(CustomReportDemo.class.getSimpleName());
 	    JavaSparkContext sc = new JavaSparkContext(conf);
-	    List<String> pdbIds = Arrays.asList("1HV4"); // single protein chain
+	    List<String> pdbIds = Arrays.asList("5GRD"); // single protein chain
 	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.downloadMmtfFiles(pdbIds, sc).cache(); 
 	   
-	    pdb = pdb // read MMTF hadoop sequence file
-	    		.flatMapToPair(new StructureToProteinDimers());
-	    long count = pdb // read MMTF hadoop sequence file
-	    		.count();
+	    pdb = pdb.flatMapToPair(new StructureToProteinDimers());
+	    long count = pdb.count();
 	    pdb = pdb.coalesce(1);
 	    System.out.println("# structures: " + count);
-	    MmtfWriter.writeMmtfFiles("D:/ProteinDimers", sc, pdb);
+	    MmtfWriter.writeMmtfFiles("args[0]", sc, pdb);
 	    
 	    sc.close();
 	}
