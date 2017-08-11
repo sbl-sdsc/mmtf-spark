@@ -32,7 +32,7 @@ public class MapToProteinDimers {
 		
 	    SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(CustomReportDemo.class.getSimpleName());
 	    JavaSparkContext sc = new JavaSparkContext(conf);
-	    List<String> pdbIds = Arrays.asList("5GRD"); // single protein chain
+	    List<String> pdbIds = Arrays.asList("5KNL"); // single protein chain
 	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.downloadMmtfFiles(pdbIds, sc).cache(); 
 	   
 	    pdb = pdb.flatMapToPair(new StructureToProteinDimers());

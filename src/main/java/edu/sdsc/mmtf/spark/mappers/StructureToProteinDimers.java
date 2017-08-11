@@ -29,7 +29,7 @@ public class StructureToProteinDimers implements PairFlatMapFunction<Tuple2<Stri
 	private double cutoffDistance = 8.0;
 	private int contacts = 20;
 	private boolean useAllAtoms = false;
-	
+	private boolean exclusive = false;
 	/**
 	 * 
 	 * 
@@ -49,10 +49,11 @@ public class StructureToProteinDimers implements PairFlatMapFunction<Tuple2<Stri
 	 * 
 	 * 
 	 */
-	public StructureToProteinDimers(double cutoffDistance, int contacts, boolean useAllAtoms) {
+	public StructureToProteinDimers(double cutoffDistance, int contacts, boolean useAllAtoms, boolean exclusive) {
 		this.cutoffDistance = cutoffDistance;
 		this.contacts = contacts;
 		this.useAllAtoms = useAllAtoms;
+		this.exclusive = exclusive;
 	}
 		
 	@Override
@@ -68,14 +69,31 @@ public class StructureToProteinDimers implements PairFlatMapFunction<Tuple2<Stri
 			boxes = getAllAtomsDistanceBoxes(chains, cutoffDistance);
 		else boxes = getCBetaAtomsDistanceBoxes(chains, cutoffDistance);
 		
+		HashSet<Tuple2<String, String>> exclusiveHashSet = new HashSet<Tuple2<String, String>>();
 		//loop through chains
 		for(int i = 0; i < chains.size(); i++)
 		{
 			for(int j = 0; j < i; j++)
-			{		
+			{	
+				
 				//for each pair of chains, check if they are in contact or not
 				if(checkPair(boxes.get(i), boxes.get(j), chains.get(i), chains.get(j), cutoffDistance, contacts))
-					resList.add(combineChains(chains.get(i), chains.get(j)));
+				{
+					if(exclusive)
+					{
+						String es1 = chains.get(i).getEntitySequence(getChainToEntityIndex(chains.get(i))[0]);
+						String es2 = chains.get(j).getEntitySequence(getChainToEntityIndex(chains.get(j))[0]);
+						Tuple2<String, String> newTuple1 = new Tuple2<String, String>(es1, es2);
+						Tuple2<String, String> newTuple2 = new Tuple2<String, String>(es2, es1);
+						if(!exclusiveHashSet.contains(newTuple1) && !exclusiveHashSet.contains(newTuple2))
+						{
+							resList.add(combineChains(chains.get(i), chains.get(j)));
+							exclusiveHashSet.add(newTuple1);
+							exclusiveHashSet.add(newTuple2);
+						}
+					}
+					else resList.add(combineChains(chains.get(i), chains.get(j)));
+				}
 			}
 		}
 		return resList.iterator();
@@ -107,7 +125,6 @@ public class StructureToProteinDimers implements PairFlatMapFunction<Tuple2<Stri
 			for(int j = 0; j < pointsInBox1.size(); j++)
 			{
 				if(hs1.contains(i) || hs2.contains(j)) continue;
-				System.out.println(i + "" + j);
 				if(distance(s1, s2, pointsInBox2.get(i), pointsInBox1.get(j)) < cutoffDistance)
 				{
 					num++;
@@ -199,7 +216,6 @@ public class StructureToProteinDimers implements PairFlatMapFunction<Tuple2<Stri
 
 			// set model info (only one model: 0)
 			newChain.setModelInfo(0, 1);
-
 			// set entity and chain info
 			newChain.setEntityInfo(new int[]{0}, s.getEntitySequence(entityToChainIndex), 
 					s.getEntityDescription(entityToChainIndex), s.getEntityType(entityToChainIndex));
