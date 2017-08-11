@@ -7,23 +7,27 @@ import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 
-import edu.sdsc.mmtf.spark.datasets.Uniprot;
-import edu.sdsc.mmtf.spark.datasets.Uniprot.UniDataset;
+import edu.sdsc.mmtf.spark.datasets.UniProt;
+import edu.sdsc.mmtf.spark.datasets.UniProt.UniProtDataset;
 
 public class UniProtDemo {
 	public static void main(String[] args) throws IOException {  
 		if (args.length != 2) {
-			System.err.println("Usage: " + Uniprot.class.getSimpleName() + " <outputFilePath> + <fileFormat>");
+			System.err.println("Usage: " + UniProt.class.getSimpleName() + " <outputFilePath> + <fileFormat>");
 			System.exit(1);
 		}
 	    long start = System.nanoTime();
 	    
 	    SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(CustomReportDemo.class.getSimpleName());
 	    JavaSparkContext sc = new JavaSparkContext(conf);
-	    Dataset<Row> ds = Uniprot.getDataset(sc, UniDataset.UNIREF100);
+	    
+	    Dataset<Row> ds = UniProt.getDataset(UniProtDataset.SWISS_PROT);
 	    // show the schema of this dataset
 	    ds.printSchema();
 	    ds.show(20, false);
+	    
+	    // these datasets take a very long time to read. 
+	    // let's save a local copy for future rapid access.
 	    ds.write().mode("overwrite").format(args[1]).save(args[0]);
 	    
 	    System.out.println("Count: " + ds.count());

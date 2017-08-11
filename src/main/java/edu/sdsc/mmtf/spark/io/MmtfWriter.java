@@ -18,7 +18,7 @@ import org.rcsb.mmtf.serialization.MessagePackSerialization;
 import scala.Tuple2;
 
 /**
- * Encodes and writes MMTF encoded and gzipped structure data to a Hadoop Sequence file. 
+ * Encodes and writes MMTF encoded structure data to a Hadoop Sequence file. 
  * 
  * @author Peter Rose
  *
@@ -32,8 +32,19 @@ public class MmtfWriter {
 	 * @param structure Structure data to be written
 	 */
 	public static void writeSequenceFile(String path, JavaSparkContext sc, JavaPairRDD<String, StructureDataInterface> structure) {		
+		writeSequenceFile(path, sc,structure, true);
+	}
+	
+	/**
+	 * Encodes and writes MMTF encoded structure data to a Hadoop Sequence file.
+	 * @param path Path to Hadoop file dictionary
+	 * @param sc Spark context
+	 * @param structure Structure data to be written
+	 * @param compress if true, apply gzip compression
+	 */
+	public static void writeSequenceFile(String path, JavaSparkContext sc, JavaPairRDD<String, StructureDataInterface> structure, boolean compressed) {		
 		structure
-				.mapToPair(t -> new Tuple2<String,byte[]>(t._1, toGzippedByteArray(t._2)))
+				.mapToPair(t -> new Tuple2<String,byte[]>(t._1, toByteArray(t._2, compressed)))
 				.mapToPair(t -> new Tuple2<Text,BytesWritable>(new Text(t._1), new BytesWritable(t._2)))
 				.saveAsHadoopFile(path, Text.class, BytesWritable.class, SequenceFileOutputFormat.class);
 	}
@@ -51,20 +62,24 @@ public class MmtfWriter {
         final String fullPath = path;
           
         structure
-				.mapToPair(t -> new Tuple2<String,byte[]>(t._1, toGzippedByteArray(t._2)))
+				.mapToPair(t -> new Tuple2<String,byte[]>(t._1, toByteArray(t._2, true)))
 		        .foreach(t -> FileUtils.writeByteArrayToFile(new File(fullPath+t._1+".mmtf.gz"), t._2));
 	}
 	
 	/**
-	 * Returns a gzipped MMTF-encoded byte array.
-	 * @return MMTF encoded and gzipped structure data
+	 * Returns an MMTF-encoded byte array with optional gzip compression.
+	 * @return MMTF encoded and optionally gzipped structure data
 	 * @throws IOException
 	 */
-	private static byte[] toGzippedByteArray(StructureDataInterface structure) throws IOException {
+	private static byte[] toByteArray(StructureDataInterface structure, boolean compressed) throws IOException {
 		GenericEncoder genericEncoder = new GenericEncoder(structure);
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		MessagePackSerialization serializer = new MessagePackSerialization();
 		serializer.serialize(genericEncoder.getMmtfEncodedStructure(), bos);
-		return  WriterUtils.gzipCompress(bos.toByteArray());
+		if (compressed) {
+			return  WriterUtils.gzipCompress(bos.toByteArray());
+		} else {
+			return bos.toByteArray();
+		}
 	}
 }

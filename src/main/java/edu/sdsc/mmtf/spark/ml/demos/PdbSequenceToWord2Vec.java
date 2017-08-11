@@ -23,7 +23,7 @@ import edu.sdsc.mmtf.spark.ml.ProteinSequenceEncoder;
  * @author Peter Rose
  *
  */
-public class SequenceToWord2Vec {
+public class PdbSequenceToWord2Vec {
 	public static void main(String[] args) throws IOException {
 
 		String path = System.getProperty("MMTF_REDUCED");
