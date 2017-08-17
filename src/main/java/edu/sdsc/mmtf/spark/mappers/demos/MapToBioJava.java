@@ -1,10 +1,8 @@
 package edu.sdsc.mmtf.spark.mappers.demos;
 
 import org.apache.spark.SparkConf;
-import org.apache.spark.api.java.JavaDoubleRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 
-import edu.sdsc.mmtf.spark.filters.PolymerComposition;
 import edu.sdsc.mmtf.spark.io.MmtfReader;
 import edu.sdsc.mmtf.spark.mappers.StructureToBioJava;
 import edu.sdsc.mmtf.spark.mappers.StructureToPolymerChains;

@@ -1,10 +1,15 @@
 package edu.sdsc.mmtf.spark.io;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipException;
 
 import org.apache.hadoop.io.BytesWritable;
@@ -12,10 +17,14 @@ import org.apache.hadoop.io.Text;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.PairFunction;
+import org.biojava.nbio.structure.Structure;
+import org.biojava.nbio.structure.io.PDBFileReader;
+import org.biojava.nbio.structure.io.mmtf.MmtfStructureWriter;
 import org.rcsb.mmtf.api.StructureDataInterface;
 import org.rcsb.mmtf.dataholders.MmtfStructure;
 import org.rcsb.mmtf.decoder.GenericDecoder;
 import org.rcsb.mmtf.decoder.ReaderUtils;
+import org.rcsb.mmtf.encoder.AdapterToStructureData;
 import org.rcsb.mmtf.serialization.MessagePackSerialization;
 
 import scala.Tuple2;
@@ -113,6 +122,110 @@ public class MmtfReader {
 						return new Tuple2<String, StructureDataInterface>(t._1.toString(), new GenericDecoder(mmtf)); // decode message pack
 					}
 				});
+	}
+	
+	
+
+	/**
+	 * Get list of files from the path
+	 * 
+	 * @param path File path
+	 * @return list of files in the path
+	 */
+	private static List<File> getFiles(String path)
+	{
+		List<File> fileList = new ArrayList<File>();
+		for(File f: new File(path).listFiles())
+		{
+			if(f.isDirectory()) fileList.addAll(getFiles(f.toString()));
+			else fileList.add(f);
+		}
+		return fileList;
+	}
+		
+	
+	/**
+	 * Reads the specified PDB entries from a MMTF file.
+	 * 
+	 * @param path Path to MMTF files
+	 * @param sc Spark context
+	 * @return structure data as keyword/value pairs
+	 */
+	public static JavaPairRDD<String, StructureDataInterface> readMmtfFiles(String path, JavaSparkContext sc) {
+		return sc
+				.parallelize(getFiles(path))
+				.mapToPair(new PairFunction<File,String, StructureDataInterface>() {
+					private static final long serialVersionUID = 9018971417443154996L;
+
+					public Tuple2<String, StructureDataInterface> call(File f) throws Exception {
+						try{
+							if(f.toString().contains(".mmtf.gz"))
+							{
+								InputStream in = new FileInputStream(f);
+								MmtfStructure mmtf = new MessagePackSerialization().deserialize(new GZIPInputStream(in));
+								return new Tuple2<String, StructureDataInterface>(f.getName().substring(0, f.getName().indexOf(".mmtf")), new GenericDecoder(mmtf));
+							}
+							else if(f.toString().contains(".mmtf"))
+							{
+								InputStream in = new FileInputStream(f);
+								MmtfStructure mmtf = new MessagePackSerialization().deserialize(in); 
+								return new Tuple2<String, StructureDataInterface>(f.getName().substring(0, f.getName().indexOf(".mmtf")), new GenericDecoder(mmtf));					
+							}
+							else return null;
+						}catch(Exception e)
+						{
+							System.out.println(e);
+							return null;
+						}
+					}
+				})
+				.filter(t -> t != null);
+	}
+	
+	
+	/**
+	 * Reads the specified PDB entries from a pdb file.
+	 * 
+	 * Missing data: bond info, bioAssembly info
+	 * Different data : atom serial number, entity description
+	 * 
+	 * @param path Path to MMTF files
+	 * @param sc Spark context
+	 * @return structure data as keyword/value pairs
+	 */
+	public static JavaPairRDD<String, StructureDataInterface> readPdbFiles(String path, JavaSparkContext sc) {
+		return sc
+				.parallelize(getFiles(path))
+				.mapToPair(new PairFunction<File,String, StructureDataInterface>() {
+
+					private static final long serialVersionUID = -5612212642803414037L;
+
+					public Tuple2<String, StructureDataInterface> call(File f) throws Exception {
+						try{
+							if(f.toString().contains(".pdb"))
+							{
+								PDBFileReader pdbreader = new PDBFileReader();
+								Structure struc = pdbreader.getStructure(f.toString()); 
+								AdapterToStructureData writerToEncoder = new AdapterToStructureData();
+								new MmtfStructureWriter(struc, writerToEncoder);
+								return new Tuple2<String, StructureDataInterface>(f.getName().substring(0, f.getName().indexOf(".pdb")), writerToEncoder);
+							}
+							else if(f.toString().contains(".ent"))
+							{
+								PDBFileReader pdbreader = new PDBFileReader();
+								Structure struc = pdbreader.getStructure(f.toString()); 
+								AdapterToStructureData writerToEncoder = new AdapterToStructureData();
+								new MmtfStructureWriter(struc, writerToEncoder);
+								return new Tuple2<String, StructureDataInterface>(f.getName().substring(0, f.getName().indexOf(".ent")), writerToEncoder);
+							}
+							else return null;
+						}catch(Exception e)
+						{
+							return null;
+						}
+					}
+				})
+				.filter(t -> t != null);
 	}
 	
 	/**
