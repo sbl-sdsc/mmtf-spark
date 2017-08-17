@@ -12,7 +12,6 @@ import edu.sdsc.mmtf.spark.datasets.demos.CustomReportDemo;
 import edu.sdsc.mmtf.spark.io.MmtfReader;
 import edu.sdsc.mmtf.spark.io.MmtfWriter;
 import edu.sdsc.mmtf.spark.mappers.StructureToBioassembly;
-import edu.sdsc.mmtf.spark.mappers.StructureToPolymerChains;
 
 /**
  * Example demonstrating how to extract protein chains from
@@ -25,7 +24,10 @@ import edu.sdsc.mmtf.spark.mappers.StructureToPolymerChains;
 public class MapToBioAssembly {
 
 	public static void main(String[] args) {
-
+		if (args.length != 1) {
+			System.err.println("Usage: " + MapToBioAssembly.class.getSimpleName() + " <outputFilePath>");
+			System.exit(1);
+		}
 	    SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(CustomReportDemo.class.getSimpleName());
 	    JavaSparkContext sc = new JavaSparkContext(conf);
 	    List<String> pdbIds = Arrays.asList("1HV4"); // single protein chain
@@ -37,7 +39,7 @@ public class MapToBioAssembly {
 	    		.count();
 	    pdb = pdb.coalesce(1);
 	    System.out.println("# structures: " + count);
-	    MmtfWriter.writeMmtfFiles("D:/bioAss", sc, pdb);
+	    MmtfWriter.writeMmtfFiles(args[0], sc, pdb);
 	    
 	    sc.close();
 	}

@@ -6,7 +6,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -21,7 +20,6 @@ import org.apache.spark.api.java.function.PairFunction;
 import org.biojava.nbio.structure.Structure;
 import org.biojava.nbio.structure.io.PDBFileReader;
 import org.biojava.nbio.structure.io.mmtf.MmtfStructureWriter;
-import org.rcsb.mmtf.api.StructureAdapterInterface;
 import org.rcsb.mmtf.api.StructureDataInterface;
 import org.rcsb.mmtf.dataholders.MmtfStructure;
 import org.rcsb.mmtf.decoder.GenericDecoder;
@@ -126,6 +124,14 @@ public class MmtfReader {
 				});
 	}
 	
+	
+
+	/**
+	 * Get list of files from the path
+	 * 
+	 * @param path File path
+	 * @return list of files in the path
+	 */
 	private static List<File> getFiles(String path)
 	{
 		List<File> fileList = new ArrayList<File>();
@@ -191,7 +197,8 @@ public class MmtfReader {
 		return sc
 				.parallelize(getFiles(path))
 				.mapToPair(new PairFunction<File,String, StructureDataInterface>() {
-					private static final long serialVersionUID = 9018971417443154996L;
+
+					private static final long serialVersionUID = -5612212642803414037L;
 
 					public Tuple2<String, StructureDataInterface> call(File f) throws Exception {
 						try{
