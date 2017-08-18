@@ -18,6 +18,7 @@ import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.PairFunction;
 import org.biojava.nbio.structure.Structure;
+import org.biojava.nbio.structure.io.MMCIFFileReader;
 import org.biojava.nbio.structure.io.PDBFileReader;
 import org.biojava.nbio.structure.io.mmtf.MmtfStructureWriter;
 import org.rcsb.mmtf.api.StructureDataInterface;
@@ -227,6 +228,54 @@ public class MmtfReader {
 				})
 				.filter(t -> t != null);
 	}
+	
+	/**
+	 * Reads the specified PDB entries from a pdb file.
+	 * 
+	 * Missing data: bond info, bioAssembly info
+	 * Different data : atom serial number, entity description
+	 * 
+	 * @param path Path to MMTF files
+	 * @param sc Spark context
+	 * @return structure data as keyword/value pairs
+	 */
+	public static JavaPairRDD<String, StructureDataInterface> readMmcifFiles(String path, JavaSparkContext sc) {
+		return sc
+				.parallelize(getFiles(path))
+				.mapToPair(new PairFunction<File,String, StructureDataInterface>() {
+
+					private static final long serialVersionUID = -5612212642803414037L;
+
+					public Tuple2<String, StructureDataInterface> call(File f) throws Exception {
+						try{
+							if(f.toString().contains(".cif.gz"))
+							{
+								InputStream in = new FileInputStream(f);
+								MMCIFFileReader mmcifReader = new MMCIFFileReader();
+								Structure struc = mmcifReader.getStructure(new GZIPInputStream(in)); 
+								AdapterToStructureData writerToEncoder = new AdapterToStructureData();
+								new MmtfStructureWriter(struc, writerToEncoder);
+								return new Tuple2<String, StructureDataInterface>(f.getName().substring(0, f.getName().indexOf(".cif")), writerToEncoder);
+							}
+							else if(f.toString().contains(".cif"))
+							{
+								InputStream in = new FileInputStream(f);
+								MMCIFFileReader mmcifReader = new MMCIFFileReader();
+								Structure struc = mmcifReader.getStructure(in); 
+								AdapterToStructureData writerToEncoder = new AdapterToStructureData();
+								new MmtfStructureWriter(struc, writerToEncoder);
+								return new Tuple2<String, StructureDataInterface>(f.getName().substring(0, f.getName().indexOf(".cif")), writerToEncoder);
+							}
+							else return null;
+						}catch(Exception e)
+						{
+							return null;
+						}
+					}
+				})
+				.filter(t -> t != null);
+	}
+	
 	
 	/**
 	 * Downloads and reads the specified PDB entries using <a href="http://mmtf.rcsb.org/download.html">MMTF web services</a>.
