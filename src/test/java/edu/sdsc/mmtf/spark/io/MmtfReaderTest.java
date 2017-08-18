@@ -51,22 +51,33 @@ public class MmtfReaderTest {
 	}
 	@Test
 	public void test3() throws IOException {
-		Path p = Paths.get("./src/main/resources/files/test");
-	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.readPdbFiles(p.toString(), sc);
-
-	    assertTrue(pdb.count() == 1);
-	    pdb = pdb.flatMapToPair(new StructureToPolymerChains());
+		Path p = Paths.get("./src/main/resources/files/");
+	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.readMmcifFiles(p.toString(), sc);
 	    
-	    assertTrue(pdb.count() == 8);
+	    assertTrue(pdb.count() == 2);
 	}
 	@Test
 	public void test4() throws IOException {
 		Path p = Paths.get("./src/main/resources/files/test");
-	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.readMmtfFiles(p.toString(), sc);
-
+	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.readPdbFiles(p.toString(), sc);
 	    assertTrue(pdb.count() == 1);
 	    pdb = pdb.flatMapToPair(new StructureToPolymerChains());
-	    
+	    assertTrue(pdb.count() == 8);
+	}
+	@Test
+	public void test5() throws IOException {
+		Path p = Paths.get("./src/main/resources/files/test");
+	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.readMmtfFiles(p.toString(), sc);
+	    assertTrue(pdb.count() == 1);
+	    pdb = pdb.flatMapToPair(new StructureToPolymerChains());
+	    assertTrue(pdb.count() == 8);
+	}
+	@Test
+	public void test6() throws IOException {
+		Path p = Paths.get("./src/main/resources/files/test");
+	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.readMmcifFiles(p.toString(), sc);
+	    assertTrue(pdb.count() == 1);
+	    pdb = pdb.flatMapToPair(new StructureToPolymerChains());
 	    assertTrue(pdb.count() == 8);
 	}
 }

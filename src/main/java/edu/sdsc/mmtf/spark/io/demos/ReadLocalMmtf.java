@@ -30,7 +30,7 @@ public class ReadLocalMmtf {
 		 
 	    // read list of PDB entries from a local Hadoop sequence file
 
-	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.readMmtfFiles(args[0], sc);
+	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.readMmcifFiles(args[0], sc);
 	    
 	    pdb.foreach(t -> TraverseStructureHierarchy.demo(t._2));
 	    System.out.println("# structures: " + pdb.count());
