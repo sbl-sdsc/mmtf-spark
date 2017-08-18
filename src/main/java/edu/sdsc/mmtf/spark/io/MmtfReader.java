@@ -244,7 +244,7 @@ public class MmtfReader {
 				.parallelize(getFiles(path))
 				.mapToPair(new PairFunction<File,String, StructureDataInterface>() {
 
-					private static final long serialVersionUID = -5612212642803414037L;
+					private static final long serialVersionUID = -7815663658405168429L;
 
 					public Tuple2<String, StructureDataInterface> call(File f) throws Exception {
 						try{
