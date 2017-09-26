@@ -18,6 +18,8 @@ import org.rcsb.mmtf.encoder.EncoderUtils;
 
 import edu.sdsc.mmtf.spark.filters.ContainsPolymerChainType;
 import scala.Tuple2;
+import javax.vecmath.*;
+
 /**
  * TODO 
  * @author Yue Yu
@@ -63,13 +65,15 @@ public class StructureToProteinDimers implements PairFlatMapFunction<Tuple2<Stri
 		
 		//split the structure into a list of structure of chains
 		List<StructureDataInterface> chains = splitToChains(structure);
+		List<Vector3d> chainVectors = getChainVectors(chains);
+		
 		//for each chain, create a distance box
 		List<DistanceBox<Integer>> boxes;
 		if(useAllAtoms == true)
 			boxes = getAllAtomsDistanceBoxes(chains, cutoffDistance);
 		else boxes = getCBetaAtomsDistanceBoxes(chains, cutoffDistance);
 		
-		HashSet<Tuple2<String, String>> exclusiveHashSet = new HashSet<Tuple2<String, String>>();
+		List<Vector3d> exclusiveList = new ArrayList<Vector3d>();
 		//loop through chains
 		for(int i = 0; i < chains.size(); i++)
 		{
@@ -81,21 +85,21 @@ public class StructureToProteinDimers implements PairFlatMapFunction<Tuple2<Stri
 				{
 					if(exclusive)
 					{
-						String es1 = chains.get(i).getEntitySequence(getChainToEntityIndex(chains.get(i))[0]);
-						String es2 = chains.get(j).getEntitySequence(getChainToEntityIndex(chains.get(j))[0]);
-						Tuple2<String, String> newTuple1 = new Tuple2<String, String>(es1, es2);
-						Tuple2<String, String> newTuple2 = new Tuple2<String, String>(es2, es1);
-						if(!exclusiveHashSet.contains(newTuple1) && !exclusiveHashSet.contains(newTuple2))
+//						String es1 = chains.get(i).getEntitySequence(getChainToEntityIndex(chains.get(i))[0]);
+//						String es2 = chains.get(j).getEntitySequence(getChainToEntityIndex(chains.get(j))[0]);
+						Vector3d newVec = calcDiff(chainVectors.get(i), chainVectors.get(j));
+//						System.out.println(newVec);
+						if(!checkList(newVec, exclusiveList))
 						{
 							resList.add(combineChains(chains.get(i), chains.get(j)));
-							exclusiveHashSet.add(newTuple1);
-							exclusiveHashSet.add(newTuple2);
+							exclusiveList.add(newVec);
 						}
 					}
 					else resList.add(combineChains(chains.get(i), chains.get(j)));
 				}
 			}
 		}
+//		System.out.println(exclusiveList);
 		return resList.iterator();
 	}
 
@@ -135,6 +139,49 @@ public class StructureToProteinDimers implements PairFlatMapFunction<Tuple2<Stri
 			}
 		}
 		return false;
+	}
+	
+	private static boolean checkList(Vector3d vec, List<Vector3d> exclusiveList)
+	{
+		for(int i = 0; i < exclusiveList.size(); i++)
+		{
+			if(calcDiff(vec, exclusiveList.get(i)).length() < 0.1) return true;
+			vec.negate();
+			if(calcDiff(vec, exclusiveList.get(i)).length() < 0.1) return true;
+			vec.negate();
+		}
+		return false;
+	}
+	
+	
+	private static List<Vector3d> getChainVectors(List<StructureDataInterface> chains)
+	{
+		List<Vector3d> chainVectors = new ArrayList<Vector3d>();
+		for(int i = 0; i < chains.size(); i++)
+		{
+			chainVectors.add(calcAverageVec(chains.get(i)));
+		}
+		return chainVectors;
+	}
+	
+	private static Vector3d calcAverageVec(StructureDataInterface s1)
+	{
+		double totX = 0;
+		double totY = 0;
+		double totZ = 0;
+		for(int i = 0; i <s1.getNumAtoms(); i++)
+		{
+			totX += s1.getxCoords()[i];
+			totY += s1.getyCoords()[i];
+			totZ += s1.getzCoords()[i];
+		}
+		return new Vector3d(totX/s1.getNumAtoms(), totY/s1.getNumAtoms(), totZ/s1.getNumAtoms());
+	}
+	
+	private static Vector3d calcDiff(Vector3d v1, Vector3d v2)
+	{
+		v1.sub(v2);
+		return v1;
 	}
 	
 	private static List<DistanceBox<Integer>> getAllAtomsDistanceBoxes(List<StructureDataInterface> chains, double cutoffDistance)
