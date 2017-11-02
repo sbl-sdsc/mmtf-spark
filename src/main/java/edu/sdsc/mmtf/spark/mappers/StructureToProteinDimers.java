@@ -145,9 +145,9 @@ public class StructureToProteinDimers implements PairFlatMapFunction<Tuple2<Stri
 	{
 		for(int i = 0; i < exclusiveList.size(); i++)
 		{
-			if(calcDiff(vec, exclusiveList.get(i)).length() < 0.1) return true;
+			if(calcDiff(vec, exclusiveList.get(i)).length() < 0.1 && vec.angle(exclusiveList.get(i)) < 0.1) return true;
 			vec.negate();
-			if(calcDiff(vec, exclusiveList.get(i)).length() < 0.1) return true;
+			if(calcDiff(vec, exclusiveList.get(i)).length() < 0.1 && vec.angle(exclusiveList.get(i)) < 0.1) return true;
 			vec.negate();
 		}
 		return false;
