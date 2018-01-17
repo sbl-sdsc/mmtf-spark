@@ -33,7 +33,7 @@ public class SwissProtSequenceToWord2Vec2 {
 		Dataset<Row> data = UniProt.getDataset(UniProtDataset.SWISS_PROT);
 		
 		// make sure there are no empty sequence records
-		data = data.na().drop(new String[]{"sequence"});
+//		data = data.na().drop(new String[]{"sequence"});
 		
 		data.show(10,false);
 		

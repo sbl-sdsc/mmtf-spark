@@ -33,14 +33,17 @@ public class MapToProteinDimers {
 		
 	    SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(CustomReportDemo.class.getSimpleName());
 	    JavaSparkContext sc = new JavaSparkContext(conf);
-	    List<String> pdbIds = Arrays.asList("1STP"); // single protein chain
+//	    List<String> pdbIds = Arrays.asList("1STP"); // single protein chain
+	    List<String> pdbIds = Arrays.asList("5IBZ"); // single protein chain 5IBZ -> D2
 	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.downloadMmtfFiles(pdbIds, sc).cache(); 
 	   
-	    pdb = pdb.flatMapToPair(new StructureToBioassembly()).flatMapToPair(new StructureToProteinDimers(8, 20, false, true));
+//	    pdb = pdb.flatMapToPair(new StructureToBioassembly()).flatMapToPair(new StructureToProteinDimers(8, 20, false, true));
+	    pdb = pdb.flatMapToPair(new StructureToBioassembly()).flatMapToPair(new StructureToProteinDimers(8, 20, true, true));
+//	    pdb = pdb.flatMapToPair(new StructureToProteinDimers(8, 3, false, true));
 	    long count = pdb.count();
 	    pdb = pdb.coalesce(1);
 	    System.out.println("# structures: " + count);
-	    MmtfWriter.writeMmtfFiles("args[0]", sc, pdb);
+	    MmtfWriter.writeMmtfFiles(args[0], sc, pdb);
 	    
 	    sc.close();
 	}

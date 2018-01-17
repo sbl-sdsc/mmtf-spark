@@ -15,6 +15,7 @@ import edu.sdsc.mmtf.spark.io.MmtfReader;
 import edu.sdsc.mmtf.spark.io.MmtfWriter;
 import edu.sdsc.mmtf.spark.mappers.StructureToPolymerChains;
 import edu.sdsc.mmtf.spark.rcsbfilters.BlastClusters;
+import edu.sdsc.mmtf.spark.rcsbfilters.Pisces;
 
 /**
  * @author peter
@@ -46,11 +47,13 @@ public class CreateRepresentativeSet {
 	    int sequenceIdentity = 40;
 	    
 	    pdb = pdb
-	    		.filter(new BlastClusters(sequenceIdentity))
-	    		.flatMapToPair(new StructureToPolymerChains())
-	    		.filter(new BlastClusters(sequenceIdentity))
-	    		.filter(new PolymerComposition(PolymerComposition.AMINO_ACIDS_20));
+
+//	    		.flatMapToPair(new StructureToPolymerChains())
+//	    		.filter(new BlastClusters(sequenceIdentity))
+	    		.filter(new Pisces(sequenceIdentity, 2.5));
+//	    		.filter(new PolymerComposition(PolymerComposition.AMINO_ACIDS_20));
     
+	    pdb = pdb.coalesce(12);
 	    // save representative set
 	    MmtfWriter.writeSequenceFile(path +"_representatives" + sequenceIdentity, sc, pdb);
 	    

@@ -46,6 +46,8 @@ public class JavaRDDToDataset implements Serializable {
 				sf[i] = DataTypes.createStructField(colNames[i], DataTypes.StringType, false);
 			} else if (o instanceof Integer) {
 				sf[i] = DataTypes.createStructField(colNames[i], DataTypes.IntegerType, false);
+			} else if (o instanceof Long) {
+				sf[i] = DataTypes.createStructField(colNames[i], DataTypes.LongType, false);
 			} else if (o instanceof Float) {
 				sf[i] = DataTypes.createStructField(colNames[i], DataTypes.FloatType, false);
 			} else if (o instanceof Double) {
