@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>edu.sdsc</groupId>
 	<artifactId>mmtf-spark</artifactId>
-	<version>0.0.1</version>
+	<version>0.0.1-SNAPSHOT</version>
 
 	<properties>
 		<jdk.version>1.8</jdk.version>
