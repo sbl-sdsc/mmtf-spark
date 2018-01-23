@@ -1,12 +1,12 @@
 # mmtf-spark
-MMTF-Spark is  Java open source project that provides APIs and sample applications for the scalable mining of 3D biomacromolecular structures, such as the Protein Data Bank (PDB) archive. MMTF-Spark uses Big Data technologies to enable high-performance parallel processing of macromolecular structures. MMTTF-Spark use the following technology stack:
+MMTF-Spark is a Java open source project that provides APIs and sample applications for the scalable mining of 3D biomacromolecular structures, such as the Protein Data Bank (PDB) archive. MMTF-Spark uses Big Data technologies to enable high-performance parallel processing of macromolecular structures. MMTF-Spark use the following technology stack:
 * [Apache Spark](https://spark.apache.org/) a fast and general engine for large-scale distributed data processing.
-* [MMTF](https://mmtf.rcsb.org/) the Macromolecular Transmission Format for compact data storage and transmission and high-performance parsing
-* [Hadoop Sequence File](https://wiki.apache.org/hadoop/SequenceFile) a Big Data format for parallel I/O use by Apache Spark
+* [MMTF](https://mmtf.rcsb.org/) the Macromolecular Transmission Format for compact data storage, transmission and high-performance parsing
+* [Hadoop Sequence File](https://wiki.apache.org/hadoop/SequenceFile) a Big Data file format for parallel I/O
 * [Apache Parquet](https://parquet.apache.org/) a columnar data format to store dataframes
 * [BioJava](http://biojava.org/) a framework for processing biological data
 
-# Tutorial
+# Tutorials
 The companion project [mmtf-workshop-2017](https://github.com/sbl-sdsc/mmtf-workshop-2017) offers an introduction to Apache Spark and in-depth tutorials and sample code how to use MMTF-Spark.
 
 In addition, a Python version [MMTF-PySpark](https://github.com/sbl-sdsc/mmtf-pyspark) is under development. MMTF-PySpark offers demos as Jupyter notebooks as well as an experimental zero-install [Binder 2.0](https://elifesciences.org/labs/8653a61d/introducing-binder-2-0-share-your-interactive-research-environment) deployment of MMTF-PySpark.
@@ -24,8 +24,8 @@ To check the Maven installation, run the following command:
 $ mvn -v
 ```
 
-## Install mmtf-spark Git Repositories
-Clone the mmtf-spark repository and build the project using Maven.
+## Install mmtf-spark
+Clone (or fork) the mmtf-spark repository and build the project using Maven.
 
 ```
 $ git clone https://github.com/sbl-sdsc/mmtf-spark.git
