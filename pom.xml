@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>edu.sdsc</groupId>
 	<artifactId>mmtf-spark</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.1.0-alpha.1</version>
 
 	<properties>
 		<jdk.version>1.8</jdk.version>
@@ -15,7 +15,7 @@
 		<project.build.targetEncoding>UTF-8</project.build.targetEncoding>
 		<junit.version>4.12</junit.version>
 		<mmtf.version>1.0.7</mmtf.version>
-		<biojava.version>5.0.0-alpha8</biojava.version>
+		<biojava.version>5.0.0-alpha13</biojava.version>
 		<spark.version>2.2.1</spark.version>
 	</properties>
 
