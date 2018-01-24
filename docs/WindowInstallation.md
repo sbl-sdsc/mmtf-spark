@@ -1,9 +1,8 @@
 # Installation on Windows
 
-The following libraries and tools are required to install mmtf-spark. If you do not have these tool installed, follow the instructions below. This installation guide assumes you install
-into your home directory C:\Users\USER_NAME.
-
 ## Prerequisites
+The following libraries and tools are required to install mmtf-spark. If you do not have these tool installed, follow the instructions below. Except for Java, you need to choose an installation directory, for example your home directory C:\Users\USER_NAME. This directory is
+a placeholder for a location of your choice.
 
 ### Install Java Development Toolkit (JDK)
 To check your current Java JDK installation, run the following command: 
@@ -65,6 +64,7 @@ The installation requires the [Maven](http://maven.apache.org/guides/getting-sta
 Copy this file to a suitable location, e.g., C:\Users\USER_NAME\apache-maven-3.5.2-bin.tar.gz, and expand it.
 
 ```
+cp apache-maven-3.5.2-bin.tar.gz C:\Users\USER_NAME
 gzip -d apache-maven-3.5.2-bin.tar.gz
 tar -xvf apache-maven-3.5.2-bin.tar
 ```
@@ -74,7 +74,7 @@ Set environmental variables:
 ** Value: C:\Users\USER_NAME\apache-maven-3.5.2\bin
 
 
-## Install Spark
+### Install Spark
 [Download Spark](http://spark.apache.org/downloads.html)(Pre-built for Apache Hadoop 2.7 and later)
 
 Copy the downloaded file spark-2.2.1-bin-hadoop2.7.tgz to a suitable location and expand it:
@@ -106,12 +106,11 @@ curl -k -L -o winutils.exe https://github.com/steveloughran/winutils/blob/master
 
 ```
 Copy wintutils.exe to the spark bin directory.
-
 ```
 cp winutils.exe C:\Users\USER_NAME\spark-2.2.1-bin-hadoop2.7\bin
 ```
 
-## Install mmtf-spark
+# Install mmtf-spark
 Clone (or fork) the mmtf-spark repository and build the project using Maven.
 ```
 cd C:\Users\USER_NAME
