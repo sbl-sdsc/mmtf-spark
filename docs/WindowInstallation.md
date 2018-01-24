@@ -1,83 +1,42 @@
 # Installation on Windows
 
 ## Prerequisites
-The following libraries and tools are required to install mmtf-spark. If you do not have these tool installed, follow the instructions below. Except for Java, you need to choose an installation directory, for example your home directory C:\Users\USER_NAME. This directory is
-a placeholder for a location of your choice.
+The following libraries and tools are required to install mmtf-spark. Except for Java, you need to choose an installation directory, for example your home directory C:\Users\USER_NAME. This directory is a placeholder for a location of your choice.
 
-### Install Java Development Toolkit (JDK)
-To check your current Java JDK installation, run the following command: 
-```
-javac --version
-```
-This should print: `javac 1.8.0_31` (version number should be 1.8.xxxx or higher)
-
+### Install Java SE Development Toolkit (JDK)
 If you do not have the JDK or an older version, install the JDK
 
-[Download JDK](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)(Windows x64) and run the installer.
-
-Set environmental variables:
-* User variable:
-** Variable: JAVA_HOME
-** Value: C:\Program Files\Java\jdk1.8.xxxx
-* System variable:
-** Variable: PATH
-** Value: C:\Program Files\Java\jdk1.8.xxxx\bin
-
-Open a new Windows Command Prompt (cmd) and type
-```
-echo %JAVA_HOME%
-```
-This should display the path to the Java installation.
+[Download JDK](http://www.oracle.com/technetwork/java/javase/downloads/index.html) (Windows x64 version) and run the installer.
 
 ### Install UNIX Command Line Tools (Gow)
-To check if you have access to UNIX command line tool, run the following command:
-```
-curl --version
-```
-
 If you do not have access to UNIX command line tool, install Gow. It lets you run UNIX command line tools such as gzip, tar and curl in a Windows Command Prompt.
 
 [Download Gow installer](https://github.com/bmatzelle/gow/releases) and run the installer.
 
 ### Install Git
-To check if you have git installed, run the following command:
-```
-git --version
-```
-This should display the version number, e.g., `git version 2.16.1.windows.1`.
-
-Git is the version control system used to download the mmtf-spark repository from Github.
+The Git version control system is used to download repositories from Github.
 
 [Download Git](https://github.com/git-for-windows/git/releases/download/v2.16.1.windows.1/Git-2.16.1-64-bit.exe) and run the installer (choose all default options)
 
 
 ### Install Maven
-To check the Maven installation, run the following command:
-```
-mvn --version
-```
-
 The installation requires the [Maven](http://maven.apache.org/guides/getting-started/index.html#What_is_Maven) build tool. If you do not have Maven installed, follow the directions below.
 
 [Download Maven](http://maven.apache.org/download.cgi) (apache-maven-3.5.2-bin.tar.gz) or newer version
 
-Copy this file to a suitable location, e.g., C:\Users\USER_NAME\apache-maven-3.5.2-bin.tar.gz, and expand it.
+Copy the downloaded file to your install location and expand it.
 
 ```
 cp apache-maven-3.5.2-bin.tar.gz C:\Users\USER_NAME
+cd C:\Users\USER_NAME
 gzip -d apache-maven-3.5.2-bin.tar.gz
 tar -xvf apache-maven-3.5.2-bin.tar
 ```
-Set environmental variables:
-* User variable:
-** Variable: PATH
-** Value: C:\Users\USER_NAME\apache-maven-3.5.2\bin
-
 
 ### Install Spark
 [Download Spark](http://spark.apache.org/downloads.html)(Pre-built for Apache Hadoop 2.7 and later)
 
-Copy the downloaded file spark-2.2.1-bin-hadoop2.7.tgz to a suitable location and expand it:
+Copy the downloaded file to your install location and expand it.
 
 ``` 
 cp spark-2.2.1-bin-hadoop2.7.tgz C:\Users\USER_NAME
@@ -85,21 +44,8 @@ cd C:\Users\USER_NAME
 gzip -d spark-2.2.1-bin-hadoop2.7.tgz
 tar -xvf spark-2.2.1-bin-hadoop2.7.tar
 ```
-Set environmental variables:
-* User variable:
-** Variable: SPARK_HOME
-** Value: C:\Users\USER_NAME\spark-2.2.1-bin-hadoop2.7
-* System variable:
-** Variable: PATH
-** Value: C:\Users\USER_NAME\spark-2.2.1-bin-hadoop2.7\bin
 
 ## Install winutils.exe
-To check winutils installation, run the following command
-```
-winutils
-```
-This should display the winutils help file.
-
 Download winutils.exe
 ```
 curl -k -L -o winutils.exe https://github.com/steveloughran/winutils/blob/master/hadoop-2.7.1/bin/winutils.exe?raw=true
@@ -111,10 +57,48 @@ cp winutils.exe C:\Users\USER_NAME\spark-2.2.1-bin-hadoop2.7\bin
 ```
 
 # Install mmtf-spark
-Clone (or fork) the mmtf-spark repository and build the project using Maven.
+Clone the mmtf-spark repository and build the project using Maven.
 ```
 cd C:\Users\USER_NAME
 git clone https://github.com/sbl-sdsc/mmtf-spark.git
 cd mmtf-spark
+
+# Setup Environment Variables
+1. In Search, search for and then select: System (Control Panel). [See also](https://www.java.com/en/download/help/path.xml)
+2. Click the Advanced system settings link.
+3. Click Environment Variables. In the section User Variables, find the PATH environment variable and select it. Click Edit. If the PATH environment variable does not exist, click New.
+4. In the Edit (or New) User variable window, specify the following environment variables. Use the exact version number and location where you downloaded the files. 
+
+| Variable      | Value                                 |
+| ------------- |---------------------------------------|
+| PATH          | C:\Program Files\Java\jdk-9.0.4\bin |
+| PATH          | C:\Users\USER_NAME\apache-maven-3.5.2\bin |
+| PATH          | C:\Users\USER_NAME\spark-2.2.1-bin-hadoop2.7\bin |
+| SPARK_HOME    | C:\Users\USER_NAME\spark-2.2.1-bin-hadoop2.7|
+| JAVA_HOME     | C:\Program Files\Java\jdk-9.0.4    |
+
+
+
+Click OK. Close all remaining windows by clicking OK.
+5. Reopen Command prompt window, and run your java code.
+
+
+# Check your Prerequisites
+Close all Command prompt windows. Then reopen a Command prompt window and type the following commands to check your prerequisites.
+```
+javac  --version
+git  --version
+maven --version
+winutils
+echo %JAVA_HOME%
+echo %SPARK_HOME%
+```
+
+
+# Build mmtf-spark
+Run maven to build the mmtf-spark project and run the unit tests.
+```
 mvn install
 ```
+
+When this command finished, it should print "Build Success"
