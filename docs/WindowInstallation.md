@@ -1,6 +1,5 @@
 # Installation of Prerequisites on Windows
 
-## Prerequisites
 The following libraries and tools are required to install mmtf-spark. If you do not have these tool installed, follow the instructions below.
 
 ### Install Java Development Toolkit (JDK)
