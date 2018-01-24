@@ -62,6 +62,7 @@ Clone the mmtf-spark repository and build the project using Maven.
 cd C:\Users\USER_NAME
 git clone https://github.com/sbl-sdsc/mmtf-spark.git
 cd mmtf-spark
+```
 
 # Setup Environment Variables
 1. In Search, search for and then select: System (Control Panel). [See also](https://www.java.com/en/download/help/path.xml)
@@ -78,8 +79,8 @@ cd mmtf-spark
 | JAVA_HOME     | C:\Program Files\Java\jdk-9.0.4    |
 
 
-
 Click OK. Close all remaining windows by clicking OK.
+
 5. Reopen Command prompt window, and run your java code.
 
 
@@ -101,4 +102,4 @@ Run maven to build the mmtf-spark project and run the unit tests.
 mvn install
 ```
 
-When this command finished, it should print "Build Success"
+If the installation and testing is successful, you should see a message *Build Success*.
