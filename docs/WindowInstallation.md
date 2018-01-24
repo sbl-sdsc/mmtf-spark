@@ -45,7 +45,7 @@ gzip -d spark-2.2.1-bin-hadoop2.7.tgz
 tar -xvf spark-2.2.1-bin-hadoop2.7.tar
 ```
 
-## Install winutils.exe
+### Install Hadoop winutils
 Download winutils.exe
 ```
 curl -k -L -o winutils.exe https://github.com/steveloughran/winutils/blob/master/hadoop-2.7.1/bin/winutils.exe?raw=true
@@ -79,17 +79,17 @@ cd mmtf-spark
 | JAVA_HOME     | C:\Program Files\Java\jdk-9.0.4    |
 
 
-Click OK. Close all remaining windows by clicking OK.
+5. Click OK. Close all remaining windows by clicking OK.
 
-5. Reopen Command prompt window, and run your java code.
+6. Reopen Command prompt window, and run your java code.
 
 
 # Check your Prerequisites
-Close all Command prompt windows. Then reopen a Command prompt window and type the following commands to check your prerequisites.
+Close all Command prompt windows. Then reopen a Command prompt window and type the following commands to check your setup.
 ```
 javac  --version
 git  --version
-maven --version
+maven  --version
 winutils
 echo %JAVA_HOME%
 echo %SPARK_HOME%
