@@ -78,13 +78,14 @@ git clone https://github.com/sbl-sdsc/mmtf-spark.git
 | PATH          | C:\Users\USER_NAME\spark-2.2.1-bin-hadoop2.7\bin |
 
 5. Create the following new User variables.
-| Variable      | Value                                       |
-| ------------- |---------------------------------------------|
-| SPARK_HOME    | C:\Users\USER_NAME\spark-2.2.1-bin-hadoop2.7|
-| JAVA_HOME     | C:\Program Files\Java\jdk1.8.0_162          |
+
+| Variable      | Value                                        |
+| ------------- |----------------------------------------------|
+| SPARK_HOME    | C:\Users\USER_NAME\spark-2.2.1-bin-hadoop2.7 |
+| JAVA_HOME     | C:\Program Files\Java\jdk1.8.0_162           |
 
 
-5. Click *OK*. Close all remaining windows by clicking *OK*.
+6. Click *OK*. Close all remaining windows by clicking *OK*.
 
 
 # Check your Prerequisites
@@ -105,4 +106,4 @@ cd C:\Users\USER_NAME\mmtf-spark
 mvn install
 ```
 
-If the installation and testing is successful, you should see a message *Build Success*.
+If installation and testing are successful, you should see a message *Build Success*.
