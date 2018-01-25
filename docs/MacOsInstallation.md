@@ -1,6 +1,6 @@
 # Installation on MacOS
 
-* Under development *
+* Under development 
 
 ## Prerequisites
 The following libraries and tools are required to install mmtf-spark. Except for Java, you need to choose an installation directory. This directory is a placeholder for a location of your choice.
@@ -64,7 +64,8 @@ vim ~/.bash_profile
 Add the following lines in your bash_profile:
 
 ```
-export SPARK_HOME=~/spark-2.2.0-bin-hadoop2.7  <Path to your spark>
+export PATH="$PATH:/Applications/apache-maven-3.3.9/bin"
+export SPARK_HOME=~/spark-2.2.0-bin-hadoop2.7 
 
 ```
 TODO: which of those are needed for MacOS?
