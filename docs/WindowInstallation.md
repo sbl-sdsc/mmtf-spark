@@ -9,7 +9,7 @@ If you do not have the JDK or an older version, install the JDK 1.8.
 [Download JDK 1.8 for Windows x64](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) and run the installer.
 
 ### Install UNIX Command Line Tools (Gow)
-If you do not have access to UNIX command line tool, install Gow. It lets you run UNIX command line tools such as gzip, tar and curl in a Windows Command Prompt.
+Gow is a lightweight set of UNIX command line tools such as gzip, tar and curl that can be run in a Command Prompt window.
 
 [Download Gow](https://github.com/bmatzelle/gow/releases) and run the installer.
 
@@ -25,7 +25,7 @@ The installation requires the [Maven](http://maven.apache.org/guides/getting-sta
 [Download Maven](http://maven.apache.org/download.cgi) (apache-maven-3.5.2-bin.tar.gz) or newer version
 
 Move the downloaded file to your install location (C:\Users\USER_NAME) and expand it using
-gzip and tar.
+gzip and tar in Command Prompt window.
 
 ```
 cd C:\Users\USER_NAME
@@ -48,7 +48,7 @@ tar -xvf spark-2.2.1-bin-hadoop2.7.tar
 ```
 
 ### Install Hadoop winutils
-Download winutils.exe using the curl command in a Windows command prompt.
+Download winutils.exe using the curl command in a Command Prompt window.
 ```
 curl -k -L -o winutils.exe https://github.com/steveloughran/winutils/blob/master/hadoop-2.7.1/bin/winutils.exe?raw=true
 ```
@@ -57,8 +57,6 @@ Move wintutils.exe to the C:\Users\USER_NAME\spark-2.2.1-bin-hadoop2.7\bin direc
 
 
 # Install mmtf-spark
-Create a Github account, if you don't have one. You may be asked for your Github username and password to clone the repository.
-
 Clone the mmtf-spark repository and build the project using Maven.
 ```
 cd C:\Users\USER_NAME
@@ -89,7 +87,7 @@ git clone https://github.com/sbl-sdsc/mmtf-spark.git
 
 
 # Check your Prerequisites
-*Close* all Command prompt windows. Then reopen a Command prompt window and type the following commands to check your setup.
+*Close* all Windows Command Prompts. Then reopen a Windows Command Prompt and type the following commands to check your setup.
 ```
 javac  -version
 git  --version
@@ -106,4 +104,4 @@ cd C:\Users\USER_NAME\mmtf-spark
 mvn install
 ```
 
-If installation and testing are successful, you should see a message *Build Success*.
+If installation and testing are successful, a *Build Success* message will be printed.
