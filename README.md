@@ -13,9 +13,9 @@ In addition, a Python version [MMTF-PySpark](https://github.com/sbl-sdsc/mmtf-py
 
 # Installation
 
-[MacOS and LINUX](MacOsInstallation.md)
+[MacOS and LINUX](docs/MacOsInstallation.md)
 
-[Windows](WindowsInstallation.md)
+[Windows](docs/WindowsInstallation.md)
 
 ## Download the PDB archive as a Hadoop Sequence File
 The mmtf-spark project read the PDB archive in the [MMTF file format](https://doi.org/10.1371/journal.pcbi.1005575) from a [Hadoop Sequence File](https://wiki.apache.org/hadoop/SequenceFile). This file format enables high-performance, parallel processing of the entire PDB using [Apache Spark](https://spark.apache.org).
