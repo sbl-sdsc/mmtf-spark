@@ -25,7 +25,7 @@ The installation requires the [Maven](http://maven.apache.org/guides/getting-sta
 [Download Maven](http://maven.apache.org/download.cgi) (apache-maven-3.5.2-bin.tar.gz) or newer version
 
 Move the downloaded file to your install location (C:\Users\USER_NAME) and expand it using
-gzip and tar in Command Prompt window.
+gzip and tar in a Command Prompt window.
 
 ```
 cd C:\Users\USER_NAME
@@ -57,7 +57,7 @@ Move wintutils.exe to the C:\Users\USER_NAME\spark-2.2.1-bin-hadoop2.7\bin direc
 
 
 # Install mmtf-spark
-Clone the mmtf-spark repository and build the project using Maven.
+Clone the mmtf-spark repository using Git.
 ```
 cd C:\Users\USER_NAME
 git clone https://github.com/sbl-sdsc/mmtf-spark.git

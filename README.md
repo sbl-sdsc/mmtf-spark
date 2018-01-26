@@ -12,28 +12,10 @@ The companion project [mmtf-workshop-2017](https://github.com/sbl-sdsc/mmtf-work
 In addition, a Python version [MMTF-PySpark](https://github.com/sbl-sdsc/mmtf-pyspark) is under development. MMTF-PySpark offers demos as Jupyter notebooks as well as an experimental zero-install [Binder 2.0](https://elifesciences.org/labs/8653a61d/introducing-binder-2-0-share-your-interactive-research-environment) deployment of MMTF-PySpark.
 
 # Installation
-## Install Maven
-The installation requires the [Maven](http://maven.apache.org/guides/getting-started/index.html#What_is_Maven) build tool. If you do not have Maven installed, follow the directions below.
 
-[Download Maven](http://maven.apache.org/download.cgi)
+[MacOS and LINUX](MacOsInstallation.md)
 
-[Install Maven](http://maven.apache.org/install.html)
-
-To check the Maven installation, run the following command:
-```
-$ mvn -v
-```
-
-## Install mmtf-spark
-Clone (or fork) the mmtf-spark repository and build the project using Maven.
-
-```
-$ git clone https://github.com/sbl-sdsc/mmtf-spark.git
-$ cd mmtf-spark
-$ mvn install
-```
-The *install* goal will compile, test, and package the project’s code and then copy it into the local dependency repository, which Maven maintains on your local machine.
-
+[Windows](WindowsInstallation.md)
 
 ## Download the PDB archive as a Hadoop Sequence File
 The mmtf-spark project read the PDB archive in the [MMTF file format](https://doi.org/10.1371/journal.pcbi.1005575) from a [Hadoop Sequence File](https://wiki.apache.org/hadoop/SequenceFile). This file format enables high-performance, parallel processing of the entire PDB using [Apache Spark](https://spark.apache.org).
