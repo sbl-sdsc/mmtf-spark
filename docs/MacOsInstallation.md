@@ -1,7 +1,5 @@
 # Installation on MacOS
 
-* Under development 
-
 ## Prerequisites
 The following libraries and tools are required to install mmtf-spark. Except for Java, you need to choose an installation directory. This directory is a placeholder for a location of your choice.
 
@@ -45,15 +43,15 @@ git clone https://github.com/sbl-sdsc/mmtf-spark.git
 # Setup Environment Variables
 Add the following environment variables to your .bash_profile file.
 
-Open .bash_profile with your favorite editor, eg:
+Open .bash_profile with your favorite editor, e.g., using nano:
 
 ```
 cd ~
-vim ~/.bash_profile
+nano .bash_profile
 
 ```
 
-Add the following lines in your bash_profile (adjust version numbers and locations as necessary):
+Add the following lines in your .bash_profile (adjust version numbers and locations as necessary):
 
 ```
 export PATH=/opt/apache-maven-3.5.2/bin:$PATH
