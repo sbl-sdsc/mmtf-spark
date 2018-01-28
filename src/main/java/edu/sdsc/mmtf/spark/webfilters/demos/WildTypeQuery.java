@@ -1,7 +1,7 @@
 /**
  * 
  */
-package edu.sdsc.mmtf.spark.webfilter.demos;
+package edu.sdsc.mmtf.spark.webfilters.demos;
 
 import java.io.IOException;
 
