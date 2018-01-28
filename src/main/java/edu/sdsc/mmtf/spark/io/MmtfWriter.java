@@ -21,6 +21,7 @@ import scala.Tuple2;
  * Encodes and writes MMTF encoded structure data to a Hadoop Sequence file. 
  * 
  * @author Peter Rose
+ * @since 0.1.0
  *
  */
 public class MmtfWriter {

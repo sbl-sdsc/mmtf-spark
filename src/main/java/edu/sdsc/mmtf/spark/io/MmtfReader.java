@@ -38,6 +38,7 @@ import scala.Tuple2;
  * the structural data as the value.
  * 
  * @author Peter Rose
+ * @since 0.1.0
  *
  */
 public class MmtfReader {

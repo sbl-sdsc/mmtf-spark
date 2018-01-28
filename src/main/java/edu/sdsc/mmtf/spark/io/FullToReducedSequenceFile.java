@@ -3,6 +3,8 @@
  */
 package edu.sdsc.mmtf.spark.io;
 
+import java.io.FileNotFoundException;
+
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
@@ -13,20 +15,18 @@ import scala.Tuple2;
 
 /**
  * @author Peter Rose
+ * @since 0.1.0
  *
  */
 public class FullToReducedSequenceFile {
 
 	/**
 	 * @param args
+	 * @throws FileNotFoundException 
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws FileNotFoundException {
 
-		String path = System.getProperty("MMTF_FULL");
-	    if (path == null) {
-	    	System.err.println("Environment variable for Hadoop sequence file has not been set");
-	        System.exit(-1);
-	    }
+		String path = MmtfReader.getMmtfFullPath();
 	    
 	    long start = System.nanoTime();
 	    
@@ -38,11 +38,8 @@ public class FullToReducedSequenceFile {
 	    		.readSequenceFile(path, sc)
 	    		.mapToPair(t -> new Tuple2<String,StructureDataInterface>(t._1, ReducedEncoder.getReduced(t._2)));
     
-	    path = System.getProperty("MMTF_REDUCED");
-	    if (path == null) {
-	      	System.err.println("Environment variable for Hadoop sequence file has not been set");
-	        System.exit(-1);
-	    }
+	    path = MmtfReader.getMmtfReducedPath();
+
 	    MmtfWriter.writeSequenceFile(path, sc, pdb);
 	    
 	    System.out.println("# structures: " + pdb.count());
