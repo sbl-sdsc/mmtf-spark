@@ -9,6 +9,7 @@ import scala.Tuple2;
  * This filter wraps another filter and negates its result.
  * 
  * @author Peter Rose
+ * @since 0.1.0
  *
  */
 public class NotFilter implements Function<Tuple2<String, StructureDataInterface>, Boolean> {

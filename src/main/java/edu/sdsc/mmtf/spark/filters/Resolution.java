@@ -11,6 +11,7 @@ import scala.Tuple2;
  * 
  * @see <a href="http://pdb101.rcsb.org/learn/guide-to-understanding-pdb-data/resolution">resolution</a>
  * @author Peter Rose
+ * @since 0.1.0
  *
  */
 public class Resolution implements Function<Tuple2<String, StructureDataInterface>, Boolean> {

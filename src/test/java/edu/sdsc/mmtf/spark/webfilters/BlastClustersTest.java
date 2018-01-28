@@ -1,4 +1,4 @@
-package edu.sdsc.mmtf.spark.rcsbfilters;
+package edu.sdsc.mmtf.spark.webfilters;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -18,6 +18,7 @@ import org.rcsb.mmtf.api.StructureDataInterface;
 
 import edu.sdsc.mmtf.spark.io.MmtfReader;
 import edu.sdsc.mmtf.spark.mappers.StructureToPolymerChains;
+import edu.sdsc.mmtf.spark.webfilters.BlastClusters;
 
 public class BlastClustersTest {
 	private JavaSparkContext sc;

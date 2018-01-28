@@ -1,4 +1,4 @@
-package edu.sdsc.mmtf.spark.rcsbfilters;
+package edu.sdsc.mmtf.spark.webfilters;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -16,6 +16,7 @@ import org.junit.Test;
 import org.rcsb.mmtf.api.StructureDataInterface;
 
 import edu.sdsc.mmtf.spark.io.MmtfReader;
+import edu.sdsc.mmtf.spark.webfilters.ChemicalStructureQuery;
 
 public class ChemicalStructureQueryTest {
 	private JavaSparkContext sc;

@@ -1,5 +1,5 @@
 /**
- * Classes that create or manipulate Spark Datasets.
+ * Classes that create or manipulate Spark Datasets (DataFrames).
  * 
  * @author Peter Rose
  *

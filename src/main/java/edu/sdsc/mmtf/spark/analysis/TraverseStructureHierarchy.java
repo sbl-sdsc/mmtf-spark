@@ -17,6 +17,7 @@ import edu.sdsc.mmtf.spark.utils.DsspSecondaryStructure;
  * the StructureDataInterface and how to traverse the structure hierarchy.
  * 
  * @author Peter Rose
+ * @since 0.1.0
  */
 public class TraverseStructureHierarchy {
 

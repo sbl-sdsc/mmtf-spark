@@ -1,4 +1,4 @@
-package edu.sdsc.mmtf.spark.pdbjfilters;
+package edu.sdsc.mmtf.spark.webfilters;
 
 import java.io.IOException;
 import java.io.InputStream;

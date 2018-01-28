@@ -1,4 +1,4 @@
-package edu.sdsc.mmtf.spark.rcsbfilters;
+package edu.sdsc.mmtf.spark.webfilters;
 
 import java.io.IOException;
 import java.util.Arrays;

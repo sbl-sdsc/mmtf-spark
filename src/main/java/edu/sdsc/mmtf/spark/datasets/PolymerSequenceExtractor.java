@@ -26,6 +26,7 @@ import edu.sdsc.mmtf.spark.ml.JavaRDDToDataset;
  * </pre>
  * 
  * @author Peter Rose
+ * @since 0.1.0
  *
  */
 public class PolymerSequenceExtractor {

@@ -1,4 +1,4 @@
-package edu.sdsc.mmtf.spark.rcsbfilters;
+package edu.sdsc.mmtf.spark.webfilters;
 
 import static org.junit.Assert.*;
 
@@ -17,7 +17,7 @@ import org.rcsb.mmtf.api.StructureDataInterface;
 import edu.sdsc.mmtf.spark.filters.PolymerCompositionTest;
 import edu.sdsc.mmtf.spark.io.MmtfReader;
 import edu.sdsc.mmtf.spark.mappers.StructureToPolymerChains;
-import edu.sdsc.mmtf.spark.rcsbfilters.Pisces;
+import edu.sdsc.mmtf.spark.webfilters.Pisces;
 
 public class PiscesTest {
 	private JavaSparkContext sc;

@@ -17,6 +17,7 @@ import scala.Tuple2;
  * does not return any results.
  * 
  * @author Peter Rose
+ * @since 0.1.0
  *
  */
 public class ContainsDSaccharideChain implements Function<Tuple2<String, StructureDataInterface>, Boolean> {

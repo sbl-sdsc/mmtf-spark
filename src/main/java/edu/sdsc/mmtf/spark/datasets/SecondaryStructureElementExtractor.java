@@ -12,6 +12,7 @@ import edu.sdsc.mmtf.spark.ml.JavaRDDToDataset;
 /**
  * TODO
  * @author Yue Yu
+ * @since 0.1.0
  */
 public class SecondaryStructureElementExtractor {
 

@@ -1,4 +1,4 @@
-package edu.sdsc.mmtf.spark.pdbjfilters;
+package edu.sdsc.mmtf.spark.webfilters;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -17,6 +17,7 @@ import org.rcsb.mmtf.api.StructureDataInterface;
 
 import edu.sdsc.mmtf.spark.io.MmtfReader;
 import edu.sdsc.mmtf.spark.mappers.StructureToPolymerChains;
+import edu.sdsc.mmtf.spark.webfilters.MineSearch;
 
 public class MineSearchTest {
 	private JavaSparkContext sc;

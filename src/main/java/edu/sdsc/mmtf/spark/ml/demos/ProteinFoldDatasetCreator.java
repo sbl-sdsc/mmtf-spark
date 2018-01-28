@@ -23,7 +23,7 @@ import edu.sdsc.mmtf.spark.filters.ContainsLProteinChain;
 import edu.sdsc.mmtf.spark.io.MmtfReader;
 import edu.sdsc.mmtf.spark.mappers.StructureToPolymerChains;
 import edu.sdsc.mmtf.spark.ml.ProteinSequenceEncoder;
-import edu.sdsc.mmtf.spark.rcsbfilters.Pisces;
+import edu.sdsc.mmtf.spark.webfilters.Pisces;
 
 /**
  * This class is a simple example of using Dataset operations to create a dataset

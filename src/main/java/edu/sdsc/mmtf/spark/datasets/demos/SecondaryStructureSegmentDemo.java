@@ -17,6 +17,10 @@ import edu.sdsc.mmtf.spark.filters.ContainsLProteinChain;
 import edu.sdsc.mmtf.spark.io.MmtfReader;
 import edu.sdsc.mmtf.spark.mappers.StructureToPolymerChains;
 
+/**
+ * @author Yue Yu
+ * @since 0.1.0
+ */
 public class SecondaryStructureSegmentDemo {
 	public static void main(String[] args) throws IOException {    
 	    long start = System.nanoTime();

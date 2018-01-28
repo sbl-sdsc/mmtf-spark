@@ -30,6 +30,7 @@ import scala.Tuple2;
  * </pre>
  * 
  * @author Peter Rose
+ * @since 0.1.0
  *
  */
 public class SecondaryStructureExtractor {

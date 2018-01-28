@@ -16,10 +16,11 @@ import org.rcsb.mmtf.api.StructureDataInterface;
 
 import edu.sdsc.mmtf.spark.datasets.GroupInteractionExtractor;
 import edu.sdsc.mmtf.spark.io.MmtfReader;
-import edu.sdsc.mmtf.spark.rcsbfilters.BlastClusters;
+import edu.sdsc.mmtf.spark.webfilters.BlastClusters;
 
 /**
  * @author Peter Rose
+ * @since 0.1.0
  *
  */
 public class InteractionAnalysisSimple {
@@ -30,11 +31,7 @@ public class InteractionAnalysisSimple {
 	 */
 	public static void main(String[] args) throws IOException {
 
-		String path = System.getProperty("MMTF_FULL");
-	    if (path == null) {
-	    	    System.err.println("Environment variable for Hadoop sequence file has not been set");
-	        System.exit(-1);
-	    }
+		String path = MmtfReader.getMmtfFullPath();
 	    
 	    long start = System.nanoTime();
 	    

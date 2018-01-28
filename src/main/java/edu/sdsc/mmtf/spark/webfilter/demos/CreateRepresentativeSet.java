@@ -1,7 +1,7 @@
 /**
  * 
  */
-package edu.sdsc.mmtf.spark.rcsbfilters.demos;
+package edu.sdsc.mmtf.spark.webfilter.demos;
 
 import java.io.IOException;
 
@@ -10,12 +10,9 @@ import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.rcsb.mmtf.api.StructureDataInterface;
 
-import edu.sdsc.mmtf.spark.filters.PolymerComposition;
 import edu.sdsc.mmtf.spark.io.MmtfReader;
 import edu.sdsc.mmtf.spark.io.MmtfWriter;
-import edu.sdsc.mmtf.spark.mappers.StructureToPolymerChains;
-import edu.sdsc.mmtf.spark.rcsbfilters.BlastClusters;
-import edu.sdsc.mmtf.spark.rcsbfilters.Pisces;
+import edu.sdsc.mmtf.spark.webfilters.Pisces;
 
 /**
  * @author peter

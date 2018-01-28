@@ -33,6 +33,7 @@ import org.apache.spark.sql.SparkSession;
  * }
  * </pre>
  * @author Peter Rose
+ * @since 0.1.0
  * 
  */
 public class CustomReportService {

@@ -12,6 +12,7 @@ import scala.Tuple2;
  * structure (e.g., NMR structure), this filter only checks the first model.
  * 
  * @author Peter Rose
+ * @since 0.1.0
  * 
  */
 public class ContainsDnaChain implements Function<Tuple2<String, StructureDataInterface>, Boolean> {

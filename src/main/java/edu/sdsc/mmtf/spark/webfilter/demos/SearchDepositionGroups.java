@@ -1,4 +1,4 @@
-package edu.sdsc.mmtf.spark.pdbjfilters.demos;
+package edu.sdsc.mmtf.spark.webfilter.demos;
 
 import java.io.IOException;
 
@@ -8,7 +8,7 @@ import org.apache.spark.api.java.JavaSparkContext;
 import org.rcsb.mmtf.api.StructureDataInterface;
 
 import edu.sdsc.mmtf.spark.io.MmtfReader;
-import edu.sdsc.mmtf.spark.pdbjfilters.MineSearch;
+import edu.sdsc.mmtf.spark.webfilters.MineSearch;
 
 /**
  * PDBj Mine 2 RDB group deposition query and MMTF filtering using pdbid

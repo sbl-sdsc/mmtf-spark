@@ -1,7 +1,7 @@
 /**
  * 
  */
-package edu.sdsc.mmtf.spark.rcsbfilters.demos;
+package edu.sdsc.mmtf.spark.webfilter.demos;
 
 import java.io.IOException;
 
@@ -9,7 +9,7 @@ import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
 
 import edu.sdsc.mmtf.spark.io.MmtfReader;
-import edu.sdsc.mmtf.spark.rcsbfilters.WildType;
+import edu.sdsc.mmtf.spark.webfilters.WildType;
 
 /**
  * @author peter

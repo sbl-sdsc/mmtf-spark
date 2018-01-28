@@ -10,8 +10,14 @@ import org.apache.spark.sql.Row;
 import edu.sdsc.mmtf.spark.datasets.UniProt;
 import edu.sdsc.mmtf.spark.datasets.UniProt.UniProtDataset;
 
+/**
+ * 
+ * @author Yue YU
+ * @since 0.1.0
+ */
 public class UniProtDemo {
 	public static void main(String[] args) throws IOException {  
+	    
 		if (args.length != 2) {
 			System.err.println("Usage: " + UniProt.class.getSimpleName() + " <outputFilePath> + <fileFormat>");
 			System.exit(1);

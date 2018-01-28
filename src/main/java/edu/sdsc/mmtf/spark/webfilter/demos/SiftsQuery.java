@@ -1,4 +1,4 @@
-package edu.sdsc.mmtf.spark.pdbjfilters.demos;
+package edu.sdsc.mmtf.spark.webfilter.demos;
 
 import java.io.IOException;
 
@@ -9,7 +9,7 @@ import org.rcsb.mmtf.api.StructureDataInterface;
 
 import edu.sdsc.mmtf.spark.io.MmtfReader;
 import edu.sdsc.mmtf.spark.mappers.StructureToPolymerChains;
-import edu.sdsc.mmtf.spark.pdbjfilters.MineSearch;
+import edu.sdsc.mmtf.spark.webfilters.MineSearch;
 
 /**
  * PDBj Mine 2 RDB complex query of PDB and SIFTS data, followed by MMTF filtering using pdbid & chain name
@@ -17,13 +17,13 @@ import edu.sdsc.mmtf.spark.pdbjfilters.MineSearch;
  *   
  * @author Gert-Jan Bekker
  */
-public class SIFTSQuery 
+public class SiftsQuery 
 {
     public static void main( String[] args ) throws IOException
     {
         // goal: use an sql query to get a list of pdbids, then filter the MMTF-DB to only include those entries
     	
-		SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(SIFTSQuery.class.getSimpleName());
+		SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(SiftsQuery.class.getSimpleName());
 		JavaSparkContext sc = new JavaSparkContext(conf);
 		
 		String path = System.getProperty("MMTF_FULL");

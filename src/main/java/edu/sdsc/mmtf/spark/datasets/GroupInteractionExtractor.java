@@ -18,6 +18,7 @@ import edu.sdsc.mmtf.spark.utils.StructureToAllInteractions;
  * Chemical Component identifier (residue name), e.g., "ZN", "ATP".
  *
  * @author Peter Rose
+ * @since 0.1.0
  *
  */
 public class GroupInteractionExtractor {

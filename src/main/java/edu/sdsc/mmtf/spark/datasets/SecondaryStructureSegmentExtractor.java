@@ -19,6 +19,7 @@ import edu.sdsc.mmtf.spark.ml.JavaRDDToDataset;
  * must be an odd number.
  * 
  * @author Yue Yu
+ * @since 0.1.0
  *
  */
 public class SecondaryStructureSegmentExtractor {

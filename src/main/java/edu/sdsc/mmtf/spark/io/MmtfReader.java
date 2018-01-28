@@ -3,6 +3,7 @@ package edu.sdsc.mmtf.spark.io;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -41,8 +42,6 @@ import scala.Tuple2;
  */
 public class MmtfReader {
 
-	// TODO read local mmtf and mmtf.gz files
-	
 	/**
 	 * Reads an MMTF Hadoop Sequence file.
 	 * See <a href="http://mmtf.rcsb.org/download.html"> for file download information</a>
@@ -310,4 +309,48 @@ public class MmtfReader {
 		return new GenericDecoder(ReaderUtils.getDataFromUrl(pdbId));
 	}
 
+	/**
+	 * Returns the path to the full MMTF-Hadoop sequence file.
+	 * It first check if the system property MMTF_FULL has been set
+	 * (with JVM -DMMTF_FULL=<path> option). If the system property
+	 * is not set, it looks for the environment variable MMTF_FULL.
+	 * 
+	 * @return path to full MMTF-Hadoop file if set
+	 * @throws FileNotFoundException if path has not been set
+	 * @since 0.2.0
+	 */
+    public static String getMmtfFullPath() throws FileNotFoundException {
+        // get path from System property (set with -DMMTF_FULL=<path>)
+        String path = System.getProperty("MMTF_FULL");
+        if (path == null) {
+            // get path from environment variable
+            path = System.getenv("MMTF_FULL");
+            if (path == null) {
+                throw new FileNotFoundException("Path to full MMTF-Hadoop file not set.");
+            }
+        }
+        return path;
+    }
+    /**
+     * Returns the path to the reduced MMTF-Hadoop sequence file.
+     * It first check if the system property MMTF_REDUCED has been set
+     * (with JVM -DMMTF_REDUCED=<path> option). If the system property
+     * is not set, it looks for the environment variable MMTF_REDUCED.
+     * 
+     * @return path to reduced MMTF-Hadoop file
+     * @throws FileNotFoundException if path has not been set
+     * @since 0.2.0
+     */
+    public static String getMmtfReducedPath() throws FileNotFoundException {
+        // get path from System property (set with -DMMTF_REDUCED=<path>)
+        String path = System.getProperty("MMTF_REDUCED");
+        if (path == null) {
+            // get path from environment variable
+            path = System.getenv("MMTF_REDUCED");
+            if (path == null) {
+                throw new FileNotFoundException("Path to reduced MMTF-Hadoop file not set.");
+            }
+        }
+        return path;
+    }
 }

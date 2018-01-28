@@ -16,6 +16,7 @@ import scala.Tuple2;
  * <a href="http://mmcif.wwpdb.org/dictionaries/mmcif_pdbx_v40.dic/Items/_exptl.method.html">here</a>
  * 
  * @author Peter Rose
+ * @since 0.1.0
  *
  */
 public class ExperimentalMethods implements Function<Tuple2<String, StructureDataInterface>, Boolean> {
@@ -72,6 +73,7 @@ public class ExperimentalMethods implements Function<Tuple2<String, StructureDat
 
 		// order experimental methods alphabetically to enable equals comparison of sets
 		Set<String> methods = new TreeSet<>(Arrays.asList(structure.getExperimentalMethods()));
-		return methods.equals(experimentalMethods);
+		methods.retainAll(experimentalMethods);
+		return !methods.isEmpty();
 	}
 }
