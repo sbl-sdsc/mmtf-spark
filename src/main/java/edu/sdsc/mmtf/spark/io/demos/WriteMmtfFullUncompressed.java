@@ -1,5 +1,7 @@
 package edu.sdsc.mmtf.spark.io.demos;
 
+import java.io.FileNotFoundException;
+
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
@@ -16,17 +18,15 @@ import edu.sdsc.mmtf.spark.io.MmtfWriter;
  * on Solid State Drives, since they can be read faster.
  * 
  * @author Peter Rose
+ * @since 0.1.0
  *
  */
 public class WriteMmtfFullUncompressed {
 
-	public static void main(String[] args) {  
+	public static void main(String[] args) throws FileNotFoundException {  
 		
-		String path = System.getProperty("MMTF_FULL");
-	    if (path == null) {
-	    	    System.err.println("Environment variable for Hadoop sequence file has not been set");
-	        System.exit(-1);
-	    }
+		String path = MmtfReader.getMmtfFullPath();
+	   
 	    long start = System.nanoTime();
 	    
 	    // instantiate Spark. Each Spark application needs these two lines of code.

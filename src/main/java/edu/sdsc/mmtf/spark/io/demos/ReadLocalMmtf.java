@@ -10,9 +10,10 @@ import edu.sdsc.mmtf.spark.io.MmtfReader;
 
 /**
  * Example reading a list of PDB IDs from a local 
- * reduced MMTF Hadoop sequence file into a JavaPairRDD.
+ * MMTF file into a JavaPairRDD.
  * 
  * @author Peter Rose
+ * @since 0.1.0
  *
  */
 public class ReadLocalMmtf {
@@ -28,9 +29,9 @@ public class ReadLocalMmtf {
 	    SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(ReadLocalMmtf.class.getSimpleName());
 	    JavaSparkContext sc = new JavaSparkContext(conf);
 		 
-	    // read list of PDB entries from a local Hadoop sequence file
+	    // read a local MMTF file
 
-	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.readMmcifFiles(args[0], sc);
+	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.readMmtfFiles(args[0], sc);
 	    
 	    pdb.foreach(t -> TraverseStructureHierarchy.demo(t._2));
 	    System.out.println("# structures: " + pdb.count());
