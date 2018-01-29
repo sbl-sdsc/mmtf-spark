@@ -14,6 +14,8 @@ import edu.sdsc.mmtf.spark.filters.ContainsSequenceRegex;
 import edu.sdsc.mmtf.spark.io.MmtfReader;
 
 /**
+ * Example how to filter PDB entries by a sequence pattern.
+ * 
  * @author Peter Rose
  * @since 0.1.0
  *

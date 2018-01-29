@@ -9,8 +9,7 @@ import edu.sdsc.mmtf.spark.filters.DepositionDate;
 import edu.sdsc.mmtf.spark.io.MmtfReader;
 
 /**
- * This example demonstrates how to filter structures with
- * specified depositionDate range
+ * Example how to filter PDB entries by deposition date range.
  * 
  * @author Yue Yu
  * @since 0.1.0

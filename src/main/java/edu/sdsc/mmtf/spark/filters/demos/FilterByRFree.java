@@ -9,10 +9,7 @@ import edu.sdsc.mmtf.spark.filters.Resolution;
 import edu.sdsc.mmtf.spark.io.MmtfReader;
 
 /**
- * Example of reading an MMTF Hadoop Sequence file, 
- * filtering the entries by resolution, and counting the 
- * number of entries. This example shows how methods can 
- * be chained together.
+ * Example how to filter PDB entries by r-free value range.
  * 
  * @see <a href="http://pdb101.rcsb.org/learn/guide-to-understanding-pdb-data/r-value-and-r-free">rfree</a>
  * 

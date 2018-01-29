@@ -11,8 +11,7 @@ import edu.sdsc.mmtf.spark.filters.NotFilter;
 import edu.sdsc.mmtf.spark.io.MmtfReader;
 
 /**
- * Example how to wrap a filter in a NotFilter to negate
- * a filter.
+ * Example how to wrap a filter in a NotFilter to negate a filter.
  * 
  * @author Peter Rose
  * @since 0.1.0
@@ -34,7 +33,7 @@ public class NotFilterExample {
 	    		.filter(new NotFilter(new ContainsDnaChain())) // should not contain any DNA chains
 	    		.count();
 	    
-	    System.out.println("# PDB entries without DNA chains: " + count);
+	    System.out.println("# PDB entries with L-protein and without DNA chains: " + count);
 	    sc.close();
 	}
 }

@@ -9,9 +9,8 @@ import edu.sdsc.mmtf.spark.filters.ContainsGroup;
 import edu.sdsc.mmtf.spark.io.MmtfReader;
 
 /**
- * This example demonstrates how to filter structures with
- * specified groups (residues).
- * Groups are specified by their one, two, or three-letter codes,
+ * Example how to filter PDB entries by the presence of specified groups (residues).
+ * Groups are specified by their upper case one, two, or three-letter codes,
  * e.g. "F", "MG", "ATP", as defined in the 
  * <a href="https://www.wwpdb.org/data/ccd">wwPDB Chemical Component Dictionary</a>.
  * 
@@ -28,6 +27,7 @@ public class FilterByGroups {
 	    SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(FilterByGroups.class.getSimpleName());
 	    JavaSparkContext sc = new JavaSparkContext(conf);
 		 
+	    // find all structure that contain ATP and MG
 	    long count = MmtfReader
 	    		.readSequenceFile(path, sc)
 	    		.filter(new ContainsGroup("ATP"))

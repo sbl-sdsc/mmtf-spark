@@ -9,11 +9,7 @@ import edu.sdsc.mmtf.spark.filters.ContainsLProteinChain;
 import edu.sdsc.mmtf.spark.io.MmtfReader;
 
 /**
- * This example demonstrates how to filter the PDB by polymer chain type. It filters
- * 
- * Simple example of reading an MMTF Hadoop Sequence file, filtering the entries by resolution,
- * and counting the number of entries. This example shows how methods can be chained for a more
- * concise syntax.
+ * Example how to filter PDB entries that exclusively contain L-protein chains.
  * 
  * @author Peter Rose
  * @since 0.1.0
@@ -32,7 +28,7 @@ public class FilterExclusivelyByLProteins {
 	    
 	    long count = MmtfReader
 	    		.readSequenceFile(path, sc) // read MMTF hadoop sequence file
-	    		// retain pdb entries that exclusively (flag set to true) contain L-peptide chains
+	    		// retain pdb entries that exclusively (flag set to true) contain L-protein chains
 	    		.filter(new ContainsLProteinChain(exclusive)) 
 	    		.count();
 	    

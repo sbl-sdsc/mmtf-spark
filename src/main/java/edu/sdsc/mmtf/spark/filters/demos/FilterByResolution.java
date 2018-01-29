@@ -11,9 +11,7 @@ import edu.sdsc.mmtf.spark.filters.Resolution;
 import edu.sdsc.mmtf.spark.io.MmtfReader;
 
 /**
- * Example of reading an MMTF Hadoop Sequence file, 
- * filtering the entries by resolution,
- * and counting the number of entries.
+ * Example how to filter PDB entries by resolution range.
  * 
  * @see <a href="http://pdb101.rcsb.org/learn/guide-to-understanding-pdb-data/resolution">resolution</a>
  * 
@@ -37,7 +35,7 @@ public class FilterByResolution {
 	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.readSequenceFile(path,  sc);
 
 	    // filter PDB entries resolution. Entries without resolution values, 
-	    // e.g., NMR structures, will be filtered out.
+	    // e.g., NMR structures, will be filtered out as well.
 	    pdb = pdb.filter(new Resolution(0.0, 2.0));
 	    
 	    System.out.println("# structures: " + pdb.count());

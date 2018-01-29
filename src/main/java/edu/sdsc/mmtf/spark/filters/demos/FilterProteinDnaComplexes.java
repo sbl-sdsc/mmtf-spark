@@ -7,14 +7,12 @@ import org.apache.spark.api.java.JavaSparkContext;
 
 import edu.sdsc.mmtf.spark.filters.ContainsDnaChain;
 import edu.sdsc.mmtf.spark.filters.ContainsLProteinChain;
+import edu.sdsc.mmtf.spark.filters.ContainsRnaChain;
+import edu.sdsc.mmtf.spark.filters.NotFilter;
 import edu.sdsc.mmtf.spark.io.MmtfReader;
 
 /**
- * This example demonstrates how to filter the PDB by polymer chain type. It filters
- * 
- * Simple example of reading an MMTF Hadoop Sequence file, filtering the entries by resolution,
- * and counting the number of entries. This example shows how methods can be chained for a more
- * concise syntax.
+ * Example how to filter PDB entries that contain L-peptide/DNA complexes.
  * 
  * @author Peter Rose
  * @since 0.1.0
@@ -32,11 +30,12 @@ public class FilterProteinDnaComplexes {
 		 
 	    long count = MmtfReader
 	    		.readSequenceFile(path, sc) // read MMTF hadoop sequence file
-	    		.filter(new ContainsLProteinChain()) // retain pdb entries that exclusively contain L-peptide chains
-	    	    .filter(new ContainsDnaChain()) // retain pdb entries that exclusively contain L-Dna chains
-	    		.count();
+	    		.filter(new ContainsLProteinChain()) // retain pdb entries that contain L-peptide chains
+	    	    .filter(new ContainsDnaChain()) // retain pdb entries that contain L-Dna chains
+	    		.filter(new NotFilter(new ContainsRnaChain())) // filter out an RNA containing entries
+	    	    .count();
 	    
-	    System.out.println("# Complexes that contain L-peptide and DNA: " + count);
+	    System.out.println("# L-peptide/DNA complexes: " + count);
 	    sc.close();
 	}
 }
