@@ -14,7 +14,13 @@ import org.rcsb.mmtf.encoder.ReducedEncoder;
 import scala.Tuple2;
 
 /**
- * Converts a full MMTF Hadoop Sequence File to a reduced version.
+ * Converts a full MMTF Hadoop Sequence File to a reduced MMTF representation.
+ * MMTF representations: 
+ * <p><ul>
+ * <li>reduced: C-alpha atoms for polypeptides, P for polynucleotides, 
+ * and all atom for all other groups (residues) at 0.1 A coordinate precision;
+ * <li>full: all atoms at 0.001 A coordinate precision
+ * </ul>
  * 
  * <p> Reference: Bradley AR, Rose AS, Pavelka A, Valasatava Y, Duarte JM, Prlić A, Rose PW (2017) 
  * MMTF - an efficient file format for the transmission, visualization, and analysis of macromolecular 
@@ -28,9 +34,9 @@ import scala.Tuple2;
 public class FullToReducedSequenceFile {
 
     /**
-     * Converts a full MMTF Hadoop Sequence File to a reduced version.
-     * @param args args[0] input directory (full version), 
-     * args[1] output directory (reduced version)
+     * Converts a full MMTF Hadoop Sequence File to a reduced representation.
+     * @param args args[0] input directory (full), 
+     * args[1] output directory (reduced)
      * @throws FileNotFoundException
      */
 	public static void main(String[] args) throws FileNotFoundException {
