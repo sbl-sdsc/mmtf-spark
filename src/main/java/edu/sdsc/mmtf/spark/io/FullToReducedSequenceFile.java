@@ -14,19 +14,32 @@ import org.rcsb.mmtf.encoder.ReducedEncoder;
 import scala.Tuple2;
 
 /**
+ * Converts a full MMTF Hadoop Sequence File to a reduced version.
+ * 
+ * <p> Reference: Bradley AR, Rose AS, Pavelka A, Valasatava Y, Duarte JM, Prlić A, Rose PW (2017) 
+ * MMTF - an efficient file format for the transmission, visualization, and analysis of macromolecular 
+ * structures. PLOS Computational Biology 13(6): e1005575. <a href="https://doi.org/10.1371/journal.pcbi.1005575">doi: 10.1371/journal.pcbi.1005575</a>
+ * 
  * @author Peter Rose
  * @since 0.1.0
+ * @see <a href="https://mmtf.rcsb.org/download.html">MMTF Website</a>
  *
  */
 public class FullToReducedSequenceFile {
 
-	/**
-	 * @param args
-	 * @throws FileNotFoundException 
-	 */
+    /**
+     * Converts a full MMTF Hadoop Sequence File to a reduced version.
+     * @param args args[0] input directory (full version), 
+     * args[1] output directory (reduced version)
+     * @throws FileNotFoundException
+     */
 	public static void main(String[] args) throws FileNotFoundException {
+	    if (args.length != 2) {
+	        System.out.println("Usage: FullToReducedSequenceFile <path_to_full> <path_to_reduced>");
+	        System.exit(-1);
+	    }
 
-		String path = MmtfReader.getMmtfFullPath();
+		String fullPath = args[0];
 	    
 	    long start = System.nanoTime();
 	    
@@ -35,14 +48,14 @@ public class FullToReducedSequenceFile {
 	    
 	    // read PDB in MMTF format
 	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader
-	    		.readSequenceFile(path, sc)
-	    		.mapToPair(t -> new Tuple2<String,StructureDataInterface>(t._1, ReducedEncoder.getReduced(t._2)));
-    
-	    path = MmtfReader.getMmtfReducedPath();
+	    		.readSequenceFile(fullPath, sc)
+	    		.mapValues(s -> ReducedEncoder.getReduced(s));
+	    		
+	    String reducedPath = args[1];
 
-	    MmtfWriter.writeSequenceFile(path, sc, pdb);
+	    MmtfWriter.writeSequenceFile(reducedPath, sc, pdb);
 	    
-	    System.out.println("# structures: " + pdb.count());
+	    System.out.println("# structures converted: " + pdb.count());
 	  
 	    long end = System.nanoTime();
 	    
@@ -50,5 +63,4 @@ public class FullToReducedSequenceFile {
 	    
 	    sc.close();
 	}
-
 }
