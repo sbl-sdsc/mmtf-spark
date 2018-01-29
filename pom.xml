@@ -153,12 +153,12 @@
 				<configuration>
 					<artifactSet>
 						<excludes>
-	<!-- 						<exclude>junit:junit</exclude>
+						<exclude>junit:junit</exclude>
 							<exclude>log4j:log4j:jar:</exclude>
 							<exclude>org.slf4j:</exclude>
 							<exclude>org.apache.logging.log4j:</exclude>
 							<exclude>commons-lang:</exclude>
-							<exclude>org.msgpack:</exclude> -->
+							<exclude>org.msgpack:</exclude>
 						</excludes>
 					</artifactSet>
 				</configuration>

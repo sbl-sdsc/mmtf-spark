@@ -48,7 +48,14 @@
         </executions>
         <configuration>
           <artifactSet>
-            <excludes />
+            <excludes>
+              <exclude>junit:junit</exclude>
+              <exclude>log4j:log4j:jar:</exclude>
+              <exclude>org.slf4j:</exclude>
+              <exclude>org.apache.logging.log4j:</exclude>
+              <exclude>commons-lang:</exclude>
+              <exclude>org.msgpack:</exclude>
+            </excludes>
           </artifactSet>
         </configuration>
       </plugin>
@@ -63,6 +70,12 @@
     </repository>
   </repositories>
   <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.12</version>
+      <scope>compile</scope>
+    </dependency>
     <dependency>
       <groupId>org.apache.spark</groupId>
       <artifactId>spark-core_2.11</artifactId>

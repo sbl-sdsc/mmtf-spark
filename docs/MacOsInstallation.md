@@ -27,10 +27,24 @@ sudo cp -r ./apache-maven-3.5.2 /opt
 ### Install Spark
 [Download Spark](http://spark.apache.org/downloads.html) (Pre-built for Apache Hadoop 2.7 and later)
 
-Expand the tar.gz file and copy it to the /opt directory. If you are not an administrator on your computer, copy the file to different install location.
+Expand the tar.gz file by double clicking on the file.
+
+By default, SPARK logs at the INFO level, which leads to excessive log messages. Change the log level from INFO to ERROR
+
+```
+cd ./spark-2.2.1-bin-hadoop2.7/conf
+cp log4j.properties.template log4j.properties
+```
+
+Then edit the log4j.properties file and change the level from INFO to ERROR:
+
+`log4j.rootCategory=INFO, console` to `log4j.rootCategory=ERROR, console`
+
+
+Then copy spark-2.2.1-bin-hadoop2.7 to the /opt directory. If you are not an administrator on your computer, copy the file to different install location.
 
 ``` 
-sudo cp-r ./spark-2.2.1-bin-hadoop2.7 /opt
+sudo cp -r ./spark-2.2.1-bin-hadoop2.7 /opt
 ```
 
 # Install mmtf-spark
