@@ -34,6 +34,25 @@ or
 wget https://mmtf.rcsb.org/v1.0/hadoopfiles/full.tar
 tar -xvf full.tar
 ```
+
+## Running a Demo Application using spark-submit
+
+Simple example of running a demo application.
+[PolyPeptideChainStatistics](PolyPeptideChainStatistics.java)
+
+```
+spark-submit --master local --class edu.sdsc.mmtf.spark.mappers.demos.PolyPeptideChainStatistics  INSTALL_DIRECTORY/mmtf-spark/target/mmtf-spark-0.2.0-SNAPSHOT.jar
+```
+
+Example with command line arguments. This example read the PDB files
+in an input directory (recursively) and creates an MMTF-Hadoop Sequence file.
+[PdbToMmtfFull](PdbToMmtfFull.java)
+
+```
+spark-submit --master local  --class edu.sdsc.mmtf.spark.io.demos.PdbToMmtfFull  INSTALL_DIRECTORY/mmtf-spark/target/mmtf-spark-0.2.0-SNAPSHOT.jar PDB_FILE_DIRECTORY MMTF_HADOOP_FILE_DIRECTORY
+```
+
+
 ## How to Cite this Work
 
 Bradley AR, Rose AS, Pavelka A, Valasatava Y, Duarte JM, Prlić A, Rose PW (2017) MMTF - an efficient file format for the transmission, visualization, and analysis of macromolecular structures. PLOS Computational Biology 13(6): e1005575. doi: [10.1371/journal.pcbi.1005575](https://doi.org/10.1371/journal.pcbi.1005575)

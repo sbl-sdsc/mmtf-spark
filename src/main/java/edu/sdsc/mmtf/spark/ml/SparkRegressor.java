@@ -15,7 +15,11 @@ import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 
 /**
+ * Fits a regression model using an MLlib regression method and 
+ * returns regression metrics.
+ * 
  * @author Peter Rose
+ * @since 0.1.0
  *
  */
 public class SparkRegressor {

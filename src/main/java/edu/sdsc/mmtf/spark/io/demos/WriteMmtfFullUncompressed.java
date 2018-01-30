@@ -12,8 +12,8 @@ import edu.sdsc.mmtf.spark.io.MmtfWriter;
 
 /**
  * Example reading all PDB entries from a local 
- * full MMTF Hadoop sequence file and saving it as 
- * an uncompressed MMTF Hadoop sequence file. 
+ * full MMTF-Hadoop sequence file and saving it as 
+ * an uncompressed MMTF-Hadoop sequence file. 
  * The uncompressed files are preferable for local files
  * on Solid State Drives, since they can be read faster.
  * 

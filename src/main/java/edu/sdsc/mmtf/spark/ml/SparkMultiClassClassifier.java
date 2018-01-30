@@ -20,8 +20,11 @@ import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 
 /**
+ * Fits a multi-class classification model using an MLlib 
+ * classification method and returns classification metrics.
+ * 
  * @author Peter Rose
- *
+ * @since 0.1.0
  */
 public class SparkMultiClassClassifier {
 	@SuppressWarnings("rawtypes")
@@ -92,10 +95,8 @@ public class SparkMultiClassClassifier {
 		// Display some sample predictions
 		System.out.println();
 		System.out.println("Sample predictions: " + predictor.getClass().getSimpleName());
-//		String primaryKey = predictions.columns()[0];
-		predictions.sample(false, 0.1, seed).show(25);
-//		predictions.select(primaryKey, label, "predictedLabel").sample(false, 0.1, seed).show(25);	
-				
+
+		predictions.sample(false, 0.1, seed).show(25);	
 	
 		predictions = predictions.withColumnRenamed(label, "stringLabel");
 		predictions = predictions.withColumnRenamed("indexedLabel", label);

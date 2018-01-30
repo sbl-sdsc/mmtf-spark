@@ -1,5 +1,7 @@
 package edu.sdsc.mmtf.spark.mappers.demos;
 
+import java.io.FileNotFoundException;
+
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
 
@@ -9,21 +11,16 @@ import edu.sdsc.mmtf.spark.mappers.StructureToPolymerChains;
 
 /**
  * Example demonstrating how to extract protein chains from
- * PDB entries. This example uses a flatMapToPair function
- * to transform a structure to its polymer chains.
+ * PDB entries and convert them to BioJava structure objects. 
  * 
  * @author Peter Rose
  *
  */
 public class MapToBioJava {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws FileNotFoundException {
 
-		String path = System.getProperty("MMTF_REDUCED");
-	    if (path == null) {
-	    	    System.err.println("Environment variable for Hadoop sequence file has not been set");
-	        System.exit(-1);
-	    }
+		String path = MmtfReader.getMmtfReducedPath();
 	    
 	    SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(MapToBioJava.class.getSimpleName());
 	    JavaSparkContext sc = new JavaSparkContext(conf);

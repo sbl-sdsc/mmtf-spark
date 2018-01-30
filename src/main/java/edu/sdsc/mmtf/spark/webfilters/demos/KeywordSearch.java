@@ -37,11 +37,12 @@ public class KeywordSearch
 	    // do a keyword search and get the pdbid from the brief_summary table, finally order by the hit_score
         String sql = "select pdbid, resolution, biol_species, db_uniprot, db_pfam, hit_score from keyword_search('porin') order by hit_score desc";
 		
+        pdb.filter(new MineSearch(sql));
         // simply run the query
         MineSearch search = new MineSearch(sql); // if no further parameters are given, `pdbid` column will be used for filtering without chain-level
-        search.dataset.show(10); // output the returned data (10 items) => this can be further filtered or used directly in your service
+//        search.dataset.show(10); // output the returned data (10 items) => this can be further filtered or used directly in your service
         
-        System.out.println("Number of entries in MMTF library matching query: "+pdb.filter(search).keys().count()+"/"+search.dataset.count());
+        System.out.println("Number of entries in MMTF library matching query: " + pdb.filter(search).count());
 		
         sc.close();
         

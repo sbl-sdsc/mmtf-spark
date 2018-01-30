@@ -11,8 +11,6 @@ import org.apache.spark.api.java.JavaSparkContext;
 import org.rcsb.mmtf.api.StructureDataInterface;
 import org.rcsb.mmtf.encoder.ReducedEncoder;
 
-import scala.Tuple2;
-
 /**
  * Converts a full MMTF Hadoop Sequence File to a reduced MMTF representation.
  * MMTF representations: 

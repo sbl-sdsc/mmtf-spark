@@ -44,7 +44,7 @@ public class MmtfWriter {
 	 * @param compress if true, apply gzip compression
 	 */
 	public static void writeSequenceFile(String path, JavaSparkContext sc, JavaPairRDD<String, StructureDataInterface> structure, boolean compressed) {		
-		structure
+	    structure
 				.mapToPair(t -> new Tuple2<String,byte[]>(t._1, toByteArray(t._2, compressed)))
 				.mapToPair(t -> new Tuple2<Text,BytesWritable>(new Text(t._1), new BytesWritable(t._2)))
 				.saveAsHadoopFile(path, Text.class, BytesWritable.class, SequenceFileOutputFormat.class);

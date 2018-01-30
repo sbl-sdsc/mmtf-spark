@@ -32,20 +32,30 @@ import org.rcsb.mmtf.serialization.MessagePackSerialization;
 import scala.Tuple2;
 
 /**
- * Methods for reading MMTF Hadoop sequence files and downloading and of individual MMTF files
- * using MMTF web services <a href="http://mmtf.rcsb.org/download.html">MMTF web services</a>. 
- * The data are returned as JavaPairRDD with the structure id (e.g. PDB ID) as the key and 
- * the structural data as the value.
+ * Methods for reading macromolecular structure in MMTF, mmCIF, and PDB file formats. 
+ * The data are returned as a JavaPairRDD with the structure id (e.g. PDB ID) as 
+ * the key and the structural data as the value.
+ * 
+ * <p> Supported operations and file formats:
+ * <p><ul>
+ * <li> read directory of MMTF-Hadoop Sequence files in full and reduced representation
+ * <li> download MMTF full and reduced representations using web services (mmtf.rcsb.org)
+ * <li> read directory of MMTF files (.mmtf, mmtf.gz)
+ * <li> read directory of mmCIF files (.cif, .cif.gz)
+ * <li> read directory of PDB files (.pdb, .ent)
+ * </ul>
  * 
  * @author Peter Rose
+ * @author Yue Yu
  * @since 0.1.0
  *
  */
 public class MmtfReader {
 
 	/**
-	 * Reads an MMTF Hadoop Sequence file.
-	 * See <a href="http://mmtf.rcsb.org/download.html"> for file download information</a>
+	 * Reads an MMTF-Hadoop Sequence file. The Hadoop Sequence file may contain
+	 * either gzip compressed or uncompressed values.
+	 * See <a href="https://mmtf.rcsb.org/download.html"> for file download information</a>
 	 * 
 	 * @param path Path to Hadoop sequence file
 	 * @param sc Spark context
@@ -59,12 +69,17 @@ public class MmtfReader {
 
 					public Tuple2<String, StructureDataInterface> call(Tuple2<Text, BytesWritable> t) throws Exception {
 						byte[] values = t._2.copyBytes();
+						
+						// if data are gzipped, unzip them first
 						try {
-						    values = ReaderUtils.deflateGzip(t._2.copyBytes()); // unzip binary MessagePack data
-						} catch (ZipException e) {
-						}
-						MmtfStructure mmtf = new MessagePackSerialization().deserialize(new ByteArrayInputStream(values)); // deserialize message pack
-						return new Tuple2<String, StructureDataInterface>(t._1.toString(), new GenericDecoder(mmtf)); // decode message pack
+						    values = ReaderUtils.deflateGzip(t._2.copyBytes());
+						} catch (ZipException e) {}
+						
+						// deserialize message pack
+						MmtfStructure mmtf = new MessagePackSerialization().deserialize(new ByteArrayInputStream(values)); 
+						
+						// decode message pack
+						return new Tuple2<String, StructureDataInterface>(t._1.toString(), new GenericDecoder(mmtf)); 
 					}
 				});
 	}
@@ -87,11 +102,15 @@ public class MmtfReader {
 
 					public Tuple2<String, StructureDataInterface> call(Tuple2<Text, BytesWritable> t) throws Exception {
 						byte[] values = t._2.copyBytes();
+						// if data are gzipped, unzip them first
 						try {
 						    values = ReaderUtils.deflateGzip(t._2.copyBytes()); // unzip binary MessagePack data
-						} catch (ZipException e) {
-						}
+						} catch (ZipException e) {}
+						
+						// deserialize message pack
 						MmtfStructure mmtf = new MessagePackSerialization().deserialize(new ByteArrayInputStream(values)); // deserialize message pack
+						
+						// decode message pack
 						return new Tuple2<String, StructureDataInterface>(t._1.toString(), new GenericDecoder(mmtf)); // decode message pack
 					}
 				});
@@ -115,11 +134,15 @@ public class MmtfReader {
 
 					public Tuple2<String, StructureDataInterface> call(Tuple2<Text, BytesWritable> t) throws Exception {
 						byte[] values = t._2.copyBytes();
+						// if data are gzipped, unzip them first
 						try {
 						    values = ReaderUtils.deflateGzip(t._2.copyBytes()); // unzip binary MessagePack data
-						} catch (ZipException e) {
-						}
+						} catch (ZipException e) {}
+						
+						// deserialize message pack
 						MmtfStructure mmtf = new MessagePackSerialization().deserialize(new ByteArrayInputStream(values)); // deserialize message pack
+						
+						// decode message pack
 						return new Tuple2<String, StructureDataInterface>(t._1.toString(), new GenericDecoder(mmtf)); // decode message pack
 					}
 				});
@@ -146,7 +169,9 @@ public class MmtfReader {
 		
 	
 	/**
-	 * Reads the specified PDB entries from a MMTF file.
+	 * Reads uncompressed and compressed MMTF files recursively from
+	 * a given directory. 
+	 * This methods reads files with the mmtf or mmtf.gz extension.
 	 * 
 	 * @param path Path to MMTF files
 	 * @param sc Spark context
@@ -185,12 +210,13 @@ public class MmtfReader {
 	
 	
 	/**
-	 * Reads the specified PDB entries from a pdb file.
+     * Reads uncompressed PDB files recursively from a given directory path. 
+     * This methods reads files with the .pdb or .ent extension.
 	 * 
 	 * Missing data: bond info, bioAssembly info
 	 * Different data : atom serial number, entity description
 	 * 
-	 * @param path Path to MMTF files
+	 * @param path Path to PDB files
 	 * @param sc Spark context
 	 * @return structure data as keyword/value pairs
 	 */
@@ -230,12 +256,11 @@ public class MmtfReader {
 	}
 	
 	/**
-	 * Reads the specified PDB entries from a pdb file.
+     * Reads uncompressed and compressed mmCIF files recursively from a given directory path. 
+     * This methods reads files with the .cif or .cif.gz extension.
 	 * 
-	 * Missing data: bond info, bioAssembly info
-	 * Different data : atom serial number, entity description
 	 * 
-	 * @param path Path to MMTF files
+	 * @param path Path to .cif files
 	 * @param sc Spark context
 	 * @return structure data as keyword/value pairs
 	 */
@@ -278,16 +303,18 @@ public class MmtfReader {
 	
 	
 	/**
-	 * Downloads and reads the specified PDB entries using <a href="http://mmtf.rcsb.org/download.html">MMTF web services</a>.
+	 * Downloads and reads the specified PDB entries in the full MMTF representation
+	 * using MMTF web services.
 	 * 
 	 * @param pdbIds List of PDB IDs (upper case)
 	 * @param sc Spark context
 	 * @return structure data as keyword/value pairs
+	 * @see <a href="http://mmtf.rcsb.org/download.html">MMTF web services</a>.
 	 */
 	public static JavaPairRDD<String, StructureDataInterface> downloadMmtfFiles(List<String> pdbIds, JavaSparkContext sc) {
 		return sc
 				.parallelize(pdbIds)
-				.mapToPair(t -> new Tuple2<String, StructureDataInterface>(t, getStructure(t, false, false)));
+				.mapToPair(t -> new Tuple2<String, StructureDataInterface>(t, getStructure(t, true, false)));
 	}
 	
 	/**
@@ -306,8 +333,9 @@ public class MmtfReader {
 	}
 	
 	private static StructureDataInterface getStructure(String pdbId, boolean https, boolean reduced) throws IOException {
-// TODO use with new version		return new GenericDecoder(ReaderUtils.getDataFromUrl(pdbId, https, reduced));
-		return new GenericDecoder(ReaderUtils.getDataFromUrl(pdbId));
+// TODO use with new version		
+	    return new GenericDecoder(ReaderUtils.getDataFromUrl(pdbId, https, reduced));
+//		return new GenericDecoder(ReaderUtils.getDataFromUrl(pdbId));
 	}
 
 	/**
@@ -329,7 +357,8 @@ public class MmtfReader {
             if (path == null) {
                 throw new FileNotFoundException("Path to full MMTF-Hadoop file not set.");
             }
-        }
+        } 
+        System.out.println("Hadoop Sequence file path: MMTF_FULL=" + path);
         return path;
     }
     /**
@@ -352,6 +381,7 @@ public class MmtfReader {
                 throw new FileNotFoundException("Path to reduced MMTF-Hadoop file not set.");
             }
         }
+        System.out.println("Hadoop Sequence file path: MMTF_REDUCED=" + path);
         return path;
     }
 }

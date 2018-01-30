@@ -12,10 +12,15 @@ import org.rcsb.mmtf.api.StructureDataInterface;
 
 import edu.sdsc.mmtf.spark.io.MmtfReader;
 import edu.sdsc.mmtf.spark.io.MmtfWriter;
+import edu.sdsc.mmtf.spark.mappers.StructureToPolymerChains;
 import edu.sdsc.mmtf.spark.webfilters.Pisces;
 
 /**
- * @author peter
+ * Creates an MMTF-Hadoop Sequence file for a representative set of
+ * protein chains.
+ * 
+ * @author Peter Rose
+ * @since 0.1.0
  *
  */
 public class CreateRepresentativeSet {
@@ -26,11 +31,7 @@ public class CreateRepresentativeSet {
 	 */
 	public static void main(String[] args) throws IOException {
 
-		String path = System.getProperty("MMTF_FULL");
-	    if (path == null) {
-	    	    System.err.println("Environment variable for Hadoop sequence file has not been set");
-	        System.exit(-1);
-	    }
+		String path = MmtfReader.getMmtfFullPath();
 	    
 	    long start = System.nanoTime();
 	    
@@ -40,26 +41,26 @@ public class CreateRepresentativeSet {
 	    // read PDB in MMTF format
 	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.readSequenceFile(path, sc);
 
-	    // filter by representative protein chains at 40% sequence identify
+	    // filter by representative protein chains at 40% sequence identify and
+	    // 2.5 A resolution using the Pisces filter
 	    int sequenceIdentity = 40;
+	    double resolution = 2.5;
 	    
 	    pdb = pdb
-
-//	    		.flatMapToPair(new StructureToPolymerChains())
-//	    		.filter(new BlastClusters(sequenceIdentity))
-	    		.filter(new Pisces(sequenceIdentity, 2.5));
-//	    		.filter(new PolymerComposition(PolymerComposition.AMINO_ACIDS_20));
+	    		.flatMapToPair(new StructureToPolymerChains())
+	    		.filter(new Pisces(sequenceIdentity, resolution));
     
-	    pdb = pdb.coalesce(12);
-	    // save representative set
-	    MmtfWriter.writeSequenceFile(path +"_representatives" + sequenceIdentity, sc, pdb);
+	    System.out.println("# representative chains: " + pdb.count());
 	    
-//	    System.out.println("# representative chains: " + pdb.count());
+	    // coalesce partitions to avoid saving many small files
+	    pdb = pdb.coalesce(12);
+	    
+	    // save representative set
+	    MmtfWriter.writeSequenceFile(path +"_representatives_i40_r2.5", sc, pdb);
 		    
 	    sc.close();
 	    
         long end = System.nanoTime();
 	    System.out.println("Time:     " + (end-start)/1E9 + "sec.");
 	}
-
 }

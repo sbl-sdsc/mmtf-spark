@@ -19,7 +19,7 @@ import scala.Tuple2;
  * used to filter the data. The input to the filter consists of an SQL WHERE clause, and list 
  * of data columns available from RCSB PDB web services.
  * 
- * <p>See <a href="http://www.rcsb.org/pdb/results/reportField.do"> list of supported
+ * <p>See <a href="https://www.rcsb.org/pdb/results/reportField.do"> list of supported
  * field names.</a>
  * 
  * <p>See <a href="https://www.w3schools.com/sql/sql_where.asp"> for examples of
@@ -31,10 +31,11 @@ import scala.Tuple2;
  * <pre><code>
  *      JavaPairRDD<String, StructureDataInterface> pdb = ...
  *      String whereClause = "WHERE ecNo='2.7.11.1' AND source='Homo sapiens'";
- *      pdb = pdb.filter(new RcsbWebserviceFilter(whereClause, "ecNo","source"));
+ *      pdb = pdb.filter(new CustomReportQuery(whereClause, "ecNo","source"));
  * </code></pre>
  * 
  * @author Peter Rose
+ * @since 0.1.0
  *
  */
 public class CustomReportQuery implements Function<Tuple2<String, StructureDataInterface>, Boolean> {

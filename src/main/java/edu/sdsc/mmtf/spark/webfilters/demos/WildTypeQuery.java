@@ -23,20 +23,19 @@ public class WildTypeQuery {
 	 */
 	public static void main(String[] args) throws IOException {
 
-		String path = System.getProperty("MMTF_REDUCED");
-	    if (path == null) {
-	    	System.err.println("Environment variable for Hadoop sequence file has not been set");
-	        System.exit(-1);
-	    }
+		String path = MmtfReader.getMmtfReducedPath();
 	    
 	    long start = System.nanoTime();
 	    
 	    SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(WildTypeQuery.class.getSimpleName());
 	    JavaSparkContext sc = new JavaSparkContext(conf);
-		 
+		
+	    boolean includeExpressionTags = true;
+	    int sequenceCoverage = 95;
+	    
 	    long count = MmtfReader
 	    		.readSequenceFile(path, sc)
-	    		.filter(new WildType(true, WildType.SEQUENCE_COVERAGE_95))
+	    		.filter(new WildType(includeExpressionTags, sequenceCoverage))
 	    		.count();
 	    		
 	    System.out.println(count);
@@ -46,5 +45,4 @@ public class WildTypeQuery {
 	    
 	    sc.close();
 	}
-
 }

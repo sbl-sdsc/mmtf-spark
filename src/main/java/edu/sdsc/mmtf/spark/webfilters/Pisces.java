@@ -24,6 +24,8 @@ import scala.Tuple2;
  * Bioinformatics, 19:1589-1591, 2003. 
  * 
  * @author Yue Yu
+ * @since 0.1.0
+ * 
  */
 public class Pisces implements Function<Tuple2<String, StructureDataInterface>, Boolean> {	
 	private static final long serialVersionUID = -3962877268210540994L;

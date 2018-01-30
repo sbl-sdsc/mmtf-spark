@@ -12,6 +12,7 @@ import org.apache.spark.sql.types.DataTypes;
  * (e.g., protein sequences).
  * 
  * @author Peter Rose
+ * @since 0.1.0
  *
  */
 public class SequenceNgrammer {

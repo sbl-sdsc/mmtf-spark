@@ -8,42 +8,32 @@ import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.rcsb.mmtf.api.StructureDataInterface;
 
-import edu.sdsc.mmtf.spark.datasets.demos.CustomReportDemo;
 import edu.sdsc.mmtf.spark.io.MmtfReader;
-import edu.sdsc.mmtf.spark.io.MmtfWriter;
 import edu.sdsc.mmtf.spark.mappers.StructureToBioassembly;
 import edu.sdsc.mmtf.spark.mappers.StructureToProteinDimers;
 
 /**
- * Example demonstrating how to extract protein chains from
- * PDB entries. This example uses a flatMapToPair function
- * to transform a structure to its polymer chains.
+ * Example demonstrating how to extract all possible protein dimers
+ * from a biological assembly.
  * 
  * @author Peter Rose
+ * @since 0.1.0
  *
  */
 public class MapToProteinDimers {
 
 	public static void main(String[] args) {
 
-		if (args.length != 1) {
-			System.err.println("Usage: " + MapToProteinDimers.class.getSimpleName() + " <outputFilePath>");
-			System.exit(1);
-		}
-		
-	    SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(CustomReportDemo.class.getSimpleName());
+	    SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(MapToProteinDimers.class.getSimpleName());
 	    JavaSparkContext sc = new JavaSparkContext(conf);
-//	    List<String> pdbIds = Arrays.asList("1STP"); // single protein chain
+
 	    List<String> pdbIds = Arrays.asList("5IBZ"); // single protein chain 5IBZ -> D2
-	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.downloadMmtfFiles(pdbIds, sc).cache(); 
+	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.downloadMmtfFiles(pdbIds, sc);
 	   
-//	    pdb = pdb.flatMapToPair(new StructureToBioassembly()).flatMapToPair(new StructureToProteinDimers(8, 20, false, true));
-	    pdb = pdb.flatMapToPair(new StructureToBioassembly()).flatMapToPair(new StructureToProteinDimers(8, 20, true, true));
-//	    pdb = pdb.flatMapToPair(new StructureToProteinDimers(8, 3, false, true));
-	    long count = pdb.count();
-	    pdb = pdb.coalesce(1);
-	    System.out.println("# structures: " + count);
-	    MmtfWriter.writeMmtfFiles(args[0], sc, pdb);
+	    pdb = pdb.flatMapToPair(new StructureToBioassembly())
+	            .flatMapToPair(new StructureToProteinDimers(8, 20, true, true));
+	   
+	    System.out.println("# dimers in 5IBZ bioassembly: " + pdb.count());
 	    
 	    sc.close();
 	}

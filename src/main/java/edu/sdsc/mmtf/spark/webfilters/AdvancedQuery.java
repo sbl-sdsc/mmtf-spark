@@ -25,10 +25,11 @@ import scala.Tuple2;
  *                          "<struct.title.comparator>contains</struct.title.comparator>" +
  *                          "<struct.title.value>mutant</struct.title.value" +
  *                     "</orgPdbQuery>";
- *      pdb = pdb.filter(new RcsbAdvancedSearch(query));
+ *      pdb = pdb.filter(new AdvancedSearch(query));
  * </code></pre>
  * 
  * @author Peter Rose
+ * @since 0.1.0
  *
  */
 public class AdvancedQuery implements Function<Tuple2<String, StructureDataInterface>, Boolean> {

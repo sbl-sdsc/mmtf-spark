@@ -51,10 +51,10 @@ public class SiftsQuery
 						"AND LENGTH(p.pdbx_seq_one_letter_code_can) >= 58 " +
 						"ORDER BY reso, len,s.chain ";
         MineSearch search = new MineSearch(sql, "structureChainId", true); // structureChainId is used for filtering the MMTF data and chain-level is set to true
-        search.dataset.show(10); // output the returned data (10 items) => this can be further filtered or used directly in your service
+//        search.dataset.show(10); // output the returned data (10 items) => this can be further filtered or used directly in your service
         
         
-        System.out.println("Number of entries in MMTF library matching query: "+pdb.flatMapToPair(new StructureToPolymerChains()).filter(search).keys().count()+"/"+search.dataset.count());
+        System.out.println("Number of entries in MMTF library matching query: "+pdb.flatMapToPair(new StructureToPolymerChains()).filter(search).count());
         
         sc.close();
         

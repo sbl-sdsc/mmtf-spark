@@ -4,8 +4,14 @@
 package edu.sdsc.mmtf.spark.utils;
 
 /**
+ * Enumeration of DSSP Secondary Structure Codes.
+ * 
+ * <p> Reference: Kabsch W., Sander C. (1983) Dictionary of protein secondary 
+ * structure: pattern recognition of hydrogen-bonded and geometrical features,
+ * Biopolymers 22, 2577-2637.
  * 
  * @author Peter Rose
+ * @since 0.1.0
  *
  */
 public enum DsspSecondaryStructure {
@@ -26,10 +32,19 @@ public enum DsspSecondaryStructure {
 		this.numericCode = numericCode;
 	}
 	
+	/**
+	 * Returns the one-letter DSSP secondary structure code.
+	 * @return
+	 */
 	public char getOneLetterCode() {
 		return oneLetterCode;
 	}
 	
+	/**
+	 * Returns the DSSP secondary structure given the numeric code.
+	 * @param numericCode
+	 * @return
+	 */
 	public static DsspSecondaryStructure getDsspCode(int numericCode) {
 		for (DsspSecondaryStructure d: DsspSecondaryStructure.values()) {
 			if (d.numericCode == numericCode) {
@@ -57,6 +72,5 @@ public enum DsspSecondaryStructure {
 		case 7: return COIL;
 		default: return COIL;
 		}
-	}
-		
+	}		
 }

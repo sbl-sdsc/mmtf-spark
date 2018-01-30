@@ -3,20 +3,20 @@
  */
 package edu.sdsc.mmtf.spark.datasets.demos;
 
+import static org.apache.spark.sql.functions.col;
+
 import java.io.IOException;
 
-import static org.apache.spark.sql.functions.col;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
-
 import org.rcsb.mmtf.api.StructureDataInterface;
 
 import edu.sdsc.mmtf.spark.datasets.GroupInteractionExtractor;
 import edu.sdsc.mmtf.spark.io.MmtfReader;
-import edu.sdsc.mmtf.spark.webfilters.BlastClusters;
+import edu.sdsc.mmtf.spark.webfilters.Pisces;
 
 /**
  * @author Peter Rose
@@ -42,7 +42,9 @@ public class AtpInteractionAnalysis {
 	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.readSequenceFile(path, sc);
 	   
 	    // filter by sequence identity subset
-	    pdb = pdb.filter(new BlastClusters(40));
+	    int sequenceIdentity = 20;
+	    double resolution = 2.0;
+	    pdb = pdb.filter(new Pisces(sequenceIdentity, resolution));
 	    
 	    // find ATP interactions within 3 Angstroms
 	    GroupInteractionExtractor finder = new GroupInteractionExtractor("ATP", 3);

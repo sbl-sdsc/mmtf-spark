@@ -74,7 +74,6 @@ public class DatasetClassifier {
 
 		data = DatasetBalancer.downsample(data, label, 1);
 		
-//		data = DatasetBalancer.balance(data, label, 1);
 		System.out.println("Dataset size (balanced)  : " + data.count());
 		data.groupBy(label).count().show(classCount);
 

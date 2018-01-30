@@ -29,21 +29,18 @@ import edu.sdsc.mmtf.spark.webfilters.Pisces;
  * The dataset is saved in a file specified by the user.
  * 
  * @author Peter Rose
+ * @since 0.1.0
  */
 public class SecondaryStructureOneHotEncoder {
 
 	/**
-	 * @param args outputFilePath outputFormat (json|parquet)
+	 * @param args args[0] outputFilePath, args[1] outputFormat (json|parquet)
 	 * @throws IOException 
 	 * @throws StructureException 
 	 */
 	public static void main(String[] args) throws IOException {
 
-		String path = System.getProperty("MMTF_REDUCED");
-	    if (path == null) {
-	    	    System.err.println("Path for Hadoop sequence file has not been set");
-	        System.exit(-1);
-	    }
+		String path = MmtfReader.getMmtfReducedPath();
 	    
 		if (args.length < 2) {
 			System.err.println("Usage: " + SecondaryStructureOneHotEncoder.class.getSimpleName() + " <outputFilePath> + <fileFormat> + [<modelFileName>]");

@@ -52,6 +52,8 @@ public class JavaRDDToDataset implements Serializable {
 				sf[i] = DataTypes.createStructField(colNames[i], DataTypes.FloatType, false);
 			} else if (o instanceof Double) {
 				sf[i] = DataTypes.createStructField(colNames[i], DataTypes.DoubleType, false);
+			} else if (o instanceof Boolean) {
+                sf[i] = DataTypes.createStructField(colNames[i], DataTypes.BooleanType, false);
 			} else {
 				System.out.println("Data type not implemented yet");
 			}

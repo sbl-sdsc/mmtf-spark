@@ -16,6 +16,7 @@ import scala.Tuple2;
  * cutoff distance.
  * 
  * @author Peter Rose
+ * @since 0.1.0
  *
  */
 public class StructureToAllInteractions implements  FlatMapFunction<Tuple2<String,StructureDataInterface>, Row> {

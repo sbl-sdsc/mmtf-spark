@@ -39,7 +39,7 @@ public class SimpleQuery
         // simply run the query
         MineSearch search = new MineSearch(sql); // if no further parameters are given, `pdbid` column will be used for filtering without chain-level
         
-        System.out.println("Number of entries in MMTF library matching query: "+pdb.filter(search).keys().count()+"/"+search.dataset.count());
+        System.out.println("Number of entries in MMTF library matching query: " + pdb.filter(search).count());
 		
         sc.close();
         

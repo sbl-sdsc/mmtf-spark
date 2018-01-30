@@ -25,8 +25,6 @@ import javax.vecmath.*;
  * @author Yue Yu
  */
 public class StructureToProteinDimers implements PairFlatMapFunction<Tuple2<String,StructureDataInterface>,String, StructureDataInterface> {
-
-
 	private static final long serialVersionUID = 590629701792189982L;
 	private double cutoffDistance = 8.0;
 	private int contacts = 20;

@@ -11,9 +11,10 @@ import scala.Tuple2;
  * This filter returns entries that contain groups with specified chemical structure (SMILES string).
  * This chemical structure query supports for query: exact, similar, substructure, and superstructure. 
  * For details see 
- * <a href="http://www.rcsb.org/pdb/staticHelp.do?p=help/advancedsearch/chemSmiles.html">Chemical Structure Search</a>.
+ * <a href="https://www.rcsb.org/pdb/staticHelp.do?p=help/advancedsearch/chemSmiles.html">Chemical Structure Search</a>.
  * 
  * @author Peter Rose
+ * @since 0.1.0
  *
  */
 public class ChemicalStructureQuery implements Function<Tuple2<String, StructureDataInterface>, Boolean> {
@@ -44,10 +45,10 @@ public class ChemicalStructureQuery implements Function<Tuple2<String, Structure
 	 *  
 	 * @param smiles SMILES string representing chemical structure
 	 * @param queryType one of the four supported query types:
-	 * {@link ChemicalStructureQuery#EXACT RcsbChemicalStructure.EXACT},
-	 * {@link ChemicalStructureQuery#SIMILAR RcsbChemicalStructure.SIMILAR},
-	 * {@link ChemicalStructureQuery#SUBSTRUCTURE RcsbChemicalStructure.SUBSTRUCTURE},
-	 * {@link ChemicalStructureQuery#SUPERTRUCTURE RcsbChemicalStructure.SUPERSTRUCTURE},
+	 * {@link ChemicalStructureQuery#EXACT ChemicalStructure.EXACT},
+	 * {@link ChemicalStructureQuery#SIMILAR ChemicalStructure.SIMILAR},
+	 * {@link ChemicalStructureQuery#SUBSTRUCTURE ChemicalStructure.SUBSTRUCTURE},
+	 * {@link ChemicalStructureQuery#SUPERTRUCTURE ChemicalStructure.SUPERSTRUCTURE},
 	 * @param percentSimilarity percent similarity for similarity search. This parameter is
 	 * ignored for all other query types.
      *

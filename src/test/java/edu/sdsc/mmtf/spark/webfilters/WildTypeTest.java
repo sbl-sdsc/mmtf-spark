@@ -41,7 +41,7 @@ public class WildTypeTest {
 
 	@Test
 	public void test1() throws IOException {
-	    pdb = pdb.filter(new WildType(true, WildType.SEQUENCE_COVERAGE_100));    
+	    pdb = pdb.filter(new WildType(true, 100));    
 	    List<String> results = pdb.keys().collect();
 	    
 	    assertTrue(results.contains("1PEN"));
