@@ -14,7 +14,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import edu.sdsc.mmtf.spark.datasets.CustomReportService;
-import edu.sdsc.mmtf.spark.rcsbfilters.AdvancedQueryTest;
+import edu.sdsc.mmtf.spark.webfilters.AdvancedQueryTest;
 
 /**
  * 

@@ -21,6 +21,7 @@ import scala.Tuple2;
  * http://mmcif.wwpdb.org/dictionaries/mmcif_mdb.dic/Items/_chem_comp.type.html
  * 
  * @author Peter Rose
+ * @since 0.1.0
  *
  */
 public class ContainsPolymerChainType implements Function<Tuple2<String, StructureDataInterface>, Boolean> {

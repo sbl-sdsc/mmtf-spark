@@ -3,39 +3,39 @@
  */
 package edu.sdsc.mmtf.spark.datasets.demos;
 
+import static org.apache.spark.sql.functions.avg;
+import static org.apache.spark.sql.functions.col;
+import static org.apache.spark.sql.functions.count;
+import static org.apache.spark.sql.functions.kurtosis;
+import static org.apache.spark.sql.functions.max;
+import static org.apache.spark.sql.functions.min;
+
 import java.io.IOException;
 
-import static org.apache.spark.sql.functions.*;
-import static org.apache.spark.sql.functions.col;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
-
 import org.rcsb.mmtf.api.StructureDataInterface;
 
 import edu.sdsc.mmtf.spark.datasets.GroupInteractionExtractor;
 import edu.sdsc.mmtf.spark.io.MmtfReader;
-import edu.sdsc.mmtf.spark.rcsbfilters.BlastClusters;
+import edu.sdsc.mmtf.spark.webfilters.Pisces;
 
 /**
  * @author Peter Rose
- *
+ * @since 0.1.0
  */
 public class InteractionAnalysisAdvanced {
 
 	/**
 	 * @param args no input arguments
-	 * @throws IOException if reading of BlastClusters fails
+	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
 
-		String path = System.getProperty("MMTF_FULL");
-	    if (path == null) {
-	    	    System.err.println("Environment variable for Hadoop sequence file has not been set");
-	        System.exit(-1);
-	    }
+		String path = MmtfReader.getMmtfFullPath();
 	     
 	    long start = System.nanoTime();
 	    
@@ -45,8 +45,8 @@ public class InteractionAnalysisAdvanced {
 	    // read PDB in MMTF format
 	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.readSequenceFile(path, sc);
 	   
-	    // filter by sequence identity subset
-	    pdb = pdb.filter(new BlastClusters(40));
+	    // get non-redundant subset
+	    pdb = pdb.filter(new Pisces(40, 2.5));
 	    
 	    // find Zinc interactions within 3 Angstroms
 	    GroupInteractionExtractor finder = new GroupInteractionExtractor("ZN", 3);
@@ -115,5 +115,4 @@ public class InteractionAnalysisAdvanced {
 	    
 	    sc.close();
 	}
-
 }

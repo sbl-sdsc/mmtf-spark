@@ -3,38 +3,35 @@
  */
 package edu.sdsc.mmtf.spark.datasets.demos;
 
+import static org.apache.spark.sql.functions.col;
+
 import java.io.IOException;
 
-import static org.apache.spark.sql.functions.col;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
-
 import org.rcsb.mmtf.api.StructureDataInterface;
 
 import edu.sdsc.mmtf.spark.datasets.GroupInteractionExtractor;
 import edu.sdsc.mmtf.spark.io.MmtfReader;
-import edu.sdsc.mmtf.spark.rcsbfilters.BlastClusters;
+import edu.sdsc.mmtf.spark.webfilters.Pisces;
 
 /**
  * @author Peter Rose
+ * @since 0.1.0
  *
  */
 public class AtpInteractionAnalysis {
 
 	/**
 	 * @param args input arguments
-	 * @throws IOException if there is a problem reading BlastClusters
+	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
 
-		String path = System.getProperty("MMTF_FULL");
-	    if (path == null) {
-	    	    System.err.println("Environment variable for Hadoop sequence file has not been set");
-	        System.exit(-1);
-	    }
+		String path = MmtfReader.getMmtfFullPath();
 	     
 	    long start = System.nanoTime();
 	    
@@ -45,7 +42,9 @@ public class AtpInteractionAnalysis {
 	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.readSequenceFile(path, sc);
 	   
 	    // filter by sequence identity subset
-	    pdb = pdb.filter(new BlastClusters(40));
+	    int sequenceIdentity = 20;
+	    double resolution = 2.0;
+	    pdb = pdb.filter(new Pisces(sequenceIdentity, resolution));
 	    
 	    // find ATP interactions within 3 Angstroms
 	    GroupInteractionExtractor finder = new GroupInteractionExtractor("ATP", 3);

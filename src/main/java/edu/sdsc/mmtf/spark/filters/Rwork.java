@@ -11,6 +11,7 @@ import scala.Tuple2;
  * @see <a href="http://pdb101.rcsb.org/learn/guide-to-understanding-pdb-data/r-value-and-r-free">rvalue</a>
  * 
  * @author Peter Rose
+ * @since 0.1.0
  *
  */
 public class Rwork implements Function<Tuple2<String, StructureDataInterface>, Boolean> {

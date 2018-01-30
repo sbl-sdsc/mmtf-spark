@@ -1,5 +1,7 @@
 package edu.sdsc.mmtf.spark.mappers.demos;
 
+import java.io.FileNotFoundException;
+
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
 
@@ -11,21 +13,18 @@ import scala.Tuple4;
  * Example how to map to higher-dimensional tuples.
  * Apache Spark supports Tuple2 ... to Tuple19. This
  * example shows how to map to a Tuple4.
- * See also Dataset as a more scalable alternative to
+ * See also Datasets as a more scalable alternative to
  * high-dimensional tuples.
  * 
  * @author Peter Rose
+ * @since 0.1.0
  *
  */
 public class MapToTuple4 {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws FileNotFoundException {
 
-		String path = System.getProperty("MMTF_REDUCED");
-	    if (path == null) {
-	    	    System.err.println("Environment variable for Hadoop sequence file has not been set");
-	        System.exit(-1);
-	    }
+		String path = MmtfReader.getMmtfReducedPath();
 	    
 	    SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(MapToTuple4.class.getSimpleName());
 	    JavaSparkContext sc = new JavaSparkContext(conf);

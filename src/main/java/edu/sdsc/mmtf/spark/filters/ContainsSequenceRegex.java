@@ -54,6 +54,7 @@ import scala.Tuple2;
  * A or G are followed by 4 variable residues, then G and K, and finally S or T
  * 
  * @author Peter Rose
+ * @since 0.1.0
  *
  */
 public class ContainsSequenceRegex implements Function<Tuple2<String, StructureDataInterface>, Boolean> {

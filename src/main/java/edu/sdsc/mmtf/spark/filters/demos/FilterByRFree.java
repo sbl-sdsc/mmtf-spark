@@ -1,5 +1,7 @@
 package edu.sdsc.mmtf.spark.filters.demos;
 
+import java.io.FileNotFoundException;
+
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
 
@@ -7,10 +9,7 @@ import edu.sdsc.mmtf.spark.filters.Resolution;
 import edu.sdsc.mmtf.spark.io.MmtfReader;
 
 /**
- * Example of reading an MMTF Hadoop Sequence file, 
- * filtering the entries by resolution, and counting the 
- * number of entries. This example shows how methods can 
- * be chained together.
+ * Example how to filter PDB entries by r-free value range.
  * 
  * @see <a href="http://pdb101.rcsb.org/learn/guide-to-understanding-pdb-data/r-value-and-r-free">rfree</a>
  * 
@@ -19,13 +18,9 @@ import edu.sdsc.mmtf.spark.io.MmtfReader;
  */
 public class FilterByRFree {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws FileNotFoundException {
 
-		String path = System.getProperty("MMTF_REDUCED");
-	    if (path == null) {
-	    	    System.err.println("Environment variable for Hadoop sequence file has not been set");
-	        System.exit(-1);
-	    }
+		String path = MmtfReader.getMmtfReducedPath();
 	    
 	    SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(FilterByRFree.class.getSimpleName());
 	    JavaSparkContext sc = new JavaSparkContext(conf);

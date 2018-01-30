@@ -13,6 +13,7 @@ import org.apache.spark.sql.Row;
  * the same number of samples in each class.
  * 
  * @author Peter Rose
+ * @since 0.1.0
  *
  */
 public class DatasetBalancer implements Serializable {
@@ -26,7 +27,7 @@ public class DatasetBalancer implements Serializable {
 	 * @param data dataset
 	 * @param columnName column to be balanced by
 	 * @param seed random number seed
-	 * @return
+	 * @return downsampled dataset
 	 */
 	public static Dataset<Row> downsample(Dataset<Row> data, String columnName, long seed) {
 		// TODO specify max ratio between minority and majority class
@@ -68,7 +69,7 @@ public class DatasetBalancer implements Serializable {
 	 * @param data dataset
 	 * @param columnName column to be balanced by
 	 * @param seed random number seed
-	 * @return
+	 * @return upsampled dataset
 	 */
 	public static Dataset<Row> upsample(Dataset<Row> data, String columnName, long seed) {
 		// TODO specify max ratio between minority and majority class

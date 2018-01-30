@@ -19,6 +19,7 @@ import edu.sdsc.mmtf.spark.datasets.CustomReportService;
  * PDB annotations.
  * 
  * @author Peter Rose
+ * @since 0.1.0
  *
  */
 public class CustomReportDemo {
@@ -30,7 +31,7 @@ public class CustomReportDemo {
 	public static void main(String[] args) throws IOException {    
 	    long start = System.nanoTime();
 	    
-	    SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(CustomReportDemo.class.getSimpleName());
+	    SparkConf conf = new SparkConf().setMaster("local[1]").setAppName(CustomReportDemo.class.getSimpleName());
 	    JavaSparkContext sc = new JavaSparkContext(conf);
 	   
 	    // retrieve PDB annotation: Binding affinities (Ki, Kd), 

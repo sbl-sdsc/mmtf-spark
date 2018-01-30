@@ -19,6 +19,7 @@ import scala.Tuple2;
  * filter only checks the first model.
  * 
  * @author Peter Rose
+ * @since 0.1.0
  *
  */
 public class PolymerComposition implements Function<Tuple2<String, StructureDataInterface>, Boolean> {
@@ -31,9 +32,6 @@ public class PolymerComposition implements Function<Tuple2<String, StructureData
 	public static final List<String> DNA_STD_NUCLEOTIDES = Arrays.asList("DA","DC","DG","DT");
 	public static final List<String> RNA_STD_NUCLEOTIDES = Arrays.asList("A","C","G","U");
 
-	// define sets of residue types, e.g.,
-	// 20 nat. amino acids, 22 nat. amino acids, nat. DNA, nat. RNA
-	// custom sets
 	/**
 	 * The default constructor.
 	 */

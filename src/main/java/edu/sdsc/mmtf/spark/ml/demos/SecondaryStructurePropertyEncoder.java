@@ -19,7 +19,7 @@ import edu.sdsc.mmtf.spark.filters.ContainsLProteinChain;
 import edu.sdsc.mmtf.spark.io.MmtfReader;
 import edu.sdsc.mmtf.spark.mappers.StructureToPolymerChains;
 import edu.sdsc.mmtf.spark.ml.ProteinSequenceEncoder;
-import edu.sdsc.mmtf.spark.rcsbfilters.Pisces;
+import edu.sdsc.mmtf.spark.webfilters.Pisces;
 
 /**
  * This class creates a dataset of sequence segments derived
@@ -29,6 +29,8 @@ import edu.sdsc.mmtf.spark.rcsbfilters.Pisces;
  * The dataset is saved in a file specified by the user.
  * 
  * @author Peter Rose
+ * @since 0.1.0
+ * 
  */
 public class SecondaryStructurePropertyEncoder {
 
@@ -39,11 +41,7 @@ public class SecondaryStructurePropertyEncoder {
 	 */
 	public static void main(String[] args) throws IOException {
 
-		String path = System.getProperty("MMTF_REDUCED");
-	    if (path == null) {
-	    	    System.err.println("Path for Hadoop sequence file has not been set");
-	        System.exit(-1);
-	    }
+		String path = MmtfReader.getMmtfReducedPath();
 	    
 		if (args.length != 2) {
 			System.err.println("Usage: " + SecondaryStructurePropertyEncoder.class.getSimpleName() + " <outputFilePath> + <fileFormat>");

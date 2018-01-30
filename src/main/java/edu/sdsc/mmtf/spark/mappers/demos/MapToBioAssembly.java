@@ -10,37 +10,30 @@ import org.rcsb.mmtf.api.StructureDataInterface;
 
 import edu.sdsc.mmtf.spark.datasets.demos.CustomReportDemo;
 import edu.sdsc.mmtf.spark.io.MmtfReader;
-import edu.sdsc.mmtf.spark.io.MmtfWriter;
 import edu.sdsc.mmtf.spark.mappers.StructureToBioassembly;
 
 /**
- * Example demonstrating how to extract protein chains from
- * PDB entries. This example uses a flatMapToPair function
- * to transform a structure to its polymer chains.
+ * Example demonstrating how to generate Biological assemblies
+ * for a PDB entry.
  * 
  * @author Peter Rose
+ * @since 0.1.0
  *
  */
 public class MapToBioAssembly {
 
 	public static void main(String[] args) {
-		if (args.length != 1) {
-			System.err.println("Usage: " + MapToBioAssembly.class.getSimpleName() + " <outputFilePath>");
-			System.exit(1);
-		}
+		
 	    SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(CustomReportDemo.class.getSimpleName());
 	    JavaSparkContext sc = new JavaSparkContext(conf);
-	    List<String> pdbIds = Arrays.asList("1HV4"); // single protein chain
-	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.downloadMmtfFiles(pdbIds, sc).cache(); 
-	   
-	    pdb = pdb // read MMTF hadoop sequence file
-	    		.flatMapToPair(new StructureToBioassembly());
-	    long count = pdb // read MMTF hadoop sequence file
-	    		.count();
-	    pdb = pdb.coalesce(1);
-	    System.out.println("# structures: " + count);
-	    MmtfWriter.writeMmtfFiles(args[0], sc, pdb);
 	    
+	    List<String> pdbIds = Arrays.asList("1HV4"); // single protein chain
+	    JavaPairRDD<String, StructureDataInterface> bioassemblies = MmtfReader
+	            .downloadMmtfFiles(pdbIds, sc)
+	            .flatMapToPair(new StructureToBioassembly());
+	    
+	    System.out.println("# bioassemblies for 1HV4: " + bioassemblies.count());
+ 
 	    sc.close();
 	}
 }

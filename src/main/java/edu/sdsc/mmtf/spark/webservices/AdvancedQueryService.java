@@ -11,8 +11,15 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Runs an RCSB PDB Advanced Query using a query in XML format.
+ * 
+ * @author Peter Rose
+ * @since 0.1.0
+ *
+ */
 public class AdvancedQueryService {
-	public static final String SERVICELOCATION="http://www.rcsb.org/pdb/rest/search";
+	public static final String SERVICELOCATION = "https://www.rcsb.org/pdb/rest/search";
 
 	/** 
 	 * Post an XML query (PDB XML query format)  to the RESTful RCSB web service

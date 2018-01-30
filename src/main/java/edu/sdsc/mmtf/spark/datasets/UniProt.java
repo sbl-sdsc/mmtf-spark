@@ -34,6 +34,7 @@ import org.apache.spark.sql.SparkSession;
  * </pre>
  * 
  * @author Yue Yu
+ * @since 0.1.0
  * 
  */
 public class UniProt {

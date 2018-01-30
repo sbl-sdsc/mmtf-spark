@@ -13,6 +13,7 @@ import scala.Tuple2;
  * this filter only checks the first model.
  * 
  * @author Peter Rose
+ * @since 0.1.0
  *
  */
 public class ContainsLProteinChain implements Function<Tuple2<String, StructureDataInterface>, Boolean> {

@@ -17,12 +17,18 @@ import edu.sdsc.mmtf.spark.filters.ContainsLProteinChain;
 import edu.sdsc.mmtf.spark.io.MmtfReader;
 import edu.sdsc.mmtf.spark.mappers.StructureToPolymerChains;
 
+/**
+ * @author Peter Rose
+ * @since 0.1.0
+ *
+ */
 public class SecondaryStructureElementDemo {
 	public static void main(String[] args) throws IOException {    
 	    long start = System.nanoTime();
-	    
-	    SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(CustomReportDemo.class.getSimpleName());
+ 
+	    SparkConf conf = new SparkConf().setMaster("local[1]").setAppName(CustomReportDemo.class.getSimpleName());
 	    JavaSparkContext sc = new JavaSparkContext(conf);
+	    
 	    List<String> pdbIds = Arrays.asList("1STP"); // single protein chain
 	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.downloadMmtfFiles(pdbIds, sc).cache();
 	    

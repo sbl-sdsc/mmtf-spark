@@ -17,16 +17,19 @@ import edu.sdsc.mmtf.spark.mappers.StructureToPolymerChains;
 import edu.sdsc.mmtf.spark.ml.ProteinSequenceEncoder;
 
 /**
+ * This class creates a dataset of helical sequence segments derived
+ * from a non-redundant set. The dataset contains the sequence segment,
+ * the DSSP Q8 and DSSP Q3 code of the center residue in a sequence
+ * segment, and a Word2Vector encoding of the sequence segment.
+ * The dataset is saved in a file specified by the user.
  * 
+ * @author Peter Rose
+ * @since 0.1.0
  */
 public class SecondaryStructureElementsWord2VecEncoder {
 	public static void main(String[] args) throws IOException {
 
-		String path = System.getProperty("MMTF_REDUCED");
-	    if (path == null) {
-	    	    System.err.println("Path for Hadoop sequence file has not been set");
-	        System.exit(-1);
-	    }
+		String path = MmtfReader.getMmtfReducedPath();
 	    
 		if (args.length != 2) {
 			System.err.println("Usage: " + SecondaryStructureWord2VecEncoder.class.getSimpleName() + " <outputFilePath> + <fileFormat>");
@@ -50,6 +53,7 @@ public class SecondaryStructureElementsWord2VecEncoder {
 				.filter(new ContainsLProteinChain()) // filter out for example D-proteins
                 .sample(false, fraction, seed);
 			
+		// extract helical sequence segments
 		Dataset<Row> data = SecondaryStructureElementExtractor.getDataset(pdb, "H");
 		System.out.println(data.count());
 		data.show(10,false);

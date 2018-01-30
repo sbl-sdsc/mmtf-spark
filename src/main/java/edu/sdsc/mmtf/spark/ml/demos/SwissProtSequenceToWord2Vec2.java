@@ -16,9 +16,18 @@ import edu.sdsc.mmtf.spark.ml.ProteinSequenceEncoder;
  * in UniProt using overlapping n-grams.
  * 
  * @author Peter Rose
+ * @since 0.1.0
  *
  */
 public class SwissProtSequenceToWord2Vec2 {
+    
+    /**
+     * Generates Word2Vector models from protein sequences
+     * in UniProt using overlapping n-grams.
+     * 
+     * @param args args[0] word2VecModel output file
+     * @throws IOException
+     */
 	public static void main(String[] args) throws IOException {
 
 		if (args.length != 1) {
@@ -31,9 +40,6 @@ public class SwissProtSequenceToWord2Vec2 {
 		SparkSession.builder().master("local[*]").getOrCreate();
 		
 		Dataset<Row> data = UniProt.getDataset(UniProtDataset.SWISS_PROT);
-		
-		// make sure there are no empty sequence records
-		data = data.na().drop(new String[]{"sequence"});
 		
 		data.show(10,false);
 		

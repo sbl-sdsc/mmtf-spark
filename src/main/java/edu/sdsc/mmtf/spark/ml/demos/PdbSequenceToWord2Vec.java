@@ -21,16 +21,13 @@ import edu.sdsc.mmtf.spark.ml.ProteinSequenceEncoder;
  * in the PDB using an overlapping n-grams.
  * 
  * @author Peter Rose
+ * @since 0.1.0
  *
  */
 public class PdbSequenceToWord2Vec {
 	public static void main(String[] args) throws IOException {
 
-		String path = System.getProperty("MMTF_REDUCED");
-	    if (path == null) {
-	    	    System.err.println("Path for Hadoop sequence file has not been set");
-	        System.exit(-1);
-	    }
+		String path = MmtfReader.getMmtfReducedPath();
 	    
 		if (args.length != 1) {
 			System.err.println("Usage: " + SecondaryStructureWord2VecEncoder.class.getSimpleName() + " <outputFileName>");
@@ -56,12 +53,15 @@ public class PdbSequenceToWord2Vec {
 		Dataset<Row> data = PolymerSequenceExtractor.getDataset(pdb);
 		data.show(10,false);
 		
+		// length of polymer sequence segment (number of residues)
 		int segmentLength = 11;
 		
 		// add Word2Vec encoded feature vector
 		ProteinSequenceEncoder encoder = new ProteinSequenceEncoder(data);
+		// size of n-grams
 		int n = 2;
 		int windowSize = (segmentLength-1)/2;
+		// dimension of vector
 		int vectorSize = 50;
 		data = encoder.overlappingNgramWord2VecEncode(n, windowSize, vectorSize);	
 		

@@ -3,6 +3,8 @@
  */
 package edu.sdsc.mmtf.spark.io.demos;
 
+import java.io.FileNotFoundException;
+
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
@@ -15,21 +17,21 @@ import edu.sdsc.mmtf.spark.io.MmtfReader;
 import edu.sdsc.mmtf.spark.io.MmtfWriter;
 
 /**
- * @author peter
+ * This class demonstrates how to create a custom MMTF-Hadoop Sequence file.
+ * 
+ * @author Peter Rose
+ * @since 0.1.0
  *
  */
 public class WriteMmtfCustom {
 
 	/**
 	 * @param args
+	 * @throws FileNotFoundException 
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws FileNotFoundException {
 
-		String path = System.getProperty("MMTF_FULL");
-	    if (path == null) {
-	    	    System.err.println("Environment variable for Hadoop sequence file has not been set");
-	        System.exit(-1);
-	    }
+		String path = MmtfReader.getMmtfFullPath();
 	    
 	    long start = System.nanoTime();
 	    
@@ -47,11 +49,13 @@ public class WriteMmtfCustom {
 	    		.filter(new Resolution(0, 2.0))
 	    		.filter(new Rfree(0, 0.2));
     
-	    // save this subset in a Hadoop Sequence file
+	    // coalesce this into 8 partitions to avoid creating many small files
 	    pdb = pdb.coalesce(8);
+	    
+	    // save this subset in a Hadoop Sequence file
 	    MmtfWriter.writeSequenceFile(path +"_xray", sc, pdb);
 	    
-	    System.out.println("# structures: " + pdb.count());
+	    System.out.println("# structures in custom set: " + pdb.count());
 	  
 	    long end = System.nanoTime();
 	    

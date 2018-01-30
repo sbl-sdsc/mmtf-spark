@@ -1,7 +1,6 @@
-/**
- * 
- */
 package edu.sdsc.mmtf.spark.mappers.demos;
+
+import java.io.FileNotFoundException;
 
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
@@ -11,21 +10,24 @@ import org.rcsb.mmtf.api.StructureDataInterface;
 import edu.sdsc.mmtf.spark.io.MmtfReader;
 
 /**
+ * Counts the number of atoms in the PDB using the classic
+ * map-reduce algorithm
+ * 
  * @author Peter Rose
+ * @since 0.1.0
  *
  */
 public class MapReduceExample {
 
 	/**
-	 * @param args
+	 * Counts the number of atoms in the PDB using the classic
+	 * map-reduce algorithm
+	 * 
+	 * @throws FileNotFoundException 
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws FileNotFoundException {
 
-		String path = System.getProperty("MMTF_FULL");
-	    if (path == null) {
-	    	    System.err.println("Environment variable for Hadoop sequence file has not been set");
-	        System.exit(-1);
-	    }
+		String path = MmtfReader.getMmtfFullPath();
 
 	    long start = System.nanoTime();
 	    

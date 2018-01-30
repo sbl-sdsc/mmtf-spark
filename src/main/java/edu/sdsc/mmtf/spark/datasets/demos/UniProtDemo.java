@@ -10,8 +10,14 @@ import org.apache.spark.sql.Row;
 import edu.sdsc.mmtf.spark.datasets.UniProt;
 import edu.sdsc.mmtf.spark.datasets.UniProt.UniProtDataset;
 
+/**
+ * 
+ * @author Yue YU
+ * @since 0.1.0
+ */
 public class UniProtDemo {
 	public static void main(String[] args) throws IOException {  
+	    
 		if (args.length != 2) {
 			System.err.println("Usage: " + UniProt.class.getSimpleName() + " <outputFilePath> + <fileFormat>");
 			System.exit(1);
@@ -21,7 +27,7 @@ public class UniProtDemo {
 	    SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(CustomReportDemo.class.getSimpleName());
 	    JavaSparkContext sc = new JavaSparkContext(conf);
 	    
-	    Dataset<Row> ds = UniProt.getDataset(UniProtDataset.SWISS_PROT);
+	    Dataset<Row> ds = UniProt.getDataset(UniProtDataset.SWISS_PROT).cache();
 	    // show the schema of this dataset
 	    ds.printSchema();
 	    ds.show(20, false);

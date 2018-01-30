@@ -10,6 +10,7 @@ import scala.Tuple2;
  * one of the filters passes.
  * 
  * @author Peter Rose
+ * @since 0.1.0
  *
  */
 public class OrFilter implements Function<Tuple2<String, StructureDataInterface>, Boolean> {

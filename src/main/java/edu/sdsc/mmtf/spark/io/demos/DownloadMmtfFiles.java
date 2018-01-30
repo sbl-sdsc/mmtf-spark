@@ -15,6 +15,7 @@ import edu.sdsc.mmtf.spark.io.MmtfReader;
  * from http://mmtf.rcsb.org into a JavaPairRDD.
  * 
  * @author Peter Rose
+ * @since 0.1.0
  *
  */
 public class DownloadMmtfFiles {

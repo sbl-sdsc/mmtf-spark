@@ -1,5 +1,6 @@
 package edu.sdsc.mmtf.spark.io.demos;
 
+import java.io.FileNotFoundException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -15,17 +16,13 @@ import edu.sdsc.mmtf.spark.io.MmtfReader;
  * reduced MMTF Hadoop sequence file into a JavaPairRDD.
  * 
  * @author Peter Rose
- *
+ * @since 0.1.0
  */
 public class ReadMmtfReduced {
 
-	public static void main(String[] args) {  
+	public static void main(String[] args) throws FileNotFoundException {  
 		
-		String path = System.getProperty("MMTF_REDUCED");
-	    if (path == null) {
-	    	    System.err.println("Environment variable for Hadoop sequence file has not been set");
-	        System.exit(-1);
-	    }
+		String path = MmtfReader.getMmtfReducedPath();
 	    
 	    // instantiate Spark. Each Spark application needs these two lines of code.
 	    SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(ReadMmtfReduced.class.getSimpleName());

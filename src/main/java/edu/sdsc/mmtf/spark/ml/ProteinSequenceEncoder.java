@@ -25,6 +25,7 @@ import org.apache.spark.sql.api.java.UDF3;
  * for the feature vector is "features".
  * 
  * @author Peter Rose
+ * @since 0.1.0
  *
  */
 public class ProteinSequenceEncoder implements Serializable {

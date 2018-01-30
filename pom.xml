@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>edu.sdsc</groupId>
 	<artifactId>mmtf-spark</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.2.0-SNAPSHOT</version>
 
 	<properties>
 		<jdk.version>1.8</jdk.version>
@@ -15,49 +15,10 @@
 		<project.build.targetEncoding>UTF-8</project.build.targetEncoding>
 		<junit.version>4.12</junit.version>
 		<mmtf.version>1.0.7</mmtf.version>
-		<biojava.version>5.0.0-alpha8</biojava.version>
-		<spark.version>2.1.0</spark.version>
+		<biojava.version>5.0.0-alpha13</biojava.version>
+		<spark.version>2.2.1</spark.version>
 	</properties>
 
-	<build>
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<artifactId>maven-surefire-plugin</artifactId>
-					<version>2.19.1</version>
-					<configuration>
-						<argLine>-Xmx4g</argLine>
-						<reuseForks>false</reuseForks>
-						<forkCount>2</forkCount>
-
-						<excludes>
-							<!-- we exclude by default the long running tests, they will only 
-								be executed if explicitly called -->
-							<exclude>**/AdvancedQueryTest.java</exclude>
-							<exclude>**/BlastClustersTest.java</exclude>
-							<exclude>**/ChemicalStructureQueryTest.java</exclude>
-							<exclude>**/CustomReportQueryTest.java</exclude>
-							<exclude>**/WildTypeTest.java</exclude>
-							<exclude>**/CustomReportServiceTest.java</exclude>
-						</excludes>
-					</configuration>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-javadoc-plugin</artifactId>
-					<version>2.10.4</version>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-eclipse-plugin</artifactId>
-					<configuration>
-						<downloadSources>true</downloadSources>
-						<downloadJavadocs>true</downloadJavadocs>
-					</configuration>
-				</plugin>
-			</plugins>
-		</pluginManagement>
-	</build>
 
 	<reporting>
 		<plugins>
@@ -65,6 +26,11 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<version>2.10.4</version>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>findbugs-maven-plugin</artifactId>
+				<version>3.0.5</version>
 			</plugin>
 		</plugins>
 	</reporting>
@@ -74,7 +40,7 @@
 			<id>sonatype-snapshots</id>
 			<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
 			<releases>
-				<enabled>false</enabled>
+				<enabled>true</enabled>
 			</releases>
 			<snapshots>
 				<enabled>true</enabled>
@@ -113,16 +79,19 @@
 					<artifactId>slf4j-log4j12</artifactId>
 				</exclusion>
 			</exclusions>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.spark</groupId>
 			<artifactId>spark-sql_2.11</artifactId>
 			<version>${spark.version}</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.spark</groupId>
 			<artifactId>spark-mllib_2.11</artifactId>
 			<version>${spark.version}</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.github.fommil.netlib</groupId>
@@ -130,10 +99,76 @@
 			<version>1.1.2</version>
 			<type>pom</type>
 		</dependency>
+		<dependency>
+			<groupId>com.squareup.okhttp3</groupId>
+			<artifactId>okhttp</artifactId>
+			<version>3.9.1</version>
+		</dependency>
 
 	</dependencies>
 
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.19.1</version>
+				<configuration>
+					<argLine>-Xmx4g</argLine>
+					<reuseForks>false</reuseForks>
+					<forkCount>2</forkCount>
 
-
+					<excludes>
+						<!-- we exclude by default the long running tests, they will only be 
+							executed if explicitly called -->
+						<exclude>**/AdvancedQueryTest.java</exclude>
+						<exclude>**/BlastClustersTest.java</exclude>
+						<exclude>**/ChemicalStructureQueryTest.java</exclude>
+						<exclude>**/CustomReportQueryTest.java</exclude>
+						<exclude>**/WildTypeTest.java</exclude>
+						<exclude>**/CustomReportServiceTest.java</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>3.0.0</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-eclipse-plugin</artifactId>
+				<version>2.10</version>
+				<configuration>
+					<downloadSources>true</downloadSources>
+					<downloadJavadocs>true</downloadJavadocs>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>3.1.0</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<artifactSet>
+						<excludes>
+							<exclude>junit:junit</exclude>
+							<exclude>log4j:log4j:jar:</exclude>
+							<exclude>org.slf4j:</exclude>
+							<exclude>org.apache.logging.log4j:</exclude>
+							<exclude>commons-lang:</exclude>
+							<exclude>org.msgpack:</exclude>
+						</excludes>
+					</artifactSet>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 
 </project>

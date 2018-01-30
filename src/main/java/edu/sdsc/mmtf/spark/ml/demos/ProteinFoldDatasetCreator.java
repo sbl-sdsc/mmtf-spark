@@ -23,7 +23,7 @@ import edu.sdsc.mmtf.spark.filters.ContainsLProteinChain;
 import edu.sdsc.mmtf.spark.io.MmtfReader;
 import edu.sdsc.mmtf.spark.mappers.StructureToPolymerChains;
 import edu.sdsc.mmtf.spark.ml.ProteinSequenceEncoder;
-import edu.sdsc.mmtf.spark.rcsbfilters.Pisces;
+import edu.sdsc.mmtf.spark.webfilters.Pisces;
 
 /**
  * This class is a simple example of using Dataset operations to create a dataset
@@ -40,11 +40,7 @@ public class ProteinFoldDatasetCreator {
 	 */
 	public static void main(String[] args) throws IOException {
 
-		String path = System.getProperty("MMTF_REDUCED");
-	    if (path == null) {
-	    	    System.err.println("Environment variable for Hadoop sequence file has not been set");
-	        System.exit(-1);
-	    }
+		String path = MmtfReader.getMmtfReducedPath();
 	    
 		if (args.length != 1) {
 			System.err.println("Usage: " + ProteinFoldDatasetCreator.class.getSimpleName() + " <dataset output file");

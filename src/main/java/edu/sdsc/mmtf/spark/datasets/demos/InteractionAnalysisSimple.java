@@ -16,10 +16,11 @@ import org.rcsb.mmtf.api.StructureDataInterface;
 
 import edu.sdsc.mmtf.spark.datasets.GroupInteractionExtractor;
 import edu.sdsc.mmtf.spark.io.MmtfReader;
-import edu.sdsc.mmtf.spark.rcsbfilters.BlastClusters;
+import edu.sdsc.mmtf.spark.webfilters.Pisces;
 
 /**
  * @author Peter Rose
+ * @since 0.1.0
  *
  */
 public class InteractionAnalysisSimple {
@@ -30,11 +31,7 @@ public class InteractionAnalysisSimple {
 	 */
 	public static void main(String[] args) throws IOException {
 
-		String path = System.getProperty("MMTF_FULL");
-	    if (path == null) {
-	    	    System.err.println("Environment variable for Hadoop sequence file has not been set");
-	        System.exit(-1);
-	    }
+		String path = MmtfReader.getMmtfFullPath();
 	    
 	    long start = System.nanoTime();
 	    
@@ -46,7 +43,8 @@ public class InteractionAnalysisSimple {
 	    
 	    // use only representative structures
 	    int sequenceIdentity = 40;
-	    pdb = pdb.filter(new BlastClusters(sequenceIdentity));
+	    double resolution = 2.5;
+	    pdb = pdb.filter(new Pisces(sequenceIdentity, resolution));
 	    
 	    GroupInteractionExtractor finder = new GroupInteractionExtractor("ZN", 3);
 	    Dataset<Row> interactions = finder.getDataset(pdb).cache();
