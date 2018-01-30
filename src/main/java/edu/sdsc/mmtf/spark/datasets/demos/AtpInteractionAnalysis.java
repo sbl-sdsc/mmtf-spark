@@ -27,7 +27,7 @@ public class AtpInteractionAnalysis {
 
 	/**
 	 * @param args input arguments
-	 * @throws IOException if there is a problem reading BlastClusters
+	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
 
