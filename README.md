@@ -18,20 +18,20 @@ In addition, a Python version [MMTF-PySpark](https://github.com/sbl-sdsc/mmtf-py
 [Windows](docs/WindowsInstallation.md)
 
 ## PDB archive as MMTF-Hadoop Sequence Files
-For high-performance, parallel processing mmtf-spark can read the PDB archive in the [MMTF file format](https://doi.org/10.1371/journal.pcbi.1005575) from [Hadoop Sequence Files](https://wiki.apache.org/hadoop/SequenceFile). See [mmtf.rcsb.org](https://mmtf.rcsb.org/download.html) for more details. The installation instructions cover the download of MMTF-Hadoop Sequence files.
+For high-performance, parallel processing, *mmtf-spark* can read the PDB archive in the [MMTF file format](https://doi.org/10.1371/journal.pcbi.1005575) from [Hadoop Sequence Files](https://wiki.apache.org/hadoop/SequenceFile). See [mmtf.rcsb.org](https://mmtf.rcsb.org/download.html) for more details. The installation instructions cover the download of MMTF-Hadoop Sequence files.
 
 ## Running a Demo Application using spark-submit
 
 Simple example of running a demo application 
-[(see source PolyPeptideChainStatistics.java)](src/main/java/edu/sdsc/mmtf/spark/mappers/demos/PolyPeptideChainStatistics.java).
+[(see PolyPeptideChainStatistics.java)](src/main/java/edu/sdsc/mmtf/spark/mappers/demos/PolyPeptideChainStatistics.java).
 
 ```
 spark-submit --master local --class edu.sdsc.mmtf.spark.mappers.demos.PolyPeptideChainStatistics  INSTALL_DIRECTORY/mmtf-spark/target/mmtf-spark-0.2.0-SNAPSHOT.jar
 ```
 
 Example with command line arguments. This example read the PDB files
-in an input directory (recursively) and creates an MMTF-Hadoop Sequence file.
-[(see source PdbToMmtfFull.java)](src/main/java/edu/sdsc/mmtf/spark/io.demos.PdbToMmtfFull.java).
+in an input directory (recursively) and creates an MMTF-Hadoop Sequence file 
+[(see PdbToMmtfFull.java)](src/main/java/edu/sdsc/mmtf/spark/io.demos.PdbToMmtfFull.java).
 
 ```
 spark-submit --master local  --class edu.sdsc.mmtf.spark.io.demos.PdbToMmtfFull  INSTALL_DIRECTORY/mmtf-spark/target/mmtf-spark-0.2.0-SNAPSHOT.jar PDB_FILE_DIRECTORY MMTF_HADOOP_FILE_DIRECTORY
