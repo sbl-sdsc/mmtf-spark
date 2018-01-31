@@ -23,7 +23,7 @@ For high-performance, parallel processing mmtf-spark can read the PDB archive in
 ## Running a Demo Application using spark-submit
 
 Simple example of running a demo application 
-[(source PolyPeptideChainStatistics.java)](PolyPeptideChainStatistics.java).
+[(see source PolyPeptideChainStatistics.java)](src/main/java/edu/sdsc/mmtf/spark/mappers/demos/PolyPeptideChainStatistics.java).
 
 ```
 spark-submit --master local --class edu.sdsc.mmtf.spark.mappers.demos.PolyPeptideChainStatistics  INSTALL_DIRECTORY/mmtf-spark/target/mmtf-spark-0.2.0-SNAPSHOT.jar
@@ -31,7 +31,7 @@ spark-submit --master local --class edu.sdsc.mmtf.spark.mappers.demos.PolyPeptid
 
 Example with command line arguments. This example read the PDB files
 in an input directory (recursively) and creates an MMTF-Hadoop Sequence file.
-[(source PdbToMmtfFull.java)](PdbToMmtfFull.java)
+[(see source src/main/java/edu/sdsc/mmtf/spark/io.demos.PdbToMmtfFull.java)](PdbToMmtfFull.java)
 
 ```
 spark-submit --master local  --class edu.sdsc.mmtf.spark.io.demos.PdbToMmtfFull  INSTALL_DIRECTORY/mmtf-spark/target/mmtf-spark-0.2.0-SNAPSHOT.jar PDB_FILE_DIRECTORY MMTF_HADOOP_FILE_DIRECTORY
