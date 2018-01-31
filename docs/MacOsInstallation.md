@@ -98,3 +98,44 @@ mvn install
 ```
 
 If installation and testing are successful, a *Build Success* message will be printed.
+
+# Download the PDB archive as Hadoop Sequence Files
+[MMTF-Hadoop Sequence files](https://http://mmtf.rcsb.org/download.html)
+are available in two representations:
+
+* full: all-atom representation with 0.001Å coordinate precision, 0.01 B-factor and occupancy precision
+
+* reduced: C-alpha atoms only for polypeptides, P-backbone atoms only for polynucleotides, all-atom representation for all other residue types, 
+0.1Å coordinate precision, 0.1 B-factor and occupancy precision.
+
+
+Weekly updated MMTF-Hadoop Sequence files can be downloaded:
+
+[download full.tar](http://mmtf.rcsb.org/v1.0/hadoopfiles/full.tar)
+
+[download reduced.tar](http://mmtf.rcsb.org/v1.0/hadoopfiles/reduced.tar)
+
+Extract the content from the .tar files by double click the file name.
+
+Alternatively, the following command line tools can be used to download and extract the data:
+
+```
+curl -O https://mmtf.rcsb.org/v1.0/hadoopfiles/full.tar
+tar -xvf full.tar
+curl -O https://mmtf.rcsb.org/v1.0/hadoopfiles/reduced.tar
+tar -xvf reduced.tar
+```
+or
+```
+wget https://mmtf.rcsb.org/v1.0/hadoopfiles/full.tar
+tar -xvf full.tar
+wget https://mmtf.rcsb.org/v1.0/hadoopfiles/reduced.tar
+tar -xvf reduced.tar
+```
+
+Add the following lines in your .bash_profile:
+
+```
+export MMTF_FULL=INSTALL_PATH/full
+export MMTF_REDUCED=INSTALL_PATH/reduced
+```
