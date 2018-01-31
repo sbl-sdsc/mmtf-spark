@@ -1,6 +1,3 @@
-/**
- * 
- */
 package edu.sdsc.mmtf.spark.ml.demos;
 
 import static org.apache.spark.sql.functions.col;
@@ -19,14 +16,16 @@ import org.biojava.nbio.structure.StructureException;
 import org.rcsb.mmtf.api.StructureDataInterface;
 
 import edu.sdsc.mmtf.spark.datasets.SecondaryStructureExtractor;
-import edu.sdsc.mmtf.spark.filters.ContainsLProteinChain;
 import edu.sdsc.mmtf.spark.io.MmtfReader;
 import edu.sdsc.mmtf.spark.mappers.StructureToPolymerChains;
 import edu.sdsc.mmtf.spark.ml.ProteinSequenceEncoder;
 import edu.sdsc.mmtf.spark.webfilters.Pisces;
 
 /**
- * This class is a simple example of using Dataset operations to create a dataset
+ * This class creates a dataset with the fold type (e.g.,
+ * all-alpha, all-beta, [alpha-beta]) protein, creates
+ * 2-grams from the amino acid sequence, and then creates
+ * a Word2Vector model from the 2-grams.
  * 
  * @author Peter Rose
  *
@@ -54,18 +53,15 @@ public class ProteinFoldDatasetCreator {
 				.setAppName(ProteinFoldDatasetCreator.class.getSimpleName());
 		JavaSparkContext sc = new JavaSparkContext(conf);
 		
-		// read MMTF Hadoop sequence file and create a non-redundant set (<=40% seq. identity)
-		// of L-protein chains
+		// read MMTF Hadoop sequence file and create a non-redundant Pisces 
+		// subset set (<=20% seq. identity) of L-protein chains
 		int sequenceIdentity = 20;
 		double resolution = 3.0;
-		double fraction = 1.0;
-		long seed = 123;
 		
 		JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader
-				.readSequenceFile(path, fraction, seed, sc)
+				.readSequenceFile(path, sc)
 				.flatMapToPair(new StructureToPolymerChains())
-                .filter(new Pisces(sequenceIdentity, resolution))
-				.filter(new ContainsLProteinChain()); // filter out for example D-proteins
+                .filter(new Pisces(sequenceIdentity, resolution));
 
 		// get secondary structure content
 		Dataset<Row> data = SecondaryStructureExtractor.getDataset(pdb);
