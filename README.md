@@ -31,7 +31,7 @@ spark-submit --master local --class edu.sdsc.mmtf.spark.mappers.demos.PolyPeptid
 
 Example with command line arguments. This example read the PDB files
 in an input directory (recursively) and creates an MMTF-Hadoop Sequence file 
-[(see PdbToMmtfFull.java)](src/main/java/edu/sdsc/mmtf/spark/io.demos.PdbToMmtfFull.java).
+[(see PdbToMmtfFull.java)](src/main/java/edu/sdsc/mmtf/spark/io.demos.PdbToMmtfFull.java). 
 
 ```
 spark-submit --master local  --class edu.sdsc.mmtf.spark.io.demos.PdbToMmtfFull  INSTALL_DIRECTORY/mmtf-spark/target/mmtf-spark-0.2.0-SNAPSHOT.jar PDB_FILE_DIRECTORY MMTF_HADOOP_FILE_DIRECTORY
