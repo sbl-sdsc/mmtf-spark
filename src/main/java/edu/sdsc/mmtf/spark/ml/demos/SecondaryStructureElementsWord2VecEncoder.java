@@ -11,10 +11,10 @@ import org.apache.spark.sql.Row;
 import org.rcsb.mmtf.api.StructureDataInterface;
 
 import edu.sdsc.mmtf.spark.datasets.SecondaryStructureElementExtractor;
-import edu.sdsc.mmtf.spark.filters.ContainsLProteinChain;
 import edu.sdsc.mmtf.spark.io.MmtfReader;
 import edu.sdsc.mmtf.spark.mappers.StructureToPolymerChains;
 import edu.sdsc.mmtf.spark.ml.ProteinSequenceEncoder;
+import edu.sdsc.mmtf.spark.webfilters.Pisces;
 
 /**
  * This class creates a dataset of helical sequence segments derived
@@ -44,14 +44,15 @@ public class SecondaryStructureElementsWord2VecEncoder {
 				.setAppName(SecondaryStructureWord2VecEncoder.class.getSimpleName());
 		JavaSparkContext sc = new JavaSparkContext(conf);
 		
-		double fraction = 1.0;
-		long seed = 123;
+		// read MMTF Hadoop sequence file and create a non-redundant Pisces 
+		// subset set (<=20% seq. identity) of L-protein chains
+		int sequenceIdentity = 20;
+		double resolution = 3.0;
 		
 		JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader
 				.readSequenceFile(path, sc)
-				.flatMapToPair(new StructureToPolymerChains(false,true))
-				.filter(new ContainsLProteinChain()) // filter out for example D-proteins
-                .sample(false, fraction, seed);
+				.flatMapToPair(new StructureToPolymerChains())
+                .filter(new Pisces(sequenceIdentity, resolution));
 			
 		// extract helical sequence segments
 		Dataset<Row> data = SecondaryStructureElementExtractor.getDataset(pdb, "H");
