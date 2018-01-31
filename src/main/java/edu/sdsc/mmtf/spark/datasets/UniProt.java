@@ -14,12 +14,12 @@ import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
 
 /**
- * This class <a href="http://www.uniprot.org/downloads">downloads</a> and reads
+ * This class <a href="https://www.uniprot.org/downloads">downloads</a> and reads
  * UniProt sequence files in the FASTA format and converts them to datasets. This
  * class reads the following files: SWISS_PROT, TREMBL, UNIREF50, UNIREF90, UNIREF100.
  * 
  * The datasets have the following
- * <a href="http://www.uniprot.org/help/fasta-headers">columns</a>.
+ * <a href="https://www.uniprot.org/help/fasta-headers">columns</a>.
  * 
  * <p>
  * Example: download, read, and save the SWISS_PROT dataset

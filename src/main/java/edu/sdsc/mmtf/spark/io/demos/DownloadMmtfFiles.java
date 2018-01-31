@@ -12,7 +12,7 @@ import edu.sdsc.mmtf.spark.io.MmtfReader;
 
 /**
  * Example of downloading a list of PDB entries using
- * from http://mmtf.rcsb.org into a JavaPairRDD.
+ * from https://mmtf.rcsb.org into a JavaPairRDD.
  * 
  * @author Peter Rose
  * @since 0.1.0

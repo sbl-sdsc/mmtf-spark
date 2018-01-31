@@ -18,7 +18,7 @@ import scala.Tuple2;
  * representative for each cluster is the first chain in a cluster.
  * 
  * <p>
- * See <a href="http://www.rcsb.org/pdb/statistics/clusterStatistics.do">
+ * See <a href="https://www.rcsb.org/pdb/statistics/clusterStatistics.do">
  * BlastClust cluster. field names.</a>
  * 
  * <p>

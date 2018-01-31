@@ -309,7 +309,7 @@ public class MmtfReader {
 	 * @param pdbIds List of PDB IDs (upper case)
 	 * @param sc Spark context
 	 * @return structure data as keyword/value pairs
-	 * @see <a href="http://mmtf.rcsb.org/download.html">MMTF web services</a>.
+	 * @see <a href="https://mmtf.rcsb.org/download.html">MMTF web services</a>.
 	 */
 	public static JavaPairRDD<String, StructureDataInterface> downloadMmtfFiles(List<String> pdbIds, JavaSparkContext sc) {
 		return sc
@@ -318,7 +318,7 @@ public class MmtfReader {
 	}
 	
 	/**
-	 * Downloads and reads the specified PDB entries using <a href="http://mmtf.rcsb.org/download.html">MMTF web services</a>.
+	 * Downloads and reads the specified PDB entries using <a href="https://mmtf.rcsb.org/download.html">MMTF web services</a>.
 	 * 
 	 * @param pdbIds List of PDB IDs (upper case)
 	 * @param https if true, used https instead of http

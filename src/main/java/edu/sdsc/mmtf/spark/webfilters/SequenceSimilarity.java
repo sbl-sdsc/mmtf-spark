@@ -42,7 +42,6 @@ import scala.Tuple2;
  * (1990)
  * <li>PSI-BLAST: Sequence searching to detect distantly related evolutionary
  * relationships using NCBI's PSI-BLAST (Position-Specific Iterated BLAST).
- * http://www.ncbi.nlm.nih.gov/Education/BLASTinfo/psi1.html
  * </ul>
  * 
  * @author Peter Rose
