@@ -32,7 +32,7 @@ public class SecondaryStructureElementsWord2VecEncoder {
 		String path = MmtfReader.getMmtfReducedPath();
 	    
 		if (args.length != 2) {
-			System.err.println("Usage: " + SecondaryStructureWord2VecEncoder.class.getSimpleName() + " <outputFilePath> + <fileFormat>");
+			System.err.println("Usage: " + SecondaryStructureElementsWord2VecEncoder.class.getSimpleName() + " <outputFilePath> + <fileFormat>");
 			System.exit(1);
 		}
 
