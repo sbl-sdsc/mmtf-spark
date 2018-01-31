@@ -7,13 +7,13 @@ import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.rcsb.mmtf.api.StructureDataInterface;
 
-import edu.sdsc.mmtf.spark.analysis.TraverseStructureHierarchy;
 import edu.sdsc.mmtf.spark.io.MmtfReader;
 import edu.sdsc.mmtf.spark.io.MmtfWriter;
 
 /**
- * Converts a directory containing PDB files into an MMTF-Hadoop Sequence file.
- * This class traverses the input directory recursively to find PDB files.
+ * Converts a directory containing PDB files into an MMTF-Hadoop Sequence file
+ * with "full" (all atom, full precision) representation. The input directory 
+ * is traversed recursively to find PDB files.
  * 
  * @author Peter Rose
  * @since 0.2.0
@@ -23,7 +23,7 @@ public class PdbToMmtfFull {
 
     /**
      * Converts a directory containing PDB files into an MMTF-Hadoop Sequence file.
-     * This class traverses the input directory recursively to find PDB files.
+     * The input directory is traversed recursively to find PDB files.
      * 
      * @param args args[0] <path-to-pdb_files>, args[1] <path-to-mmtf-hadoop-file>
      * 
@@ -41,7 +41,7 @@ public class PdbToMmtfFull {
 	    // path to output directory
 	    String mmtfPath = args[1];
 
-	    // instantiate Spark. Each Spark application needs these two lines of code.
+	    // instantiate Spark
 	    SparkConf conf = new SparkConf().setMaster("local[*]").setAppName("PdbToMmtfFull");
 	    JavaSparkContext sc = new JavaSparkContext(conf);
 		 
