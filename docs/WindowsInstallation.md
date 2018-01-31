@@ -105,3 +105,29 @@ mvn install
 ```
 
 If installation and testing are successful, a *Build Success* message will be printed.
+
+# Download the PDB archive as Hadoop Sequence Files
+MMTF-Hadoop Sequence files are available in two 
+[representations](https://mmtf.rcsb.org/download.html):
+
+* full: all-atom representation with 0.001Å coordinate precision, 0.01 B-factor and occupancy precision
+
+* reduced: C-alpha atoms only for polypeptides, P-backbone atoms only for polynucleotides, all-atom representation for all other residue types, 
+0.1Å coordinate precision, 0.1 B-factor and occupancy precision.
+
+Weekly updated MMTF-Hadoop Sequence files can be downloaded and extracted using the
+following commands:
+
+```
+curl -O https://mmtf.rcsb.org/v1.0/hadoopfiles/full.tar
+tar -xvf full.tar
+curl -O https://mmtf.rcsb.org/v1.0/hadoopfiles/reduced.tar
+tar -xvf reduced.tar
+```
+
+Set the following new User environment variables:
+
+| Variable      | Value                     |
+| ------------- |---------------------------|
+| MMTF_FULL     | C:\Users\USER_NAME\full   |
+| MMTF_REDUCED  |C:\Users\USER_NAME\reduced |

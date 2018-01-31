@@ -50,7 +50,7 @@ sudo cp -r ./spark-2.2.1-bin-hadoop2.7 /opt
 # Install mmtf-spark
 Clone the mmtf-spark repository and build the project using Maven.
 ```
-cd INSTALL_DIRECTORY
+cd INSTALL_PATH
 git clone https://github.com/sbl-sdsc/mmtf-spark.git
 ```
 
@@ -93,15 +93,15 @@ echo $SPARK_HOME
 # Build mmtf-spark
 Run maven to build the mmtf-spark project and run the unit tests.
 ```
-cd INSTALL_DIRECTORY\mmtf-spark
+cd INSTALL_PATH\mmtf-spark
 mvn install
 ```
 
 If installation and testing are successful, a *Build Success* message will be printed.
 
 # Download the PDB archive as Hadoop Sequence Files
-[MMTF-Hadoop Sequence files](https://http://mmtf.rcsb.org/download.html)
-are available in two representations:
+MMTF-Hadoop Sequence files are available in two 
+[representations](https://mmtf.rcsb.org/download.html):
 
 * full: all-atom representation with 0.001Å coordinate precision, 0.01 B-factor and occupancy precision
 
@@ -115,7 +115,7 @@ Weekly updated MMTF-Hadoop Sequence files can be downloaded:
 
 [download reduced.tar](http://mmtf.rcsb.org/v1.0/hadoopfiles/reduced.tar)
 
-Extract the content from the .tar files by double click the file name.
+Extract the content from the .tar files by double clicking the file name.
 
 Alternatively, the following command line tools can be used to download and extract the data:
 
