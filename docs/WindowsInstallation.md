@@ -119,9 +119,9 @@ Weekly updated MMTF-Hadoop Sequence files can be downloaded and extracted using 
 following commands:
 
 ```
-curl -O https://mmtf.rcsb.org/v1.0/hadoopfiles/full.tar
+curl -k -O https://mmtf.rcsb.org/v1.0/hadoopfiles/full.tar
 tar -xvf full.tar
-curl -O https://mmtf.rcsb.org/v1.0/hadoopfiles/reduced.tar
+curl -k -O https://mmtf.rcsb.org/v1.0/hadoopfiles/reduced.tar
 tar -xvf reduced.tar
 ```
 
