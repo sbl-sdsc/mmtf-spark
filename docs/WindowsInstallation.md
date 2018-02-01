@@ -80,6 +80,7 @@ git clone https://github.com/sbl-sdsc/mmtf-spark.git
 | Variable      | Value                                        |
 | ------------- |----------------------------------------------|
 | SPARK_HOME    | C:\Users\USER_NAME\spark-2.2.1-bin-hadoop2.7 |
+| HADOOP_HOME   | C:\Users\USER_NAME\spark-2.2.1-bin-hadoop2.7 |
 | JAVA_HOME     | C:\Program Files\Java\jdk1.8.0_162           |
 
 
