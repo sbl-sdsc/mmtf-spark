@@ -46,6 +46,17 @@ cd C:\Users\USER_NAME
 gzip -d spark-2.2.1-bin-hadoop2.7.tgz
 tar -xvf spark-2.2.1-bin-hadoop2.7.tar
 ```
+By default, SPARK logs at the INFO level, which leads to excessive log messages. Change the log level from INFO to FATAL.
+
+```
+cd spark-2.2.1-bin-hadoop2.7\conf
+cp log4j.properties.template log4j.properties
+```
+
+Then edit the log4j.properties file and change the level from INFO to FATAL:
+
+`log4j.rootCategory=INFO, console` to `log4j.rootCategory=FATAL, console`
+
 
 ### Install Hadoop winutils
 Download winutils.exe using the curl command in a Command Prompt window.
