@@ -53,6 +53,34 @@ import scala.Tuple2;
 public class MmtfReader {
 
 	/**
+	 * Reads a full MMTF-Hadoop Sequence file using the default file location.
+	 * The default file location is determined by {@link MmtfReader.getMmtfFullPath()}.
+	 * 
+	 * See <a href="https://mmtf.rcsb.org/download.html"> for file download information</a>
+	 * 
+	 * @param sc Spark context
+	 * @return structure data as keyword/value pairs
+	 * @throws FileNotFoundException 
+	 */
+	public static JavaPairRDD<String, StructureDataInterface> readFullSequenceFile(JavaSparkContext sc) throws FileNotFoundException {
+		return readSequenceFile(getMmtfFullPath(), sc);
+	}
+	
+	/**
+	 * Reads a reduced MMTF-Hadoop Sequence file using the default file location.
+	 * The default file location is determined by {@link MmtfReader.getMmtfReducedPath()}.
+	 * 
+	 * See <a href="https://mmtf.rcsb.org/download.html"> for file download information</a>
+	 * 
+	 * @param sc Spark context
+	 * @return structure data as keyword/value pairs
+	 * @throws FileNotFoundException 
+	 */
+	public static JavaPairRDD<String, StructureDataInterface> readReducedSequenceFile(JavaSparkContext sc) throws FileNotFoundException {
+		return readSequenceFile(getMmtfReducedPath(), sc);
+	}
+	
+	/**
 	 * Reads an MMTF-Hadoop Sequence file. The Hadoop Sequence file may contain
 	 * either gzip compressed or uncompressed values.
 	 * See <a href="https://mmtf.rcsb.org/download.html"> for file download information</a>
