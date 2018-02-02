@@ -120,6 +120,8 @@
 					<excludes>
 						<!-- we exclude by default the long running tests, they will only be 
 							executed if explicitly called -->
+						<exclude>**/ContainsDSaccharideChainTest.java</exclude>
+						<exclude>**/OrFilterTest.java</exclude>
 						<exclude>**/AdvancedQueryTest.java</exclude>
 						<exclude>**/BlastClustersTest.java</exclude>
 						<exclude>**/ChemicalStructureQueryTest.java</exclude>
