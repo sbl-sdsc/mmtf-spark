@@ -29,7 +29,7 @@ public class SecondaryStructureExtractorTest2 {
 	    sc = new JavaSparkContext(conf);
 
 	    List<String> pdbIds = Arrays.asList("1STP");
-	    pdb = MmtfReader.downloadMmtfFiles(pdbIds, sc);
+	    pdb = MmtfReader.downloadReducedMmtfFiles(pdbIds, sc);
 	}
 
 	@After

@@ -30,7 +30,7 @@ public class ContainsSequenceRegexTest {
 	    // 1JLP: does not contain Zinc finger motif
 	    // 5VAI: contains Walker P loop
 	    List<String> pdbIds = Arrays.asList("5KE8","1JLP","5VAI");
-	    pdb = MmtfReader.downloadMmtfFiles(pdbIds, sc);
+	    pdb = MmtfReader.downloadReducedMmtfFiles(pdbIds, sc);
 	}
 
 	@After

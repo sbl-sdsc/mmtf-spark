@@ -29,7 +29,7 @@ public class PiscesTest {
 	    sc = new JavaSparkContext(conf);
 	    // "4R4X.A" and "5X42.B" should pass filter
 	    List<String> pdbIds = Arrays.asList("5X42","4R4X","2ONX","1JLP");
-	    pdb = MmtfReader.downloadMmtfFiles(pdbIds, sc);
+	    pdb = MmtfReader.downloadReducedMmtfFiles(pdbIds, sc);
 	}
 
 	@After

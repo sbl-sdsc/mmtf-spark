@@ -28,7 +28,7 @@ public class SecondaryStructureSegmentDemo {
 	    SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(CustomReportDemo.class.getSimpleName());
 	    JavaSparkContext sc = new JavaSparkContext(conf);
 	    List<String> pdbIds = Arrays.asList("1STP"); // single protein chain
-	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.downloadMmtfFiles(pdbIds, sc).cache();
+	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.downloadReducedMmtfFiles(pdbIds, sc).cache();
 	    
 	    pdb = pdb
 	    		.flatMapToPair(new StructureToPolymerChains())

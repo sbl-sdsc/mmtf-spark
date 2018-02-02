@@ -30,7 +30,7 @@ public class ReleaseDateFilterTest {
 	    // 3VCO: released on 2013-03-06
 	    // 5N0Y: released on 2017-05-24
 	    List<String> pdbIds = Arrays.asList("1O6Y","4MYA","3VCO","5N0Y");
-	    pdb = MmtfReader.downloadMmtfFiles(pdbIds, sc);
+	    pdb = MmtfReader.downloadReducedMmtfFiles(pdbIds, sc);
 	}
 
 	@After

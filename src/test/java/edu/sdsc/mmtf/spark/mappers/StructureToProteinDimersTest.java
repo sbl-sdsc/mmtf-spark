@@ -33,7 +33,7 @@ public class StructureToProteinDimersTest {
 	@Test
 	public void test1() throws IOException {
 	    List<String> pdbIds = Arrays.asList("1I1G"); // D4
-	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.downloadMmtfFiles(pdbIds, sc).cache(); 
+	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.downloadFullMmtfFiles(pdbIds, sc).cache(); 
 	   
 		
 		pdb = pdb.flatMapToPair(new StructureToBioassembly()).flatMapToPair(new StructureToProteinDimers(8, 20, false, true));
@@ -44,7 +44,7 @@ public class StructureToProteinDimersTest {
 	@Test
 	public void test2() throws IOException {
 	    List<String> pdbIds = Arrays.asList("5NV3"); // D4
-	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.downloadMmtfFiles(pdbIds, sc).cache(); 
+	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.downloadFullMmtfFiles(pdbIds, sc).cache(); 
 	   
 		
 		pdb = pdb.flatMapToPair(new StructureToBioassembly()).flatMapToPair(new StructureToProteinDimers(8, 20, false, true));
@@ -66,7 +66,7 @@ public class StructureToProteinDimersTest {
 	     * B8-A4
 	     * B8-B7
 	     */
-	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.downloadMmtfFiles(pdbIds, sc).cache(); 
+	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.downloadFullMmtfFiles(pdbIds, sc).cache(); 
 	   
 		
 		pdb = pdb.flatMapToPair(new StructureToBioassembly()).flatMapToPair(new StructureToProteinDimers(8, 20, false, true));
@@ -77,7 +77,7 @@ public class StructureToProteinDimersTest {
 	@Test
 	public void test4() throws IOException {
 	    List<String> pdbIds = Arrays.asList("1BZ5");//D5
-	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.downloadMmtfFiles(pdbIds, sc).cache(); 
+	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.downloadFullMmtfFiles(pdbIds, sc).cache(); 
 	    /*
 	     * C5-B4
 	     * C6-B3

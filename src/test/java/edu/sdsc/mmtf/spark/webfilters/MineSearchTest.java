@@ -29,7 +29,7 @@ public class MineSearchTest {
 	    sc = new JavaSparkContext(conf);
 	    
 	    List<String> pdbIds = Arrays.asList("5JDE","5CU4","5L6W","5UFU","5IHB");
-	    pdb = MmtfReader.downloadMmtfFiles(pdbIds, sc);
+	    pdb = MmtfReader.downloadReducedMmtfFiles(pdbIds, sc);
 	}
 
 	@After
@@ -39,7 +39,7 @@ public class MineSearchTest {
 
 // TODO	@Test
 	/**
-	 * This test runs a very simple SQL query, checking the number of entries in the RDB
+	 * This test runs a very simple SQL query, checking the number of entries in the PDB
 	 * @throws IOException
 	 */
 	public void test1() throws IOException {

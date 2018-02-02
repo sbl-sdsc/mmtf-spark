@@ -28,7 +28,7 @@ public class DownloadMmtfFiles {
 		 
 	    // download a list of PDB entries using mmtf web services
 	    List<String> pdbIds = Arrays.asList("1AQ1","1B38","1B39","1BUH");     
-	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.downloadMmtfFiles(pdbIds, sc);
+	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.downloadReducedMmtfFiles(pdbIds, sc);
 	    
 	    System.out.println("# structures: " + pdb.count());
 	    

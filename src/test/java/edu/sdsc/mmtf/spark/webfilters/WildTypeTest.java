@@ -31,7 +31,7 @@ public class WildTypeTest {
 		// 1OCZ two entities wildtype query 100 matches: 1OCZ:1, 1OCZ:2
 		// 2ONX structure result for author query
 		List<String> pdbIds = Arrays.asList("1PEN","1OCZ","2ONX");
-	    pdb = MmtfReader.downloadMmtfFiles(pdbIds, sc);
+	    pdb = MmtfReader.downloadReducedMmtfFiles(pdbIds, sc);
 	}
 
 	@After

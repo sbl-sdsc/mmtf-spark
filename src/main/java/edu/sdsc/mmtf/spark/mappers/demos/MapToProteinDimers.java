@@ -28,7 +28,7 @@ public class MapToProteinDimers {
 	    JavaSparkContext sc = new JavaSparkContext(conf);
 
 	    List<String> pdbIds = Arrays.asList("5IBZ"); // single protein chain 5IBZ -> D2
-	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.downloadMmtfFiles(pdbIds, sc);
+	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.downloadFullMmtfFiles(pdbIds, sc);
 	   
 	    pdb = pdb.flatMapToPair(new StructureToBioassembly())
 	            .flatMapToPair(new StructureToProteinDimers(8, 20, true, true));

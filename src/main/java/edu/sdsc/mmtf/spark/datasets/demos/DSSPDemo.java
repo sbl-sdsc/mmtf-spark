@@ -28,7 +28,7 @@ public class DSSPDemo {
 	    SparkConf conf = new SparkConf().setMaster("local[1]").setAppName(CustomReportDemo.class.getSimpleName());
 	    JavaSparkContext sc = new JavaSparkContext(conf);
 	    List<String> pdbIds = Arrays.asList("1STP"); // single protein chain
-	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.downloadMmtfFiles(pdbIds, sc).cache(); 
+	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.downloadFullMmtfFiles(pdbIds, sc).cache(); 
 	    pdb = pdb.flatMapToPair(new StructureToPolymerChains());
 	    Dataset<Row> ds = SecondaryStructureExtractor.getDataset(pdb);
 	    

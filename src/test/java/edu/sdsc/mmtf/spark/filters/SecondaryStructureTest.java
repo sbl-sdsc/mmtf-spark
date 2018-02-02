@@ -31,7 +31,7 @@ public class SecondaryStructureTest {
 	    // 1EM7: alpha + beta, 14 alpha + 23 beta out of 56 = 0.25 helical and 0.411 sheet
 	    // 2C7M: 2 chains, alpha + beta (DSSP in MMTF doesn't match DSSP on RCSB PDB website)
 	    List<String> pdbIds = Arrays.asList("1AIE","1E0N","1EM7","2C7M");
-	    pdb = MmtfReader.downloadMmtfFiles(pdbIds, sc);
+	    pdb = MmtfReader.downloadReducedMmtfFiles(pdbIds, sc);
 	}
 
 	@After

@@ -28,7 +28,7 @@ public class ChemicalStructureQueryTest {
 	    sc = new JavaSparkContext(conf);
 	    
 		List<String> pdbIds = Arrays.asList("1HYA","2ONX","1F27","4QMC","2RTL");
-	    pdb = MmtfReader.downloadMmtfFiles(pdbIds, sc);
+	    pdb = MmtfReader.downloadReducedMmtfFiles(pdbIds, sc);
 	}
 
 	@After

@@ -311,31 +311,29 @@ public class MmtfReader {
 	 * @return structure data as keyword/value pairs
 	 * @see <a href="https://mmtf.rcsb.org/download.html">MMTF web services</a>.
 	 */
-	public static JavaPairRDD<String, StructureDataInterface> downloadMmtfFiles(List<String> pdbIds, JavaSparkContext sc) {
+	public static JavaPairRDD<String, StructureDataInterface> downloadFullMmtfFiles(List<String> pdbIds, JavaSparkContext sc) {
 		return sc
 				.parallelize(pdbIds)
 				.mapToPair(t -> new Tuple2<String, StructureDataInterface>(t, getStructure(t, true, false)));
 	}
 	
 	/**
-	 * Downloads and reads the specified PDB entries using <a href="https://mmtf.rcsb.org/download.html">MMTF web services</a>.
+	 * Downloads and reads the specified PDB entries in the reduced MMTF representation (C-alpha, P-backbone, all ligand atoms)
+	 * using MMTF web services.
 	 * 
 	 * @param pdbIds List of PDB IDs (upper case)
-	 * @param https if true, used https instead of http
-	 * @param reduced if true, downloads a reduced representation (C-alpha, P-backbone, all ligand atoms)
 	 * @param sc Spark context
 	 * @return structure data as keyword/value pairs
+	 * @see <a href="https://mmtf.rcsb.org/download.html">MMTF web services</a>.
 	 */
-	public static JavaPairRDD<String, StructureDataInterface> downloadMmtfFiles(List<String> pdbIds, boolean https, boolean reduced, JavaSparkContext sc) {
+	public static JavaPairRDD<String, StructureDataInterface> downloadReducedMmtfFiles(List<String> pdbIds, JavaSparkContext sc) {
 		return sc
 				.parallelize(pdbIds)
-				.mapToPair(t -> new Tuple2<String, StructureDataInterface>(t, getStructure(t, https, reduced)));
+				.mapToPair(t -> new Tuple2<String, StructureDataInterface>(t, getStructure(t, true, true)));
 	}
 	
-	private static StructureDataInterface getStructure(String pdbId, boolean https, boolean reduced) throws IOException {
-// TODO use with new version		
+	private static StructureDataInterface getStructure(String pdbId, boolean https, boolean reduced) throws IOException {		
 	    return new GenericDecoder(ReaderUtils.getDataFromUrl(pdbId, https, reduced));
-//		return new GenericDecoder(ReaderUtils.getDataFromUrl(pdbId));
 	}
 
 	/**

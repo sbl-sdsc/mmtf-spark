@@ -30,7 +30,7 @@ public class RfreeFilterTest {
 	    // 3REC: n/a NMR structure
 	    // 1LU3: n/a EM structure
 	    List<String> pdbIds = Arrays.asList("2ONX","2OLX","3REC","1LU3");
-	    pdb = MmtfReader.downloadMmtfFiles(pdbIds, sc);
+	    pdb = MmtfReader.downloadReducedMmtfFiles(pdbIds, sc);
 	}
 
 	@After

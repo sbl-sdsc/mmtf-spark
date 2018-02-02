@@ -35,7 +35,7 @@ public class ContainsDProteinChainTest {
 	    // 5XDP: L-protein and D-protein (modified)
 	    // 5GOD: 2 L-protein + 2 D-protein
 	    List<String> pdbIds = Arrays.asList("2ONX","1JLP","5X6H","5L2G","2MK1","2V5W","5XDP","5GOD");
-	    pdb = MmtfReader.downloadMmtfFiles(pdbIds, sc);
+	    pdb = MmtfReader.downloadReducedMmtfFiles(pdbIds, sc);
 	}
 
 	@After

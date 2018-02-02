@@ -34,7 +34,7 @@ public class StructureToBioJavaTest {
 	@Test
 	public void test() throws IOException {
 		List<String> pdbIds = Arrays.asList("1STP","4HHB","1JLP","5X6H","5L2G","2MK1");
-		JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.downloadMmtfFiles(pdbIds, sc).cache();
+		JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.downloadFullMmtfFiles(pdbIds, sc).cache();
 
 		// 1STP: 1 L-protein chain:
 		// 4HHB: 4 polymer chains

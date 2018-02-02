@@ -30,7 +30,7 @@ public class BlastClustersTest {
 	    sc = new JavaSparkContext(conf);
 	    
 	    List<String> pdbIds = Arrays.asList("1O06","2ONX");
-	    pdb = MmtfReader.downloadMmtfFiles(pdbIds, sc);
+	    pdb = MmtfReader.downloadReducedMmtfFiles(pdbIds, sc);
 	}
 
 	@After

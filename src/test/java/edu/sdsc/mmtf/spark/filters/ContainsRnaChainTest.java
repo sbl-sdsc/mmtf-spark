@@ -34,7 +34,7 @@ public class ContainsRnaChainTest {
 	    // 5UX0: 2 L-protein, 2 RNA, 2 DNA chains
 	    // 2NCQ: 2 RNA chains
 	    List<String> pdbIds = Arrays.asList("2ONX","1JLP","5X6H","5L2G","2MK1","5UX0","2NCQ");
-	    pdb = MmtfReader.downloadMmtfFiles(pdbIds, sc);
+	    pdb = MmtfReader.downloadReducedMmtfFiles(pdbIds, sc);
 	}
 
 	@After

@@ -27,7 +27,7 @@ public class ExperimentalMethodsTest {
 	    sc = new JavaSparkContext(conf);
 	    
 	    List<String> pdbIds = Arrays.asList("2ONX","5VLN","5VAI","5JXV","5K7N","3PDM","5MNX","5I1R","5MON","5LCB","3J07");
-	    pdb = MmtfReader.downloadMmtfFiles(pdbIds, sc);
+	    pdb = MmtfReader.downloadReducedMmtfFiles(pdbIds, sc);
 	}
 
 	@After

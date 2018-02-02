@@ -29,7 +29,7 @@ public class MapToBioAssembly {
 	    
 	    List<String> pdbIds = Arrays.asList("1HV4"); // single protein chain
 	    JavaPairRDD<String, StructureDataInterface> bioassemblies = MmtfReader
-	            .downloadMmtfFiles(pdbIds, sc)
+	            .downloadFullMmtfFiles(pdbIds, sc)
 	            .flatMapToPair(new StructureToBioassembly());
 	    
 	    System.out.println("# bioassemblies for 1HV4: " + bioassemblies.count());
