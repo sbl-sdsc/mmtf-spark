@@ -8,7 +8,7 @@ import org.apache.spark.api.java.JavaSparkContext;
 import org.rcsb.mmtf.api.StructureDataInterface;
 
 import edu.sdsc.mmtf.spark.io.MmtfReader;
-import edu.sdsc.mmtf.spark.webfilters.MineSearch;
+import edu.sdsc.mmtf.spark.webfilters.PdbjMineSearch;
 
 /**
  * PDBj Mine 2 RDB group deposition query and MMTF filtering using pdbid
@@ -39,7 +39,7 @@ public class SearchDepositionGroups
         String sql = "select pdbx_deposit_group.pdbid from pdbx_deposit_group join brief_summary on pdbx_deposit_group.pdbid=brief_summary.pdbid where group_id='G_1002001' and resolution < 1.5";
 		
         // simply run the query
-        MineSearch search = new MineSearch(sql); // if no further parameters are given, `pdbid` column (pdbx_deposit_group.pdbid was selected, but is returned as pdbid) will be used for filtering without chain-level
+        PdbjMineSearch search = new PdbjMineSearch(sql); // if no further parameters are given, `pdbid` column (pdbx_deposit_group.pdbid was selected, but is returned as pdbid) will be used for filtering without chain-level
         
         System.out.println("Number of entries in MMTF library matching query: "+pdb.filter(search).keys().count());
 		

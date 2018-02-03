@@ -9,7 +9,7 @@ import org.rcsb.mmtf.api.StructureDataInterface;
 
 import edu.sdsc.mmtf.spark.io.MmtfReader;
 import edu.sdsc.mmtf.spark.mappers.StructureToPolymerChains;
-import edu.sdsc.mmtf.spark.webfilters.MineSearch;
+import edu.sdsc.mmtf.spark.webfilters.PdbjMineSearch;
 
 /**
  * PDBj Mine 2 RDB complex query of PDB and SIFTS data, followed by MMTF filtering using pdbid & chain name
@@ -50,7 +50,7 @@ public class SiftsQuery
 							"AND r.ls_d_res_high < 2.0 " +
 						"AND LENGTH(p.pdbx_seq_one_letter_code_can) >= 58 " +
 						"ORDER BY reso, len,s.chain ";
-        MineSearch search = new MineSearch(sql, "structureChainId", true); // structureChainId is used for filtering the MMTF data and chain-level is set to true
+        PdbjMineSearch search = new PdbjMineSearch(sql, "structureChainId", true); // structureChainId is used for filtering the MMTF data and chain-level is set to true
 //        search.dataset.show(10); // output the returned data (10 items) => this can be further filtered or used directly in your service
         
         

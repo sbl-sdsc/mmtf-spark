@@ -8,7 +8,7 @@ import org.apache.spark.api.java.JavaSparkContext;
 import org.rcsb.mmtf.api.StructureDataInterface;
 
 import edu.sdsc.mmtf.spark.io.MmtfReader;
-import edu.sdsc.mmtf.spark.webfilters.MineSearch;
+import edu.sdsc.mmtf.spark.webfilters.PdbjMineSearch;
 
 /**
  * PDBj Mine 2 RDB simple query and MMTF filtering using pdbid
@@ -37,7 +37,7 @@ public class SimpleQuery
         String sql = "select pdbid from brief_summary where modification_date >= '2016-06-28' and resolution < 1.5";
 		
         // simply run the query
-        MineSearch search = new MineSearch(sql); // if no further parameters are given, `pdbid` column will be used for filtering without chain-level
+        PdbjMineSearch search = new PdbjMineSearch(sql); // if no further parameters are given, `pdbid` column will be used for filtering without chain-level
         
         System.out.println("Number of entries in MMTF library matching query: " + pdb.filter(search).count());
 		

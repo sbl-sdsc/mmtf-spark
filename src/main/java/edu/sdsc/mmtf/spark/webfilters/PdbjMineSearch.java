@@ -33,7 +33,7 @@ import scala.Tuple2;
  * @since 0.1.0
  *
  */
-public class MineSearch implements Function<Tuple2<String, StructureDataInterface>, Boolean> {
+public class PdbjMineSearch implements Function<Tuple2<String, StructureDataInterface>, Boolean> {
     private static final long serialVersionUID = -4794067375376198086L;
     private static final String SERVICELOCATION = "https://pdbj.org/rest/mine2_sql";
     private Set<String> pdbIds;
@@ -47,15 +47,15 @@ public class MineSearch implements Function<Tuple2<String, StructureDataInterfac
      *            query in SQL format
      * @throws IOException
      */
-    public MineSearch(String sqlQuery) throws IOException {
+    public PdbjMineSearch(String sqlQuery) throws IOException {
         this(sqlQuery, "pdbid", false);
     }
 
-    public MineSearch(String sqlQuery, String pdbidField) throws IOException {
+    public PdbjMineSearch(String sqlQuery, String pdbidField) throws IOException {
         this(sqlQuery, pdbidField, false);
     }
 
-    public MineSearch(String sqlQuery, String pdbidField, Boolean chainLevel) throws IOException {
+    public PdbjMineSearch(String sqlQuery, String pdbidField, Boolean chainLevel) throws IOException {
         this.chainLevel = chainLevel;
         String encodedSQL = URLEncoder.encode(sqlQuery, "UTF-8");
 
