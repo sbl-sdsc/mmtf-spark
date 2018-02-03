@@ -1,15 +1,10 @@
 package edu.sdsc.mmtf.spark.datasets.demos;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
-
 import static org.apache.spark.sql.functions.col;
 import static org.apache.spark.sql.functions.upper;
+
+import java.io.IOException;
+
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
@@ -17,8 +12,8 @@ import org.apache.spark.sql.SparkSession;
 import edu.sdsc.mmtf.spark.datasets.PdbjMineDataset;
 
 /**
- * This demo runs a PDBj Mine 2 Search web service using an SQL query and returns 
- * a dataset.
+ * This demo shows how to query metadata from the PDB archive using
+ * the PDBj Mine 2 web service. 
  * 
  * <p> This example queries the _citation category in .cif files. Each category
  * represents a table, and the fields represent the database columns to be queried.
@@ -43,7 +38,7 @@ import edu.sdsc.mmtf.spark.datasets.PdbjMineDataset;
  * <p>
  * See <a href="https://pdbj.org/help/mine2-sql"> Mine 2 SQL</a>
  * <p>
- * Design queries using the <a href="https://pdbj.org/mine/sql">PDBj Mine 2
+ * Design queries using the interactive <a href="https://pdbj.org/mine/sql">PDBj Mine 2
  * query service</a>.
  * 
  * @author Peter Rose
@@ -51,13 +46,13 @@ import edu.sdsc.mmtf.spark.datasets.PdbjMineDataset;
  * @since 0.2.0
  *
  */
-public class PdbjMineDemo {
+public class PdbMetadataDemo {
 
    public static void main(String[] args) throws IOException {
-	   SparkSession spark = SparkSession.builder().master("local[*]").appName(PdbjMineDemo.class.getSimpleName())
+	   SparkSession spark = SparkSession.builder().master("local[*]").appName(PdbMetadataDemo.class.getSimpleName())
                .getOrCreate();
 
-	   // query the following fields from the -citation category using PDBj's Mine2 web service:
+	   // query the following fields from the _citation category using PDBj's Mine2 web service:
 	   // _citation.journal_abbrev, _citation.pdbx_database_id_PubMed, _citation.year 
 	   
 	   // (note, mixed case column names must be quoted and escaped with \" )
@@ -82,7 +77,7 @@ public class PdbjMineDemo {
 	   ds = ds.filter("pdbx_database_id_PubMed > 0");
 	   System.out.println("Entries with PubMed Ids: " + ds.count());
 	   
-	   // show growths of papers in PubMed
+	   // show growth of papers in PubMed
 	   System.out.println("PubMed Ids per year: ");
 	   ds.groupBy("year").count().sort(col("year").desc()).show(10, false);
 
