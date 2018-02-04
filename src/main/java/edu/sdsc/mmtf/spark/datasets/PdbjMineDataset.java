@@ -7,7 +7,13 @@ import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.Arrays;
+import java.util.List;
 
+import static org.apache.spark.sql.functions.col;
+import static org.apache.spark.sql.functions.lit;
+import static org.apache.spark.sql.functions.upper;
+import static org.apache.spark.sql.functions.concat;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
@@ -49,10 +55,29 @@ public class PdbjMineDataset {
         SparkSession spark = SparkSession.builder().getOrCreate();
 
         // load temporary CSV file into Spark dataset
-        return spark.read()
+        Dataset<Row> ds = spark.read()
                 .format("csv").option("header", "true")
                 .option("inferSchema", "true")
  //               .option("parserLib", "UNIVOCITY") 
                 .load(tempFile.toString());
+        
+        // rename/concatenate columns to assign 
+        // consistent primary keys to datasets
+        List<String> columns = Arrays.asList(ds.columns());
+        
+        if (columns.contains("pdbid")) {
+            // this project uses upper case pdbids
+            ds = ds.withColumn("pdbid", upper(col("pdbid")));
+            
+            if (columns.contains("chain")) {
+               ds = ds.withColumn("structureChainId", 
+                       concat(col("pdbid"), lit("."), col("chain")));
+               ds = ds.drop("pdbid", "chain");
+            } else {
+               ds = ds.withColumnRenamed("pdbid", "structureId") ;
+            }
+        }
+        
+        return ds;
     }
 }

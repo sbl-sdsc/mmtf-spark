@@ -12,14 +12,14 @@ import org.apache.spark.sql.SparkSession;
 import edu.sdsc.mmtf.spark.datasets.PdbjMineDataset;
 
 /**
- * This demo shows how to query metadata from the PDB archive using
- * the PDBj Mine 2 web service. 
+ * This demo shows how to query metadata from the PDB archive. 
  * 
- * <p> This example queries the _citation category in .cif files. Each category
- * represents a table, and the fields represent the database columns to be queried.
+ * <p> This example queries the _citation category. Each category
+ * represents a table, and fields represent database columns (see
+ * <a href="https://pdbj.org/mine-rdb-docs">available tables and columns</a>.
  * 
- * <p> Example 100D.cif:
- * # 
+ * <p> Example data from 100D.cif:
+ * <pre>
  * _citation.id                        primary 
  * _citation.title                     Crystal structure of ...
  * _citation.journal_abbrev            'Nucleic Acids Res.' 
@@ -34,11 +34,13 @@ import edu.sdsc.mmtf.spark.datasets.PdbjMineDataset;
  * _citation.book_publisher            ? 
  * _citation.pdbx_database_id_PubMed   7816639 
  * _citation.pdbx_database_id_DOI      10.1093/nar/22.24.5466 
+ * </pre>
  *
- * <p>
- * See <a href="https://pdbj.org/help/mine2-sql"> Mine 2 SQL</a>
- * <p>
- * Design queries using the interactive <a href="https://pdbj.org/mine/sql">PDBj Mine 2
+ * <p> Data are provided through
+ * <a href="https://pdbj.org/help/mine2-sql">Mine 2 SQL</a>
+ * 
+ * <p> Queries can be designed with the interactive 
+ * <a href="https://pdbj.org/mine/sql">PDBj Mine 2
  * query service</a>.
  * 
  * @author Peter Rose
@@ -59,18 +61,14 @@ public class PdbMetadataDemo {
 	   String sqlQuery = "SELECT pdbid, journal_abbrev, \"pdbx_database_id_PubMed\", year from citation WHERE id = 'primary'";
 	   Dataset<Row>ds = PdbjMineDataset.getDataset(sqlQuery);
 	   
-	   // rename to standard field name and upper case id for compatibility with this project
-	   ds = ds.withColumnRenamed("pdbid", "structureId");
-	   ds = ds.withColumn("structureId", upper(col("structureId")));
-	   
-	   System.out.println("Some example results for query: " + sqlQuery);
+	   System.out.println("First 10 results from query: " + sqlQuery);
 	   ds.show(10, false);
 	    
 	   // filter out unpublished entries (they contain the word "published" in various upper/lower case combinations)
 	   ds = ds.filter("UPPER(journal_abbrev) NOT LIKE '%PUBLISHED%'");
 	   
 	   // print the top 10 journals
-	   System.out.println("Top 10 journals publishing PDB structures:");
+	   System.out.println("Top 10 journals that publish PDB structures:");
 	   ds.groupBy("journal_abbrev").count().sort(col("count").desc()).show(10, false);
 	
 	   // filter out entries without a PubMed Id (is -1 if PubMed Id is not available)

@@ -118,8 +118,8 @@
 					<forkCount>2</forkCount>
 
 					<excludes>
-						<!-- we exclude by default the long running tests, they will only be 
-							executed if explicitly called -->
+						<!-- we exclude by default long running tests, 
+						     they will only be executed if explicitly called -->
 						<exclude>**/ContainsDSaccharideChainTest.java</exclude>
 						<exclude>**/OrFilterTest.java</exclude>
 						<exclude>**/AdvancedQueryTest.java</exclude>
@@ -128,6 +128,7 @@
 						<exclude>**/CustomReportQueryTest.java</exclude>
 						<exclude>**/WildTypeTest.java</exclude>
 						<exclude>**/CustomReportServiceTest.java</exclude>
+						<exclude>**/PdbjMineDatasetTest.java</exclude>
 					</excludes>
 				</configuration>
 			</plugin>

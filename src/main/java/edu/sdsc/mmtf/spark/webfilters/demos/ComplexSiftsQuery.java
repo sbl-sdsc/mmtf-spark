@@ -17,13 +17,13 @@ import edu.sdsc.mmtf.spark.webfilters.PdbjMineSearch;
  *   
  * @author Gert-Jan Bekker
  */
-public class SiftsQuery 
+public class ComplexSiftsQuery 
 {
     public static void main( String[] args ) throws IOException
     {
         // goal: use an sql query to get a list of pdbids, then filter the MMTF-DB to only include those entries
     	
-		SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(SiftsQuery.class.getSimpleName());
+		SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(ComplexSiftsQuery.class.getSimpleName());
 		JavaSparkContext sc = new JavaSparkContext(conf);
 	    
 		// Retrieve PDB chain sequences matching to the Pfam accession "PF00046" (Homeobox) 
@@ -48,9 +48,8 @@ public class SiftsQuery
                 .flatMapToPair(new StructureToPolymerChains())
                 .filter(new PdbjMineSearch(sql, "structureChainId", true));
         
-        System.out.println("Number of entries in MMTF matching query: " + pdb.count());
+        System.out.println("Number of entries matching query: " + pdb.count());
         
-        sc.close();
-        
+        sc.close();        
     }
 }
