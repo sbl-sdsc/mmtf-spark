@@ -1,7 +1,6 @@
 package edu.sdsc.mmtf.spark.datasets.demos;
 
 import static org.apache.spark.sql.functions.col;
-import static org.apache.spark.sql.functions.upper;
 
 import java.io.IOException;
 
@@ -16,7 +15,7 @@ import edu.sdsc.mmtf.spark.datasets.PdbjMineDataset;
  * 
  * <p> This example queries the _citation category. Each category
  * represents a table, and fields represent database columns (see
- * <a href="https://pdbj.org/mine-rdb-docs">available tables and columns</a>.
+ * <a href="https://pdbj.org/mine-rdb-docs">available tables and columns</a>).
  * 
  * <p> Example data from 100D.cif:
  * <pre>
@@ -55,9 +54,8 @@ public class PdbMetadataDemo {
                .getOrCreate();
 
 	   // query the following fields from the _citation category using PDBj's Mine2 web service:
-	   // _citation.journal_abbrev, _citation.pdbx_database_id_PubMed, _citation.year 
-	   
-	   // (note, mixed case column names must be quoted and escaped with \" )
+	   // journal_abbrev, pdbx_database_id_PubMed, year.   
+	   // Note, mixed case column names must be quoted and escaped with \".
 	   String sqlQuery = "SELECT pdbid, journal_abbrev, \"pdbx_database_id_PubMed\", year from citation WHERE id = 'primary'";
 	   Dataset<Row>ds = PdbjMineDataset.getDataset(sqlQuery);
 	   
