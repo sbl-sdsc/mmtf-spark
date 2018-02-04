@@ -39,7 +39,7 @@ Example of retrieving PDB annotations from the SIFTS project
 [(see SiftsDataDemo.java)](src/main/java/edu/sdsc/mmtf/spark/datasets/demos/SiftsDataDemo.java).
 
 ```
-spark-submit --master local --class edu.sdsc.mmtf.spark.datasets.demos.PdbMetadataDemo  INSTALL_DIRECTORY/mmtf-spark/target/mmtf-spark-0.2.0-SNAPSHOT.jar
+spark-submit --master local --class edu.sdsc.mmtf.spark.datasets.demos.SiftsDataDemo INSTALL_DIRECTORY/mmtf-spark/target/mmtf-spark-0.2.0-SNAPSHOT.jar
 ```
 
 Example with command line arguments. This example reads the PDB files
