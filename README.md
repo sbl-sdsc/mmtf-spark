@@ -22,7 +22,7 @@ For high-performance, parallel processing, *mmtf-spark* can read the PDB archive
 
 ## Running a Demo Application using spark-submit
 
-Simple example of running a structural query
+Example of running a simple structural query
 [(see PolyPeptideChainStatistics.java)](src/main/java/edu/sdsc/mmtf/spark/mappers/demos/PolyPeptideChainStatistics.java).
 
 ```
@@ -30,6 +30,13 @@ spark-submit --master local --class edu.sdsc.mmtf.spark.mappers.demos.PolyPeptid
 ```
 Example of retrieving PDB metadata
 [(see PdbMetadataDemo.java)](src/main/java/edu/sdsc/mmtf/spark/datasets/demos/PdbMetadataDemo.java).
+
+```
+spark-submit --master local --class edu.sdsc.mmtf.spark.datasets.demos.PdbMetadataDemo  INSTALL_DIRECTORY/mmtf-spark/target/mmtf-spark-0.2.0-SNAPSHOT.jar
+```
+
+Example of retrieving PDB annotations from the SIFTS project
+[(see SiftsDataDemo.java)](src/main/java/edu/sdsc/mmtf/spark/datasets/demos/SiftsDataDemo.java).
 
 ```
 spark-submit --master local --class edu.sdsc.mmtf.spark.datasets.demos.PdbMetadataDemo  INSTALL_DIRECTORY/mmtf-spark/target/mmtf-spark-0.2.0-SNAPSHOT.jar
