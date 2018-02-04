@@ -22,11 +22,18 @@ import scala.Tuple2;
 
 /**
  * This filter runs an PDBj Mine 2 Search web service using an SQL query.
+ * This demo shows how to query metadata from the PDB archive. 
  * 
- * <p>
- * See <a href="https://pdbj.org/help/mine2-sql"> Mine 2 SQL</a>
- * <p>
- * Design queries using the <a href="https://pdbj.org/mine/sql">PDBj Mine 2
+ * 
+ * <p> This example queries the _citation category. Each category
+ * represents a table, and fields represent database columns (see
+ * <a href="https://pdbj.org/mine-rdb-docs">available tables and columns</a>.
+ * 
+ * <p> Data are provided through
+ * <a href="https://pdbj.org/help/mine2-sql">Mine 2 SQL</a>
+ * 
+ * <p> Queries can be designed with the interactive 
+ * <a href="https://pdbj.org/mine/sql">PDBj Mine 2
  * query service</a>.
  * 
  * @author Gert-Jan Bekker
