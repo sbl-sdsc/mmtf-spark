@@ -2,6 +2,7 @@ package edu.sdsc.mmtf.spark.datasets.demos;
 
 import java.io.IOException;
 
+import static org.apache.spark.sql.functions.col;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
@@ -49,13 +50,16 @@ public class PdbLigandDemo {
 
 	   // find non-polymeric chemical components that contain carbon 
 	   // and have a formula weight > 150 da
-	   String sqlQuery = "SELECT pdbid, id, formula, formula_weight, name from chem_comp "
-	           + " WHER type = 'non-polymer' AND formula LIKE 'C%' AND formula_weight > 150 LIMIT 10";
-	   Dataset<Row>ds = PdbjMineDataset.getDataset(sqlQuery);
-	   
-	   System.out.println("First 10 results from query: " + sqlQuery);
-	   ds.show(10, false);
+        String sqlQuery = "SELECT pdbid, id, formula, formula_weight, name from chem_comp "
+                + " WHERE type = 'non-polymer' AND formula LIKE 'C%' AND formula_weight > 150";
+        Dataset<Row> ds = PdbjMineDataset.getDataset(sqlQuery);
 
-	   spark.close();
+        System.out.println("First 10 results from query: " + sqlQuery);
+        ds.show(10, false);
+
+        System.out.println("Top 10 ligands in PDB:");
+        ds.groupBy("id").count().sort(col("count").desc()).show(10);
+
+        spark.close();
    }
 }
