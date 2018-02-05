@@ -12,37 +12,38 @@ import edu.sdsc.mmtf.spark.io.MmtfReader;
 import edu.sdsc.mmtf.spark.webfilters.WildType;
 
 /**
- * @author peter
+ * This demo selects protein sequences that do not contain mutations in
+ * comparison with the reference UniProt sequences.
+ * 
+ * Expression tags: Some PDB entries include expression tags that were added
+ * during the experiment. Select "No" to filter out sequences with expression
+ * tags. Percent coverage of UniProt sequence: PDB entries may contain only a
+ * portion of the referenced UniProt sequence. The "Percent coverage of UniProt
+ * sequence" option defines how much of a UniProt sequence needs to be contained
+ * in a PDB entry.
+ * 
+ * @author Peter Rose
+ * @since 0.2.0
  *
  */
 public class WildTypeQuery {
 
 	/**
-	 * @param args
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
 
-		String path = MmtfReader.getMmtfReducedPath();
-	    
-	    long start = System.nanoTime();
-	    
-	    SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(WildTypeQuery.class.getSimpleName());
-	    JavaSparkContext sc = new JavaSparkContext(conf);
-		
-	    boolean includeExpressionTags = true;
-	    int sequenceCoverage = 95;
-	    
-	    long count = MmtfReader
-	    		.readSequenceFile(path, sc)
-	    		.filter(new WildType(includeExpressionTags, sequenceCoverage))
-	    		.count();
-	    		
-	    System.out.println(count);
-	    long end = System.nanoTime();
-	    
-	    System.out.println("Time: " + (end-start)/1E9 + "sec.");
-	    
-	    sc.close();
+		SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(WildTypeQuery.class.getSimpleName());
+		JavaSparkContext sc = new JavaSparkContext(conf);
+
+		boolean includeExpressionTags = true;
+		int sequenceCoverage = 95;
+
+		long count = MmtfReader.readReducedSequenceFile(sc)
+				.filter(new WildType(includeExpressionTags, sequenceCoverage)).count();
+
+		System.out.println(count);
+
+		sc.close();
 	}
 }

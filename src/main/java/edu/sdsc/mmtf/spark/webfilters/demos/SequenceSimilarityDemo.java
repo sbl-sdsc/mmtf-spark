@@ -13,7 +13,11 @@ import edu.sdsc.mmtf.spark.mappers.StructureToPolymerChains;
 import edu.sdsc.mmtf.spark.webfilters.SequenceSimilarity;
 
 /**
+ * This demo filters PDB chains by sequence similarity using
+ * RCSB PDB webservices.
+ * 
  * @author Peter Rose
+ * @since 0.2.0
  *
  */
 public class SequenceSimilarityDemo {

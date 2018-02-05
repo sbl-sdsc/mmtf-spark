@@ -13,6 +13,19 @@ import scala.Tuple2;
  * For details see 
  * <a href="https://www.rcsb.org/pdb/staticHelp.do?p=help/advancedsearch/chemSmiles.html">Chemical Structure Search</a>.
  * 
+ * <p>Example 1: find structures that contain a substructure
+ * <pre><code>
+ *   pdb = pdb.filter(new ChemicalStructureQuery("OC(=O)CCCC[C@@H]1SC[C@@H]2NC(=O)N[C@H]12”,
+ *                                               ChemicalStructureQuery.SUBSTRUCTURE, 0));
+ *</pre></code>
+ *
+ * <p>Example 2: find structures that are >= 70% similar to a query structure
+ * <pre><code>
+ *   int similarity = 70;
+ *   pdb = pdb.filter(new ChemicalStructureQuery("OC(=O)CCCC[C@@H]1SC[C@@H]2NC(=O)N[C@H]12”,                 
+ *                                               ChemicalStructureQuery.SIMILAR, similarity));
+ *</pre></code>
+ * 
  * @author Peter Rose
  * @since 0.1.0
  *
