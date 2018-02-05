@@ -270,7 +270,7 @@ public class DrugBankDataset {
 
     /**
      * Returns an input stream for a given URL using authentication. This method
-     * follow redirected URLs.
+     * follows redirected URLs.
      * 
      * @param url
      * @param username

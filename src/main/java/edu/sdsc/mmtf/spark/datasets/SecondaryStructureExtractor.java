@@ -19,15 +19,13 @@ import scala.Tuple2;
  * a chain. The input to this class must be a single protein chain.
  * 
  * <p>Example: get dataset of secondary structure
- * <pre>
- * {@code
+ * <pre><code>
  * pdb.flatMapToPair(new StructureToPolymerChains())
  *    .filter(new ContainsLProteinChain());
  *    
  * Dataset<Row> secStruct = SecondaryStructureExtractor.getDataset(pdb);
  * secStruct.show(10);
- * }
- * </pre>
+ * </pre></code>
  * 
  * @author Peter Rose
  * @since 0.1.0

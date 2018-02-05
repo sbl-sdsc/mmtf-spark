@@ -19,7 +19,7 @@ import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
 
 /**
- * This filter runs an PDBj Mine 2 Search web service using an SQL query.
+ * This filter runs a PDBj Mine 2 Search webservice using an SQL query.
  * 
  * <p>
  * See <a href="https://pdbj.org/help/mine2-sql"> Mine 2 SQL</a>
