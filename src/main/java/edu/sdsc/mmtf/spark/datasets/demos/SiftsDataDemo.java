@@ -80,10 +80,10 @@ public class SiftsDataDemo {
         scop.show(10);
 
         // get PDB chain to Enzyme classification (EC) mappings
-        String enzymeQuery = "SELECT * FROM sifts.pdb_chain_enzyme LIMIT 10";
+        String enzymeQuery = "SELECT * FROM sifts.pdb_chain_enzyme LIMIT 1000";
         Dataset<Row> enzyme = PdbjMineDataset.getDataset(enzymeQuery);
         System.out.println("First 10 results for query: " + enzymeQuery);
-        enzyme.show(10);
+        enzyme.show(1000);
 
         // get PDB chain to Gene Ontology term mappings
         String goQuery = "SELECT * FROM sifts.pdb_chain_go LIMIT 10";

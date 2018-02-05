@@ -11,40 +11,29 @@ import edu.sdsc.mmtf.spark.io.MmtfReader;
 import edu.sdsc.mmtf.spark.webfilters.PdbjMineSearch;
 
 /**
- * PDBj Mine 2 RDB keyword search query and MMTF filtering using pdbid
- *  This filter searches the `keyword` column in the brief_summary table for a keyword and returns a couple of columns for the matching entries
- *  
- *  @author Gert-Jan Bekker
+ * KeywordSearch shows how to select a subset of PDB structures by 
+ * a keyword search using the PDBj Mine 2 Search web service.
+ * 
+ * @author Gert-Jan Bekker
+ * @since 0.1.0
  */
-public class KeywordSearch 
-{
-    public static void main( String[] args ) throws IOException
-    {
-        // goal: use an sql query to get a list of pdbids, then filter the MMTF-DB to only include those entries
-    	
+public class KeywordSearch {
+	public static void main(String[] args) throws IOException {
+		
 		SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(KeywordSearch.class.getSimpleName());
 		JavaSparkContext sc = new JavaSparkContext(conf);
-		
-		String path = System.getProperty("MMTF_FULL");
-	    if (path == null) {
-	    	System.err.println("Environment variable for Hadoop sequence file has not been set");
-	    	System.exit(-1);
-	    }
-	    
-	    // read PDB in MMTF format
-	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.readSequenceFile(path, sc);
 
-	    // do a keyword search and get the pdbid from the brief_summary table, finally order by the hit_score
-        String sql = "select pdbid, resolution, biol_species, db_uniprot, db_pfam, hit_score from keyword_search('porin') order by hit_score desc";
+		String sqlQuery = "SELECT pdbid from keyword_search('porin')";
+
+		// read PDB and filter by keyword search
+		JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader
+				.readReducedSequenceFile(sc)
+				.filter(new PdbjMineSearch(sqlQuery));
+
+		pdb.keys().foreach(k -> System.out.println(k));
 		
-        pdb.filter(new PdbjMineSearch(sql));
-        // simply run the query
-        PdbjMineSearch search = new PdbjMineSearch(sql); // if no further parameters are given, `pdbid` column will be used for filtering without chain-level
-//        search.dataset.show(10); // output the returned data (10 items) => this can be further filtered or used directly in your service
-        
-        System.out.println("Number of entries in MMTF library matching query: " + pdb.filter(search).count());
-		
-        sc.close();
-        
-    }
+		System.out.println("Number of entries matching query: " + pdb.count());
+
+		sc.close();
+	}
 }

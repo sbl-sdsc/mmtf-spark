@@ -42,6 +42,8 @@ import edu.sdsc.mmtf.spark.webfilters.PdbjMineSearch;
  * 
  * @author Gert-Jan Bekker
  * @author Peter Rose
+ * @since 0.2.0
+ * 
  */
 public class AuthorSearchDemo {
     public static void main(String[] args) throws IOException {

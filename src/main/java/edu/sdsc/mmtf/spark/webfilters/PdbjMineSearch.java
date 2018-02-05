@@ -14,10 +14,11 @@ import java.util.Set;
 
 import org.apache.spark.api.java.function.Function;
 import org.apache.spark.sql.Dataset;
+import org.apache.spark.sql.Encoders;
 import org.apache.spark.sql.Row;
-import org.apache.spark.sql.SparkSession;
 import org.rcsb.mmtf.api.StructureDataInterface;
 
+import edu.sdsc.mmtf.spark.datasets.PdbjMineDataset;
 import scala.Tuple2;
 
 /**
@@ -41,8 +42,7 @@ public class PdbjMineSearch implements Function<Tuple2<String, StructureDataInte
     private static final long serialVersionUID = -4794067375376198086L;
     private static final String SERVICELOCATION = "https://pdbj.org/rest/mine2_sql";
     private Set<String> pdbIds;
-    private Dataset<Row> dataset;
-    private boolean chainLevel;
+    private boolean chainLevel = false;
 
     /**
      * Fetches data using the PDBj Mine 2 SQL service
@@ -51,16 +51,8 @@ public class PdbjMineSearch implements Function<Tuple2<String, StructureDataInte
      *            query in SQL format
      * @throws IOException
      */
-    public PdbjMineSearch(String sqlQuery) throws IOException {
-        this(sqlQuery, "pdbid", false);
-    }
+	public PdbjMineSearch(String sqlQuery) throws IOException {
 
-    public PdbjMineSearch(String sqlQuery, String pdbidField) throws IOException {
-        this(sqlQuery, pdbidField, false);
-    }
-
-    public PdbjMineSearch(String sqlQuery, String pdbidField, Boolean chainLevel) throws IOException {
-        this.chainLevel = chainLevel;
         String encodedSQL = URLEncoder.encode(sqlQuery, "UTF-8");
 
         URL u = new URL(SERVICELOCATION + "?format=csv&q=" + encodedSQL);
@@ -71,23 +63,24 @@ public class PdbjMineSearch implements Function<Tuple2<String, StructureDataInte
         Files.copy(in, tempFile, StandardCopyOption.REPLACE_EXISTING);
         in.close();
 
-        SparkSession spark = SparkSession.builder().getOrCreate();
-
-        // load temporary CSV file into Spark dataset
-        dataset = spark.read()
-                .format("csv").option("header", "true")
-                .option("inferSchema", "true")
-                .option("parserLib", "UNIVOCITY") // <-- This is the
-                                                  // configuration that solved
-                                                  // the issue.
-                .load(tempFile.toString());
-
+        Dataset<Row> ds = PdbjMineDataset.getDataset(sqlQuery);
+        
+        // extract structureIds and structureChainIds to be used for filtering
         pdbIds = new HashSet<>();
-        // check whether there even is a pdbid field...
-        if (Arrays.asList(dataset.columns()).contains(pdbidField)) {
-            List<Row> rows = dataset.select(pdbidField).collectAsList();
-            for (Row r : rows)
-                pdbIds.add(r.getString(0).toUpperCase());
+        
+        List<String> columns = Arrays.asList(ds.columns());
+        if (columns.contains("structureId")) {
+            chainLevel = false;
+            pdbIds.addAll(new HashSet<String>(ds.select("structureId").as(Encoders.STRING()).collectAsList()));
+        }
+            
+        if (columns.contains("structureChainId")) {
+             chainLevel = true;
+        	 List<String> ids = ds.select("structureChainId").as(Encoders.STRING()).collectAsList();
+        	 for (String id: ids) {
+                pdbIds.add(id); // structureChainId (e.g., 4HHB.A)
+                pdbIds.add(id.substring(0,4)); // structureId (e.g., 4HHB
+         } 
         }
     }
 
