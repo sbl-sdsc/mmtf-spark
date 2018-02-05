@@ -5,7 +5,6 @@ import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.rcsb.mmtf.api.StructureDataInterface;
 
-import edu.sdsc.mmtf.spark.analysis.TraverseStructureHierarchy;
 import edu.sdsc.mmtf.spark.io.MmtfReader;
 
 /**

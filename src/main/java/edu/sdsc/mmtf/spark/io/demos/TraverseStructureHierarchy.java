@@ -1,4 +1,4 @@
-package edu.sdsc.mmtf.spark.analysis;
+package edu.sdsc.mmtf.spark.io.demos;
 
 import java.util.Arrays;
 import java.util.List;
@@ -9,7 +9,6 @@ import org.apache.spark.api.java.JavaSparkContext;
 import org.rcsb.mmtf.api.StructureDataInterface;
 
 import edu.sdsc.mmtf.spark.io.MmtfReader;
-import edu.sdsc.mmtf.spark.io.demos.ReadMmtfReduced;
 import edu.sdsc.mmtf.spark.utils.DsspSecondaryStructure;
 
 /**
