@@ -59,6 +59,9 @@ public class PdbLigandDemo {
 
         System.out.println("Top 10 ligands in PDB:");
         ds.groupBy("id").count().sort(col("count").desc()).show(10);
+        
+        System.out.println("Formula weight (>150) statistics:");
+        ds.describe("formula_weight").show();
 
         spark.close();
    }
