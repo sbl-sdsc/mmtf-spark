@@ -27,6 +27,7 @@ public class SecondaryStructureSegmentExtractor {
 	/**
 	 * Returns a dataset of sequence segments of the specified length and 
 	 * the DSSP Q8 and DSSP Q3 code of the center residue in a segment.
+	 * 
 	 * @param structureRDD structure
 	 * @param length segment length, must be an odd number
 	 * @return dataset of segments

@@ -22,14 +22,13 @@ import org.apache.spark.sql.SparkSession;
  * supported field names.</a>
  * <p>
  * Reference: The RCSB Protein Data Bank: redesigned web site and web services
- * 2011 Nucleic Acids Res. 39: D392-D401. See
+ * (2011) Nucleic Acids Res. 39: D392-D401. See
  * <a href="https://dx.doi.org/10.1093/nar/gkq1021">doi:10.1093/nar/gkq1021</a>
  * 
  * <p>
  * Example: Retrieve PubMedCentral, PubMed ID, and Deposition date
  * 
- * <pre>
- * <code>
+ * <pre><code>
  * 	Dataset<Row> ds = CustomReportService.getDataset("pmc", "pubmedId", "depositionDate");
  * 	ds.printSchema();
  * 	ds.show(5);
@@ -40,7 +39,7 @@ import org.apache.spark.sql.SparkSession;
  * 
  */
 public class CustomReportService {
-	public static final String SERVICELOCATION = "https://www.rcsb.org/pdb/rest/customReport";
+	public static final String SERVICE_LOCATION = "https://www.rcsb.org/pdb/rest/customReport";
 	private static final String CURRENT_URL = "?pdbids=*&service=wsfile&format=csv&primaryOnly=1&customReportColumns=";
 
 	/**
@@ -100,7 +99,7 @@ public class CustomReportService {
 	 * @return input stream to response
 	 */
 	private static InputStream postQuery(String url) throws IOException {
-		URL u = new URL(SERVICELOCATION);
+		URL u = new URL(SERVICE_LOCATION);
 
 		String encodedUrl = URLEncoder.encode(url, "UTF-8");
 

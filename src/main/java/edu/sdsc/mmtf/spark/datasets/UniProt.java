@@ -14,9 +14,10 @@ import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
 
 /**
- * This class <a href="https://www.uniprot.org/downloads">downloads</a> and reads
- * UniProt sequence files in the FASTA format and converts them to datasets. This
- * class reads the following files: SWISS_PROT, TREMBL, UNIREF50, UNIREF90, UNIREF100.
+ * This class <a href="https://www.uniprot.org/downloads">downloads</a> and
+ * reads UniProt sequence files in the FASTA format and converts them to
+ * datasets. This class reads the following files: SWISS_PROT, TREMBL, UNIREF50,
+ * UNIREF90, UNIREF100.
  * 
  * The datasets have the following
  * <a href="https://www.uniprot.org/help/fasta-headers">columns</a>.
@@ -24,29 +25,27 @@ import org.apache.spark.sql.SparkSession;
  * <p>
  * Example: download, read, and save the SWISS_PROT dataset
  * 
- * <pre>
- * 	{@code
+ * <pre><code>
  * 	Dataset<Row> ds = UniProt.getDataset(UniProtDataset.SWISS_PROT);
  * 	ds.printSchema();
  * 	ds.show(5);
  *  ds.write().mode("overwrite").format("parquet").save(fileName);
- *  }
- * </pre>
+ * </pre></code>
  * 
  * @author Yue Yu
  * @since 0.1.0
  * 
  */
 public class UniProt {
-	private static String baseUrl = "ftp://ftp.uniprot.org/pub/databases/uniprot/";
-	
+	private static final String UNIPROT_FTP = "ftp://ftp.uniprot.org/pub/databases/uniprot/";
+
 	public enum UniProtDataset {
-		SWISS_PROT(baseUrl + "current_release/knowledgebase/complete/uniprot_sprot.fasta.gz"), 
-		TREMBL(baseUrl + "current_release/knowledgebase/complete/uniprot_trembl.fasta.gz"), 
-		UNIREF50(baseUrl + "uniref/uniref50/uniref50.fasta.gz"), 
-		UNIREF90(baseUrl + "uniref/uniref90/uniref90.fasta.gz"), 
-		UNIREF100(baseUrl + "uniref/uniref100/uniref100.fasta.gz");
-	
+		SWISS_PROT(UNIPROT_FTP + "current_release/knowledgebase/complete/uniprot_sprot.fasta.gz"), TREMBL(
+				UNIPROT_FTP + "current_release/knowledgebase/complete/uniprot_trembl.fasta.gz"), UNIREF50(
+						UNIPROT_FTP + "uniref/uniref50/uniref50.fasta.gz"), UNIREF90(
+								UNIPROT_FTP + "uniref/uniref90/uniref90.fasta.gz"), UNIREF100(
+										UNIPROT_FTP + "uniref/uniref100/uniref100.fasta.gz");
+
 		private final String url;
 
 		UniProtDataset(String url) {
@@ -57,10 +56,12 @@ public class UniProt {
 			return url;
 		}
 	}
-	
+
 	/**
 	 * Returns the specified UniProt dataset.
-	 * @param uniProtDataset name of the UniProt dataset
+	 * 
+	 * @param uniProtDataset
+	 *            name of the UniProt dataset
 	 * @return dataset with sequence and metadata
 	 * @throws IOException
 	 */
@@ -106,7 +107,7 @@ public class UniProt {
 					pw.println(db + "," + uniqueIdentifier + "," + entryName + "," + proteinName + "," + organismName
 							+ "," + geneName + "," + proteinExistence + "," + sequenceVersion + "," + sequence);
 				}
-			    firstTime = false;
+				firstTime = false;
 				sequence = "";
 				tmp = (line.substring(1)).split("\\|");
 				db = tmp[0];
@@ -114,7 +115,8 @@ public class UniProt {
 				tmp[0] = tmp[2];
 
 				if (tmp[0].split(" OS=").length > 2) {
-					tmp[0] = tmp[0].substring(0, tmp[0].split(" OS=")[0].length() + tmp[0].split(" OS=")[1].length() + 4);
+					tmp[0] = tmp[0].substring(0,
+							tmp[0].split(" OS=")[0].length() + tmp[0].split(" OS=")[1].length() + 4);
 				}
 				tmp = tmp[0].split(" SV=", -1);
 				sequenceVersion = tmp.length > 1 ? tmp[1] : "";
@@ -132,7 +134,7 @@ public class UniProt {
 		}
 		pw.println(db + "," + uniqueIdentifier + "," + entryName + "," + proteinName + "," + organismName + ","
 				+ geneName + "," + proteinExistence + "," + sequenceVersion + "," + sequence);
-		
+
 		pw.close();
 		rd.close();
 
@@ -168,7 +170,7 @@ public class UniProt {
 							+ representativeMember + "," + sequence);
 				}
 				firstTime = false;
-				
+
 				sequence = "";
 				tmp[0] = line.substring(1);
 				tmp = tmp[0].split(" RepID=", -1);
@@ -187,7 +189,7 @@ public class UniProt {
 		}
 		pw.println(uniqueIdentifier + "," + clusterName + "," + members + "," + taxon + "," + taxonID + ","
 				+ representativeMember + "," + sequence);
-		
+
 		pw.close();
 		rd.close();
 
@@ -195,7 +197,7 @@ public class UniProt {
 
 		Dataset<Row> dataset = spark.read().format("csv").option("header", "true").option("inferSchema", "true")
 				.load(tempFile.toString());
-		
+
 		return dataset;
 	}
 }
