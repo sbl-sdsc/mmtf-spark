@@ -68,6 +68,14 @@ public class DrugBankDataset {
      * openDrugLinks.show();
      * </pre></code>
      * 
+     * <pre>
+     * +----------+--------------------+-----------+--------------------+
+     * |DrugBankID|          Commonname|        CAS|    StandardInChIKey|
+     * +----------+--------------------+-----------+--------------------+
+     * |   DB00006|         Bivalirudin|128270-60-0|OIRCOABEOLEUMC-GE...|
+     * |   DB00014|           Goserelin| 65807-02-5|BLCLNMBMMGCOAS-UR...|
+     * </pre>
+     * 
      * @return DrugBank dataset
      * @throws IOException
      */

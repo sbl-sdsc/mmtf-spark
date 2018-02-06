@@ -28,7 +28,8 @@ import org.apache.spark.sql.SparkSession;
  * <p>
  * Example: Retrieve PubMedCentral, PubMed ID, and Deposition date
  * 
- * <pre><code>
+ * <pre>
+ * <code>
  * 	Dataset<Row> ds = CustomReportService.getDataset("pmc", "pubmedId", "depositionDate");
  * 	ds.printSchema();
  * 	ds.show(5);
