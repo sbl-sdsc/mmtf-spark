@@ -10,29 +10,34 @@ import edu.sdsc.mmtf.spark.mappers.StructureToSecondaryStructureElements;
 import edu.sdsc.mmtf.spark.ml.JavaRDDToDataset;
 
 /**
- * TODO
+ * Returns a datset of continuous segments of protein sequence with the specified
+ * DSSP secondary structure code (E, H, C) of a minimum length.
+ * <p>Example
+ * <pre>
+ * +-------------+-----+
+ * |sequence     |label|
+ * +-------------+-----+
+ * |TFIVTA       |E    |
+ * |ALTGTYE      |E    |
+ * </pre>
+ * 
  * @author Yue Yu
  * @since 0.1.0
  */
 public class SecondaryStructureElementExtractor {
+	
 
-	/**
-	 * TODO
-	 */
-	public static Dataset<Row> getDataset(JavaPairRDD<String, StructureDataInterface> structureRDD, String label) {
+	 /**
+	  * Returns a datset of continuous segments of protein sequence with the specified
+	  * DSSP secondary structure code (E, H, C) of a minimum length.
+	  * @param structure structure data
+	  * @param label DSSP secondary structure label (E, H, C)
+	  * @param length minimum length of secondary structure segment
+	  * @return
+	  */
+	public static Dataset<Row> getDataset(JavaPairRDD<String, StructureDataInterface> structure, String label, int length) {
 	
-		JavaRDD<Row> rows =  SecondaryStructureExtractor.getJavaRDD(structureRDD)
-				.flatMap(new StructureToSecondaryStructureElements(label));
-
-		return JavaRDDToDataset.getDataset(rows, "sequence", "label");
-	}
-	
-	/**
-	 * TODO
-	 */
-	public static Dataset<Row> getDataset(JavaPairRDD<String, StructureDataInterface> structureRDD, String label, int length) {
-	
-		JavaRDD<Row> rows =  SecondaryStructureExtractor.getJavaRDD(structureRDD)
+		JavaRDD<Row> rows =  SecondaryStructureExtractor.getJavaRDD(structure)
 				.flatMap(new StructureToSecondaryStructureElements(label, length));
 
 		return JavaRDDToDataset.getDataset(rows, "sequence", "label");

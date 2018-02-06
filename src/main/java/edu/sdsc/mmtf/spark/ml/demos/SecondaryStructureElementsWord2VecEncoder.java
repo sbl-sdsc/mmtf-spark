@@ -31,8 +31,8 @@ public class SecondaryStructureElementsWord2VecEncoder {
 
 		String path = MmtfReader.getMmtfReducedPath();
 	    
-		if (args.length != 2) {
-			System.err.println("Usage: " + SecondaryStructureElementsWord2VecEncoder.class.getSimpleName() + " <outputFilePath> + <fileFormat>");
+		if (args.length != 0 && args.length != 2) {
+			System.err.println("Usage: " + SecondaryStructureElementsWord2VecEncoder.class.getSimpleName() + " [<outputFilePath> + <fileFormat>]");
 			System.exit(1);
 		}
 
@@ -54,12 +54,12 @@ public class SecondaryStructureElementsWord2VecEncoder {
 				.flatMapToPair(new StructureToPolymerChains())
                 .filter(new Pisces(sequenceIdentity, resolution));
 			
+		int segmentLength = 11;
+		
 		// extract helical sequence segments
-		Dataset<Row> data = SecondaryStructureElementExtractor.getDataset(pdb, "H");
+		Dataset<Row> data = SecondaryStructureElementExtractor.getDataset(pdb, "H", segmentLength);
 		System.out.println(data.count());
 		data.show(10,false);
-		
-		int segmentLength = 11;
 		
 		// add Word2Vec encoded feature vector
 		ProteinSequenceEncoder encoder = new ProteinSequenceEncoder(data);
@@ -67,15 +67,16 @@ public class SecondaryStructureElementsWord2VecEncoder {
 		int windowSize = (segmentLength-1)/2;
 		int vectorSize = 50;
 		data = encoder.overlappingNgramWord2VecEncode(n, windowSize, vectorSize);	
-		
-		if (args[1].equals("json")) {
-			// coalesce data into a single file
-		    data = data.coalesce(1);
-		}
-		
 		data.show(50,false);
 		
-		data.write().mode("overwrite").format(args[1]).save(args[0]);
+		// optionally, save results
+		if (args.length > 0) {
+			if (args[1].equals("json")) {
+				// coalesce data into a single file
+				data = data.coalesce(1);
+			}
+			data.write().mode("overwrite").format(args[1]).save(args[0]);
+		}
 		
 		long end = System.nanoTime();
 

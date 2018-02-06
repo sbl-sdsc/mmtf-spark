@@ -9,32 +9,35 @@ import org.apache.spark.sql.Row;
 import org.apache.spark.sql.RowFactory;
 
 /**
- * Maps chain sequences to its sequence segments. 
+ * Returns rows of continuous segments of protein sequence with the specified
+ * DSSP secondary structure code (E, H, C) of a minimum length.
  * 
- * TODO
  * @author Yue Yu
+ *
  */
 public class StructureToSecondaryStructureElements implements FlatMapFunction<Row, Row> {
 
 	private static final long serialVersionUID = -4554899194610295337L;
 	private String label;
-	private int length;
-	/*
-	 * Constructor sets the segment length. The length must
-	 * be an odd number
+	private int minLength;
+
+	/**
+	 * Returns a rows of continuous segments of protein sequence with the
+	 * specified DSSP secondary structure code (E, H, C) of a minimum length.
+	 * 
+	 * @param label
+	 *            DSSP label of the secondary structure element (E, H, C)
+	 * @param minLength
+	 *            minimum length of the secondary structure element
 	 */
-	public StructureToSecondaryStructureElements(String label) {
+	public StructureToSecondaryStructureElements(String label, int minLength) {
 		this.label = label;
-		this.length = 4;
+		this.minLength = minLength;
 	}
-	public StructureToSecondaryStructureElements(String label, int length) {
-		this.label = label;
-		this.length = length;
-	}
-	
+
 	@Override
 	public Iterator<Row> call(Row t) throws Exception {
-		//get information from the input Row
+		// get information from the input Row
 		String sequence = t.getString(1);
 		String dsspQ3 = t.getString(6);
 
@@ -42,24 +45,20 @@ public class StructureToSecondaryStructureElements implements FlatMapFunction<Ro
 		String currSequence = "";
 		int j;
 		List<Row> sequences = new ArrayList<>();
-		
-		for (int i = 0; i < sequence.length(); i++)
-		{
+
+		for (int i = 0; i < sequence.length(); i++) {
 			currLength = 0;
 			currSequence = "";
-			for(j = i; j < sequence.length(); j++)
-			{
-				if(dsspQ3.substring(j, j+1).equals(label))
-				{
+			for (j = i; j < sequence.length(); j++) {
+				if (dsspQ3.substring(j, j + 1).equals(label)) {
 					currLength++;
-					currSequence = currSequence.concat(sequence.substring(j, j+1));
-				}
-				else break;
+					currSequence = currSequence.concat(sequence.substring(j, j + 1));
+				} else
+					break;
 			}
 			i += currLength;
-			if(currLength >= length)
-			{
-				sequences.add( RowFactory.create(currSequence, label) );
+			if (currLength >= minLength) {
+				sequences.add(RowFactory.create(currSequence, label));
 			}
 		}
 		return sequences.iterator();
