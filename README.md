@@ -1,4 +1,7 @@
 # mmtf-spark
+
+[!Build Status](https://www.travis-ci.org/sbl-sdsc/mmtf-spark.svg?branch=master)
+
 MMTF-Spark is a Java open source project that provides APIs and sample applications for the scalable mining of 3D biomacromolecular structures, such as the Protein Data Bank (PDB) archive. MMTF-Spark uses Big Data technologies to enable high-performance parallel processing of macromolecular structures. MMTF-Spark use the following technology stack:
 * [Apache Spark](https://spark.apache.org/) a fast and general engine for large-scale distributed data processing.
 * [MMTF](https://mmtf.rcsb.org/) the Macromolecular Transmission Format for compact data storage, transmission and high-performance parsing
