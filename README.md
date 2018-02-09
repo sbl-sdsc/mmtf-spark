@@ -1,5 +1,4 @@
 # mmtf-spark
-
 [![Build Status](https://www.travis-ci.org/sbl-sdsc/mmtf-spark.svg?branch=master)](https://www.travis-ci.org/sbl-sdsc/mmtf-spark)
 [![GitHub License](https://img.shields.io/github/license/sbl-sdsc/mmtf-spark.svg)](https://github.com/sbl-sdsc/mmtf-spark/blob/master/LICENSE)
 [![Version](http://img.shields.io/badge/version-0.2.0-blue.svg?style=flat)](https://github.com/sbl-sdsc/mmtf-spark)
