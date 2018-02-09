@@ -128,7 +128,7 @@ MMTF-Hadoop Sequence files are available in two
 0.1Å coordinate precision, 0.1 B-factor and occupancy precision.
 
 
-Weekly updated MMTF-Hadoop Sequence files can be downloaded and extracted using the
+Weekly updated MMTF-Hadoop Sequence files can also be downloaded and extracted using the
 following commands:
 
 ```
