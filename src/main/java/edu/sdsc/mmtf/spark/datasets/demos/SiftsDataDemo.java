@@ -47,43 +47,43 @@ public class SiftsDataDemo {
         String interproQuery = "SELECT * FROM sifts.pdb_chain_interpro LIMIT 10";
         Dataset<Row> interpro = PdbjMineDataset.getDataset(interproQuery);
         System.out.println("First 10 results for query: " + interproQuery);
-        interpro.show(10);
+        interpro.show();
 
         // get PDB chain to UniProt mappings
         String uniprotQuery = "SELECT * FROM sifts.pdb_chain_uniprot LIMIT 10";
         Dataset<Row> uniprot = PdbjMineDataset.getDataset(uniprotQuery);
         System.out.println("First 10 results for query: " + uniprotQuery);
-        uniprot.show(10);
+        uniprot.show();
 
         // get PDB chain to taxonomy mappings
         String taxonomyQuery = "SELECT * FROM sifts.pdb_chain_taxonomy LIMIT 10";
         Dataset<Row> taxonomy = PdbjMineDataset.getDataset(taxonomyQuery);
         System.out.println("First 10 results for query: " + taxonomyQuery);
-        taxonomy.show(10);
+        taxonomy.show();
 
         // get PDB chain to PFAM mappings
         String pfamQuery = "SELECT * FROM sifts.pdb_chain_pfam LIMIT 10";
         Dataset<Row> pfam = PdbjMineDataset.getDataset(pfamQuery);
         System.out.println("First 10 results for query: " + pfamQuery);
-        pfam.show(10);
+        pfam.show();
 
         // get PDB chain to CATH mappings
         String cathQuery = "SELECT * FROM sifts.pdb_chain_cath_uniprot LIMIT 10";
         Dataset<Row> cath = PdbjMineDataset.getDataset(cathQuery);
         System.out.println("First 10 results for query: " + cathQuery);
-        cath.show(10);
+        cath.show();
 
         // get PDB chain to SCOP mappings
         String scopQuery = "SELECT * FROM sifts.pdb_chain_scop_uniprot LIMIT 10";
         Dataset<Row> scop = PdbjMineDataset.getDataset(scopQuery);
         System.out.println("First 10 results for query: " + scopQuery);
-        scop.show(10);
+        scop.show();
 
         // get PDB chain to Enzyme classification (EC) mappings
-        String enzymeQuery = "SELECT * FROM sifts.pdb_chain_enzyme LIMIT 1000";
+        String enzymeQuery = "SELECT * FROM sifts.pdb_chain_enzyme LIMIT 10";
         Dataset<Row> enzyme = PdbjMineDataset.getDataset(enzymeQuery);
         System.out.println("First 10 results for query: " + enzymeQuery);
-        enzyme.show(1000);
+        enzyme.show();
 
         // get PDB chain to Gene Ontology term mappings
         String goQuery = "SELECT * FROM sifts.pdb_chain_go LIMIT 10";
