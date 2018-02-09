@@ -1,8 +1,8 @@
 # mmtf-spark
 [![Build Status](https://www.travis-ci.org/sbl-sdsc/mmtf-spark.svg?branch=master)](https://www.travis-ci.org/sbl-sdsc/mmtf-spark)
 [![GitHub License](https://img.shields.io/github/license/sbl-sdsc/mmtf-spark.svg)](https://github.com/sbl-sdsc/mmtf-spark/blob/master/LICENSE)
-[![Version](http://img.shields.io/badge/version-0.2.0-blue.svg?style=flat)](https://github.com/sbl-sdsc/mmtf-spark)
-[![Download MMTF](http://img.shields.io/badge/download-MMTF_full-orange.svg?style=flat)](https://mmtf.rcsb.org/v1.0/hadoopfiles/full.tar)
+[![Version](http://img.shields.io/badge/version-0.2.0-yellowgreen.svg?style=flat)](https://github.com/sbl-sdsc/mmtf-spark)
+[![Download MMTF](http://img.shields.io/badge/download-MMTF_full-yellow.svg?style=flat)](https://mmtf.rcsb.org/v1.0/hadoopfiles/full.tar)
 [![Download MMTF Reduced](http://img.shields.io/badge/download-MMTF_reduced-orange.svg?style=flat)](https://mmtf.rcsb.org/v1.0/hadoopfiles/reduced.tar)
 [![Twitter](https://img.shields.io/twitter/url/https/twitter.com/mmtf_spec.svg?style=social)](https://twitter.com/intent/tweet?text=Wow:&url=https%3A%2F%2Ftwitter.com%2Fmmtf_spec)
 
