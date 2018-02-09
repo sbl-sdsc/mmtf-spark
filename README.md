@@ -3,6 +3,7 @@
 [![GitHub License](https://img.shields.io/github/license/sbl-sdsc/mmtf-spark.svg)](https://github.com/sbl-sdsc/mmtf-spark/blob/master/LICENSE)
 [![Version](http://img.shields.io/badge/version-0.2.0-blue.svg?style=flat)](https://github.com/sbl-sdsc/mmtf-spark)
 [![Twitter](https://img.shields.io/twitter/url/https/twitter.com/mmtf_spec.svg?style=social)](https://twitter.com/intent/tweet?text=Wow:&url=https%3A%2F%2Ftwitter.com%2Fmmtf_spec)
+[![Twitter Follow](https://img.shields.io/twitter/follow/espadrine.svg?style=social&label=Follow)](https://twitter.com/mmtf_spec)
 
 
 MMTF-Spark is a Java open source project that provides APIs and sample applications for the scalable mining of 3D biomacromolecular structures, such as the Protein Data Bank (PDB) archive. MMTF-Spark uses Big Data technologies to enable high-performance parallel processing of macromolecular structures. MMTF-Spark use the following technology stack:
