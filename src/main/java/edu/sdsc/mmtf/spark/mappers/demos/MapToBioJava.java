@@ -20,18 +20,16 @@ public class MapToBioJava {
 
 	public static void main(String[] args) throws FileNotFoundException {
 
-		String path = MmtfReader.getMmtfReducedPath();
-	    
 	    SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(MapToBioJava.class.getSimpleName());
 	    JavaSparkContext sc = new JavaSparkContext(conf);
 	    
 	    long count = MmtfReader
-	    		.readSequenceFile(path, sc) // read MMTF hadoop sequence file
+	    		.readReducedSequenceFile(sc) // read MMTF-Hadoop sequence file
 	    		.flatMapToPair(new StructureToPolymerChains())
 	    		.mapValues(new StructureToBioJava())
 	    		.count();
 	    
-	    System.out.println("# structures: " + count);
+	    System.out.println("Number of polymer chains: " + count);
 	    
 	    sc.close();
 	}

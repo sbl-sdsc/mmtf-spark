@@ -27,15 +27,13 @@ public class MapReduceExample {
 	 */
 	public static void main(String[] args) throws FileNotFoundException {
 
-		String path = MmtfReader.getMmtfFullPath();
-
 	    long start = System.nanoTime();
 	    
 	    SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(MapReduceExample.class.getSimpleName());
 	    JavaSparkContext sc = new JavaSparkContext(conf);
 		 
-	    // read PDB in MMTF format
-	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.readSequenceFile(path, sc);
+	    // read PDB from MMTF-Hadoop sequence file
+	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.readFullSequenceFile(sc);
 
 	    // count number of atoms
 	    long numAtoms = pdb.map(t -> t._2.getNumAtoms()).reduce((a,b) -> a+b);

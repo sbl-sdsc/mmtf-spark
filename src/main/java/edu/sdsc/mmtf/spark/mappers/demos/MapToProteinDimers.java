@@ -27,13 +27,15 @@ public class MapToProteinDimers {
 	    SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(MapToProteinDimers.class.getSimpleName());
 	    JavaSparkContext sc = new JavaSparkContext(conf);
 
-	    List<String> pdbIds = Arrays.asList("5IBZ"); // single protein chain 5IBZ -> D2
+	    List<String> pdbIds = Arrays.asList("5IBZ"); // single protein chain 5IBZ 
 	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.downloadFullMmtfFiles(pdbIds, sc);
 	   
-	    pdb = pdb.flatMapToPair(new StructureToBioassembly())
-	            .flatMapToPair(new StructureToProteinDimers(8, 20, true, true));
+	    double cutoffDistance = 8; // if distance between C-beta atoms is less than the cutoff distance, two chains are considered in contact
+	    int minContacts = 20; // minimum number of contacts to qualify as an interaction
+	    pdb = pdb.flatMapToPair(new StructureToBioassembly()) // convert to bioassembly (homotetramer with D2 symmetry)
+	             .flatMapToPair(new StructureToProteinDimers(cutoffDistance, minContacts)); // find all dimers with in bioassembly
 	   
-	    System.out.println("# dimers in 5IBZ bioassembly: " + pdb.count());
+	    System.out.println("Number of dimers in 5IBZ bioassembly: " + pdb.count());
 	    
 	    sc.close();
 	}
