@@ -38,7 +38,7 @@ public class SiftsDataDemo {
                 .getOrCreate();
 
         // get PDB entry to PubMed Id mappings
-        String pubmedQuery = "SELECT * FROM sifts.pdb_pubmed";
+        String pubmedQuery = "SELECT * FROM sifts.pdb_pubmed LIMIT 10";
         Dataset<Row> pubmed = PdbjMineDataset.getDataset(pubmedQuery);
         System.out.println("First 10 results for query: " + pubmedQuery);
         pubmed.show(10);
