@@ -103,17 +103,10 @@ If installation and testing are successful, a *Build Success* message will be pr
 MMTF-Hadoop Sequence files are available in two 
 [representations](https://mmtf.rcsb.org/download.html):
 
-* full: all-atom representation with 0.001Å coordinate precision, 0.01 B-factor and occupancy precision
+* [![Download MMTF](http://img.shields.io/badge/download-MMTF_full-orange.svg?style=flat)](https://mmtf.rcsb.org/v1.0/hadoopfiles/full.tar) all-atom representation with 0.001Å coordinate precision, 0.01 B-factor and occupancy precision 
 
-* reduced: C-alpha atoms only for polypeptides, P-backbone atoms only for polynucleotides, all-atom representation for all other residue types, 
+* [![Download MMTF Reduced](http://img.shields.io/badge/download-MMTF_reduced-orange.svg?style=flat)](https://mmtf.rcsb.org/v1.0/hadoopfiles/reduced.tar)  C-alpha atoms only for polypeptides, P-backbone atoms only for polynucleotides, all-atom representation for all other residue types, 
 0.1Å coordinate precision, 0.1 B-factor and occupancy precision.
-
-
-Weekly updated MMTF-Hadoop Sequence files can be downloaded:
-
-[download full.tar](http://mmtf.rcsb.org/v1.0/hadoopfiles/full.tar)
-
-[download reduced.tar](http://mmtf.rcsb.org/v1.0/hadoopfiles/reduced.tar)
 
 Extract the content from the .tar files by double clicking the file name.
 

@@ -13,8 +13,7 @@ import edu.sdsc.mmtf.spark.io.MmtfReader;
 import edu.sdsc.mmtf.spark.mappers.StructureToBioassembly;
 
 /**
- * Example demonstrating how to generate Biological assemblies
- * for a PDB entry.
+ * Example demonstrating how to generate Biological assemblies for a PDB entry.
  * 
  * @author Peter Rose
  * @since 0.1.0
@@ -23,17 +22,17 @@ import edu.sdsc.mmtf.spark.mappers.StructureToBioassembly;
 public class MapToBioAssembly {
 
 	public static void main(String[] args) {
-		
-	    SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(CustomReportDemo.class.getSimpleName());
-	    JavaSparkContext sc = new JavaSparkContext(conf);
-	    
-	    List<String> pdbIds = Arrays.asList("1HV4"); // single protein chain
-	    JavaPairRDD<String, StructureDataInterface> bioassemblies = MmtfReader
-	            .downloadFullMmtfFiles(pdbIds, sc)
-	            .flatMapToPair(new StructureToBioassembly());
-	    
-	    System.out.println("# bioassemblies for 1HV4: " + bioassemblies.count());
- 
-	    sc.close();
+
+		SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(CustomReportDemo.class.getSimpleName());
+		JavaSparkContext sc = new JavaSparkContext(conf);
+
+		List<String> pdbIds = Arrays.asList("1HV4");
+		JavaPairRDD<String, StructureDataInterface> bioassemblies = MmtfReader
+				.downloadFullMmtfFiles(pdbIds, sc)
+				.flatMapToPair(new StructureToBioassembly());
+
+		System.out.println("Number of bioassemblies for 1HV4: " + bioassemblies.count());
+
+		sc.close();
 	}
 }
