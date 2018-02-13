@@ -18,7 +18,7 @@ import org.rcsb.mmtf.api.StructureDataInterface;
 
 import edu.sdsc.mmtf.spark.mappers.StructureToPolymerChains;
 
-public class MmtfReaderTest {
+public class MmtfImporterTest {
 	private JavaSparkContext sc;
 
     @Rule
@@ -26,7 +26,7 @@ public class MmtfReaderTest {
     
     @Before
 	public void setUp() throws Exception {
-		SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(MmtfReaderTest.class.getSimpleName());
+		SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(MmtfImporterTest.class.getSimpleName());
 	    sc = new JavaSparkContext(conf);
     }
     
@@ -38,15 +38,31 @@ public class MmtfReaderTest {
 	@Test
 	public void test1() throws IOException {
 		Path p = Paths.get("./src/main/resources/files/");
-	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.readMmtfFiles(p.toString(), sc);
+	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfImporter.importPdbFiles(p.toString(), sc);
 	    
-	    assertTrue(pdb.count() == 3);
+	    assertTrue(pdb.count() == 2);
+	}
+	@Test
+	public void test2() throws IOException {
+		Path p = Paths.get("./src/main/resources/files/");
+	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfImporter.importMmcifFiles(p.toString(), sc);
+	    
+	    assertTrue(pdb.count() == 1);
+	}
+	
+	@Test
+	public void test3() throws IOException {
+		Path p = Paths.get("./src/main/resources/files/test");
+	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfImporter.importPdbFiles(p.toString(), sc);
+	    assertTrue(pdb.count() == 1);
+	    pdb = pdb.flatMapToPair(new StructureToPolymerChains());
+	    assertTrue(pdb.count() == 8);
 	}
 
 	@Test
-	public void test2() throws IOException {
+	public void test4() throws IOException {
 		Path p = Paths.get("./src/main/resources/files/test");
-	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.readMmtfFiles(p.toString(), sc);
+	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfImporter.importMmcifFiles(p.toString(), sc);
 	    assertTrue(pdb.count() == 1);
 	    pdb = pdb.flatMapToPair(new StructureToPolymerChains());
 	    assertTrue(pdb.count() == 8);

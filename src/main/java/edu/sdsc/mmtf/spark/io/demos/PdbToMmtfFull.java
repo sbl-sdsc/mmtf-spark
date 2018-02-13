@@ -7,7 +7,7 @@ import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.rcsb.mmtf.api.StructureDataInterface;
 
-import edu.sdsc.mmtf.spark.io.MmtfReader;
+import edu.sdsc.mmtf.spark.io.MmtfImporter;
 import edu.sdsc.mmtf.spark.io.MmtfWriter;
 
 /**
@@ -46,7 +46,7 @@ public class PdbToMmtfFull {
 	    JavaSparkContext sc = new JavaSparkContext(conf);
 		 
 	    // read PDB files recursively starting from the specified top level directory
-	    JavaPairRDD<String, StructureDataInterface> structures = MmtfReader.readPdbFiles(pdbPath, sc);
+	    JavaPairRDD<String, StructureDataInterface> structures = MmtfImporter.importPdbFiles(pdbPath, sc);
 	    
 	    // save as an MMTF-Hadoop Sequence File
 	    MmtfWriter.writeSequenceFile(mmtfPath, sc, structures);

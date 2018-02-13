@@ -7,7 +7,7 @@ import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.rcsb.mmtf.api.StructureDataInterface;
 
-import edu.sdsc.mmtf.spark.io.MmtfReader;
+import edu.sdsc.mmtf.spark.io.MmtfImporter;
 import edu.sdsc.mmtf.spark.io.MmtfWriter;
 
 /**
@@ -49,7 +49,7 @@ public class RosettaToMmtfFull {
         JavaSparkContext sc = new JavaSparkContext(conf);
 
         // read PDB files recursively starting the specified directory
-        JavaPairRDD<String, StructureDataInterface> structures = MmtfReader.readRosettaPdbFiles(pdbPath, sc);
+        JavaPairRDD<String, StructureDataInterface> structures = MmtfImporter.importPdbFiles(pdbPath, sc);
 
         // save as an MMTF-Hadoop Sequence File
         MmtfWriter.writeSequenceFile(mmtfPath, sc, structures);

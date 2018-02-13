@@ -1,46 +1,27 @@
 package edu.sdsc.mmtf.spark.io;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipException;
 
-import org.apache.commons.math3.linear.IllConditionedOperatorException;
 import org.apache.hadoop.io.BytesWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.PairFunction;
-import org.biojava.nbio.structure.AminoAcid;
-import org.biojava.nbio.structure.AminoAcidImpl;
-import org.biojava.nbio.structure.Chain;
-import org.biojava.nbio.structure.PDBHeader;
-import org.biojava.nbio.structure.Structure;
-import org.biojava.nbio.structure.StructureTools;
-import org.biojava.nbio.structure.io.FileParsingParameters;
-import org.biojava.nbio.structure.io.MMCIFFileReader;
-import org.biojava.nbio.structure.io.PDBFileParser;
-import org.biojava.nbio.structure.io.PDBFileReader;
-import org.biojava.nbio.structure.io.mmtf.MmtfStructureWriter;
 import org.rcsb.mmtf.api.StructureDataInterface;
 import org.rcsb.mmtf.dataholders.MmtfStructure;
 import org.rcsb.mmtf.decoder.GenericDecoder;
 import org.rcsb.mmtf.decoder.ReaderUtils;
-import org.rcsb.mmtf.encoder.AdapterToStructureData;
 import org.rcsb.mmtf.serialization.MessagePackSerialization;
 
 import scala.Tuple2;
@@ -249,230 +230,6 @@ public class MmtfReader {
 				})
 				.filter(t -> t != null);
 	}
-	
-	
-	/**
-     * Reads uncompressed PDB files recursively from a given directory path. 
-     * This methods reads files with the .pdb or .ent extension.
-	 * 
-	 * Missing data: bond info, bioAssembly info
-	 * Different data : atom serial number, entity description
-	 * 
-	 * @param path Path to PDB files
-	 * @param sc Spark context
-	 * @return structure data as keyword/value pairs
-	 */
-	public static JavaPairRDD<String, StructureDataInterface> readPdbFiles(String path, JavaSparkContext sc) {
-		return sc
-				.parallelize(getFiles(path))
-				.mapToPair(new PairFunction<File,String, StructureDataInterface>() {
-
-					private static final long serialVersionUID = -5612212642803414037L;
-
-					public Tuple2<String, StructureDataInterface> call(File f) throws Exception {
-						try{
-							if(f.toString().contains(".pdb"))
-							{
-								PDBFileReader pdbreader = new PDBFileReader();
-								Structure struc = pdbreader.getStructure(f.toString()); 
-								AdapterToStructureData writerToEncoder = new AdapterToStructureData();
-								new MmtfStructureWriter(struc, writerToEncoder);
-								return new Tuple2<String, StructureDataInterface>(f.getName().substring(0, f.getName().indexOf(".pdb")), writerToEncoder);
-							}
-							else if(f.toString().contains(".ent"))
-							{
-								PDBFileReader pdbreader = new PDBFileReader();
-								Structure struc = pdbreader.getStructure(f.toString()); 
-								AdapterToStructureData writerToEncoder = new AdapterToStructureData();
-								new MmtfStructureWriter(struc, writerToEncoder);
-								return new Tuple2<String, StructureDataInterface>(f.getName().substring(0, f.getName().indexOf(".ent")), writerToEncoder);
-							}
-							else return null;
-						}catch(Exception e)
-						{
-							return null;
-						}
-					}
-				})
-				.filter(t -> t != null);
-	}
-	
-	/**
-     * Reads uncompressed Rosetta-style PDB files recursively from a given directory path. 
-     * This methods reads files with the .pdb.
-     * 
-     * Missing data: bond info, bioAssembly info
-     * Different data : atom serial number, entity description
-     * 
-     * @param path Path to PDB files
-     * @param sc Spark context
-     * @return structure data as keyword/value pairs
-     */
-    public static JavaPairRDD<String, StructureDataInterface> readRosettaPdbFiles(String path, JavaSparkContext sc) {
-        return sc
-                .parallelize(getFiles(path))
-                .mapToPair(new PairFunction<File,String, StructureDataInterface>() {
-                    private static final long serialVersionUID = -7815663658405168429L;
-
-                    public Tuple2<String, StructureDataInterface> call(File f) throws Exception {
-                        try{
-                            if(f.toString().contains(".pdb"))
-                            {
-                                PDBFileParser parser = new PDBFileParser();
-                                InputStream rosettaStream = rosettaToPdb(f.toString());
-                                Structure struc = parser.parsePDBFile(rosettaStream); 
-                                rosettaStream.close();
-                                // add path as Title
-                                PDBHeader header = new PDBHeader();
-                                header.setTitle(f.toString());
-                                struc.setPDBHeader(header);
-                                AdapterToStructureData writerToEncoder = new AdapterToStructureData();
-                                new MmtfStructureWriter(struc, writerToEncoder);
-                                return new Tuple2<String, StructureDataInterface>(f.getName().substring(0, f.getName().indexOf(".pdb")), writerToEncoder);
-                            }
-                            else return null;
-                        }catch(Exception e)
-                        {
-                            return null;
-                        }
-                    }
-                })
-                .filter(t -> t != null);
-    }
-    
-    private static InputStream rosettaToPdb(String filename) throws IOException {
-        BufferedReader br = new BufferedReader(new FileReader(filename));
-
-        StringBuilder sb = new StringBuilder();
-        List<String> sequence = new ArrayList<String>();
-        String line;
-        String groupNumber ="";
-        
-        // extract ATOM records and convert to standard PDB format
-        while ((line = br.readLine()) != null) {
-            if (line.startsWith("ATOM")) {
-                if (line.charAt(21) != 'A') {
-                    throw new IllegalArgumentException("ERROR: Multi-chain Rosetta PDB files not supported, yet");
-                }
-                if (! line.substring(22,26).equals(groupNumber)) {
-                    sequence.add(line.substring(17,20));
-                    groupNumber = line.substring(22,26);
-                }
-                sb.append(fixRosettaPdb(line) + "\n");
-            }
-        }
-        
-        br.close();
-        
-        // prepend SEQRES record
-        sb = createSeqresRecord(sequence).append(sb);
-
-        return new ByteArrayInputStream(sb.toString().getBytes());
-    }
-    
-    /**
-     * Creates a standard PDB SEQRES record from a list of residue names.
-     * <p> Format:
-     * SEQRES   1 A  159  ASP PRO SER LYS ASP SER LYS ALA GLN VAL SER ALA ALA
-     * @param sequence list of 3-character residue names
-     * @return SEQRES record
-     */
-    private static StringBuilder createSeqresRecord(List<String> sequence) {
-        StringBuilder builder = new StringBuilder();
-        int nRecords = (sequence.size()+12)/13;
-        for (int i = 0; i < nRecords; i++) {
-            builder.append("SEQRES");
-            builder.append(String.format("%4d", i));
-            builder.append(" A");
-            builder.append(String.format("%5d", sequence.size()));
-            int start = i* 13;
-            int end = Math.min((i+1) * 13, sequence.size());
-            for (int j = start; j < end; j++) {
-                builder.append(" ");
-                builder.append(sequence.get(j));
-            }
-            builder.append("\n");
-        }
-        return builder;
-    }
-
-    /**
-     * Moves "wrapped" digit in atom names from the first to the last position,
-     * e.g., ATOM     47 2HD2 ASN -> ATOM     47 2HD2 ASN
-     * @param line
-     * @return
-     */
-    private static String fixRosettaPdb(String line) {
-        // wrapped atom names have a digit at position 12
-        char line12 = line.charAt(12);
-        if (Character.isDigit(line12)) {
-            StringBuilder sb = new StringBuilder(line);
-
-            if (line.charAt(14) == ' ') {
-                // case 1: "ATOM      8 1H   VAL..." -> "ATOM      8  H1  VAL..."
-                sb.setCharAt(12, ' ');
-                sb.setCharAt(14, line12);           
-            } else if (line.charAt(15) == ' ') {
-                // case 2: "ATOM     30 1HB  GLU..." -> "ATOM     30  HB1 GLU..."
-                sb.setCharAt(12, ' ');
-                sb.setCharAt(15, line12);
-            } else if (line.charAt(15) != ' ') {
-                // case 3: "ATOM     46 1HD2 ASN..." -> "ATOM     46 HD21 ASN..."
-                sb.deleteCharAt(12);
-                sb.insert(15, line12);
-            }
-
-            line = sb.toString();
-        }
-        return line;
-    }
-    
-	/**
-     * Reads uncompressed and compressed mmCIF files recursively from a given directory path. 
-     * This methods reads files with the .cif or .cif.gz extension.
-	 * 
-	 * 
-	 * @param path Path to .cif files
-	 * @param sc Spark context
-	 * @return structure data as keyword/value pairs
-	 */
-	public static JavaPairRDD<String, StructureDataInterface> readMmcifFiles(String path, JavaSparkContext sc) {
-		return sc
-				.parallelize(getFiles(path))
-				.mapToPair(new PairFunction<File,String, StructureDataInterface>() {
-
-					private static final long serialVersionUID = -7815663658405168429L;
-
-					public Tuple2<String, StructureDataInterface> call(File f) throws Exception {
-						try{
-							if(f.toString().contains(".cif.gz"))
-							{
-								InputStream in = new FileInputStream(f);
-								MMCIFFileReader mmcifReader = new MMCIFFileReader();
-								Structure struc = mmcifReader.getStructure(new GZIPInputStream(in)); 
-								AdapterToStructureData writerToEncoder = new AdapterToStructureData();
-								new MmtfStructureWriter(struc, writerToEncoder);
-								return new Tuple2<String, StructureDataInterface>(f.getName().substring(0, f.getName().indexOf(".cif")), writerToEncoder);
-							}
-							else if(f.toString().contains(".cif"))
-							{
-								InputStream in = new FileInputStream(f);
-								MMCIFFileReader mmcifReader = new MMCIFFileReader();
-								Structure struc = mmcifReader.getStructure(in); 
-								AdapterToStructureData writerToEncoder = new AdapterToStructureData();
-								new MmtfStructureWriter(struc, writerToEncoder);
-								return new Tuple2<String, StructureDataInterface>(f.getName().substring(0, f.getName().indexOf(".cif")), writerToEncoder);
-							}
-							else return null;
-						}catch(Exception e)
-						{
-							return null;
-						}
-					}
-				})
-				.filter(t -> t != null);
-	}
-	
 	
 	/**
 	 * Downloads and reads the specified PDB entries in the full MMTF representation
