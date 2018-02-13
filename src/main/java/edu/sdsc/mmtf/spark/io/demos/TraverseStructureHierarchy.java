@@ -48,7 +48,7 @@ public class TraverseStructureHierarchy {
 		printCrystallographicData(structure);
 		traverse(structure);
 		printChainInfo(structure);
-		printChainGroupInfo(structure);
+//		printChainGroupInfo(structure);
 		printChainEntityGroupAtomInfo(structure);
 		printBioAssemblyData(structure);
 		// other data not printed here include:
