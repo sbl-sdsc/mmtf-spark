@@ -184,7 +184,7 @@ public class MmtfImporter implements Serializable {
      * <pre>
      * {@code
      * List<String> uniProtIds = Arrays.asList("P36575","P24539","O00244","P18846","Q9UII2");
-     * JavaPairRDD<String, StructureDataInterface> structures = MmtfImporter.downloadSwissModels(uniProtIds, sc);
+     * JavaPairRDD<String, StructureDataInterface> structures = MmtfImporter.downloadSwissModelsByUniProtIds(uniProtIds, sc);
      * }
      * </pre></code>
      * 
