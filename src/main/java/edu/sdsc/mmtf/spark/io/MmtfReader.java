@@ -27,7 +27,7 @@ import org.rcsb.mmtf.serialization.MessagePackSerialization;
 import scala.Tuple2;
 
 /**
- * Methods for reading macromolecular structure in MMTF, mmCIF, and PDB file formats. 
+ * Methods for reading and downloading macromolecular structures in MMTF file formats. 
  * The data are returned as a JavaPairRDD with the structure id (e.g. PDB ID) as 
  * the key and the structural data as the value.
  * 
@@ -36,14 +36,12 @@ import scala.Tuple2;
  * <li> read directory of MMTF-Hadoop Sequence files in full and reduced representation
  * <li> download MMTF full and reduced representations using web services (mmtf.rcsb.org)
  * <li> read directory of MMTF files (.mmtf, mmtf.gz)
- * <li> read directory of mmCIF files (.cif, .cif.gz)
- * <li> read directory of PDB files (.pdb, .ent)
  * </ul>
  * 
  * @author Peter Rose
  * @author Yue Yu
  * @since 0.1.0
- *
+ * @see   MmtfImporter
  */
 public class MmtfReader {
 
