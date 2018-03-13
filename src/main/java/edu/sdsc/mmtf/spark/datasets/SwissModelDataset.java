@@ -18,9 +18,7 @@ import org.apache.spark.sql.SparkSession;
 
 /**
  * This class provides access to SWISS-MODEL datasets containing homology
- * models. See <a href=
- * "https://swissmodel.expasy.org/docs/repository_help#smr_api">SWISS-MODEL
- * API</a>.
+ * models. See <a href="https://swissmodel.expasy.org/docs/repository_help#smr_api">SWISS-MODEL API</a>.
  * 
  * <p>
  * References:
@@ -44,7 +42,7 @@ import org.apache.spark.sql.SparkSession;
 public class SwissModelDataset {
     private static final String SWISS_MODEL_REST_URL = "https://swissmodel.expasy.org/repository/uniprot/";
     private static final String SWISS_MODEL_PROVIDER = ".json?provider=swissmodel";
-    private static final String PDB_PROVIDER = ".json?provider=pdb";
+//    private static final String PDB_PROVIDER = ".json?provider=pdb"; //TODO not supported, yet
 
     /**
      * Downloads metadata for SWISS-MODEL homology models for a list of UniProtIds. 
@@ -125,6 +123,7 @@ public class SwissModelDataset {
      * @return flattened dataset
      */
     private static Dataset<Row> flattenDataset(Dataset<Row> ds) {
+        ds.printSchema();
         return ds.withColumn("structures", explode(ds.col("result.structures"))).select(col("query.ac"),
                 col("result.sequence"), col("structures.from"), col("structures.to"), 
                 col("structures.qmean"), col("structures.qmean_norm"), col("structures.gmqe"),

@@ -39,7 +39,7 @@ public class SwissModelDemo {
         SparkSession spark = SparkSession.builder().master("local[*]").appName(SwissModelDemo.class.getSimpleName())
                 .getOrCreate();
        
-        List<String> uniProtIds = Arrays.asList("P36575","P24539","O00244","P092838");
+        List<String> uniProtIds = Arrays.asList("P36575","P24539","O00244");
         Dataset<Row> ds = SwissModelDataset.getSwissModels(uniProtIds);
         ds.show();
 
