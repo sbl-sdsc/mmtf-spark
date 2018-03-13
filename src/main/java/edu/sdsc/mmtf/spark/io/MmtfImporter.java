@@ -58,6 +58,7 @@ public class MmtfImporter implements Serializable {
     private static final long serialVersionUID = 4998053042712120399L;
     private static final String SWISS_PROT_REST_URL = "https://swissmodel.expasy.org/repository/uniprot/";
     private static final String SWISS_MODEL_PROVIDER = ".pdb?provider=swissmodel";
+    private static final String PDB_REDO_REST_URL = "https://pdb-redo.eu/db/";
 
     /**
      * Reads uncompressed and compressed PDB files recursively from a given
@@ -142,6 +143,48 @@ public class MmtfImporter implements Serializable {
         }).filter(t -> t != null);
     }
 
+    /**
+     * Downloads optimized versions of PDB entries from the PDB-REDO databank for a 
+     * list of PDB IDs. Only a subset of structures with experimental data that
+     * could be re-refined are included in this database. Non-matching PDB Ids are ignored.
+     * 
+     * <p>
+     * "The <a href="https://pdb-redo.eu">PDB-REDO</a> databank contains optimized 
+     * versions of existing PDB entries with electron density maps, a description 
+     * of model changes, and a wealth of model validation data. All entries are 
+     * treated with a consistent protocol that reduces the effects of differences
+     * in age, software, and depositors. This makes PDB-REDO an excellent dataset 
+     * for large scale structure analysis studies."
+     * 
+     * <p>Reference<p>
+     * Joosten RP, Long F, Murshudov GN, Perrakis A (2014) The PDB_REDO server for 
+     * macromolecular structure model optimization. IUCrJ May 30 1(Pt 4), 213-20
+     * <a href="http://dx.doi.org/10.1107/S2052252514009324">doi:10.1107/S2052252514009324</a>
+     * 
+     * <p>Example
+     * <pre>
+     * {@code
+     * List<String> pdbIds = Arrays.asList("1CBS");
+     * JavaPairRDD<String, StructureDataInterface> structures = MmtfImporter.downloadPdbRedo(pdbIds, sc);
+     * }
+     * </pre>
+     * 
+     * @param pdbIds
+     *            List of pdbIds (upper case)
+     * @param sc
+     *            Spark context
+     * @return structure data  key = pdbId, value = structure
+     * @see <a href="https://pdb-redo.eu"">PDB-REDO</a>.
+     */
+    public static JavaPairRDD<String, StructureDataInterface> downloadPdbRedo(List<String> pdbIds,
+            JavaSparkContext sc) {
+        return sc.parallelize(pdbIds)
+                .mapToPair(t -> new Tuple2<String, StructureDataInterface>(
+                t,
+                getFromMmcifUrl(PDB_REDO_REST_URL + t + "/" + t.toLowerCase() + "_final.cif", t)))
+                .filter(t -> t._2 != null);
+    }
+    
     /**
      * Reads homology models from the SWISS-MODEL repository.
      * 
@@ -303,6 +346,42 @@ public class MmtfImporter implements Serializable {
         return path.substring(i-6, i);
     }
     
+    /**
+     * Reads a mmCIF file from a URL.
+     * 
+     * @param url URL for mmCIF file
+     * @return
+     * @throws IOException
+     */
+    private static AdapterToStructureData getFromMmcifUrl(String url, String structureId) throws IOException {
+        URL u = new URL(url);
+        InputStream is = null;
+        try {
+            is = u.openStream();
+        } catch (IOException e) {
+            return null;
+        }
+
+        try {
+            if (url.endsWith(".gz")) {
+                is = new GZIPInputStream(is);
+            }
+        } catch (Exception e) {
+            return null;
+        }
+
+        // parse .cif file
+        MMCIFFileReader mmcifReader = new MMCIFFileReader();
+        Structure struc = mmcifReader.getStructure(is);
+        is.close();
+
+        // convert to mmtf
+        AdapterToStructureData writerToEncoder = new AdapterToStructureData();
+        new MmtfStructureWriter(struc, writerToEncoder);
+
+        return writerToEncoder;
+    }
+
     /**
      * Reads a PDB file from a file system.
      * 
