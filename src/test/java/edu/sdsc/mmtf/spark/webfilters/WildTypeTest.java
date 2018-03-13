@@ -39,7 +39,8 @@ public class WildTypeTest {
 		sc.close();
 	}
 
-	@Test
+//  TODO the wildtype webservice of RCSB PDB is currently broken
+// 	@Test
 	public void test1() throws IOException {
 	    pdb = pdb.filter(new WildType(true, 100));    
 	    List<String> results = pdb.keys().collect();

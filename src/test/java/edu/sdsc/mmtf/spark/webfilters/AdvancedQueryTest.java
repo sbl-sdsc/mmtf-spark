@@ -43,7 +43,8 @@ public class AdvancedQueryTest {
 		sc.close();
 	}
 
-	@Test
+	// TODO the wildtype query web service is currently broken
+//	@Test
 	/**
 	 * This test runs a chain level query and compares the results at the PDB entry level
 	 * @throws IOException
