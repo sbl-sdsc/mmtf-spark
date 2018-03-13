@@ -1,12 +1,10 @@
 package edu.sdsc.mmtf.spark.io;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.List;
 
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
@@ -68,15 +66,5 @@ public class MmtfImporterTest {
 	    assertTrue(pdb.count() == 1);
 	    pdb = pdb.flatMapToPair(new StructureToPolymerChains());
 	    assertTrue(pdb.count() == 8);
-	}
-	
-	@Test
-	public void test5() throws IOException {
-//	    List<String> pdbIds = Arrays.asList("1CBS");
-//	    JavaPairRDD<String, StructureDataInterface> structures = MmtfImporter.downloadPdbRedo(pdbIds, sc);
-	    String path = "/Users/peter/Downloads/";
-	    JavaPairRDD<String, StructureDataInterface> structures = MmtfImporter.importMmcifFiles(path, sc);
-	    
-	    assertEquals(1, structures.count());
 	}
 }
