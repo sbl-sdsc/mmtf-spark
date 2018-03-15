@@ -20,8 +20,8 @@ public class InteractionFilter implements Serializable {
     private static final long serialVersionUID = 6886734398461616206L;
     
     // interaction criteria
-    private double distanceCutoff = Double.MAX_VALUE;
-    private double normalizedbFactorCutoff = Double.MAX_VALUE;
+    private double distanceCutoff = Float.MAX_VALUE-1;
+    private double normalizedbFactorCutoff = Float.MAX_VALUE-1;
     private int minInteractions = 1;
     private int maxInteractions = 10;
 

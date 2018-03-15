@@ -1,6 +1,7 @@
 package edu.sdsc.mmtf.spark.utils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.vecmath.Point3d;
@@ -19,6 +20,7 @@ import org.rcsb.mmtf.api.StructureDataInterface;
  */
 public class ColumnarStructureX extends ColumnarStructure {
     private static final long serialVersionUID = -7149627754721953351L;
+    private static double EPSILON = 0.000001;
 
     private float[] normalizedbFactors;
     private float[] clampedNormalizedbFactors;
@@ -44,8 +46,6 @@ public class ColumnarStructureX extends ColumnarStructure {
             float[] bFactors = getbFactors();
             String[] types = getEntityTypes();
 
-            // TODO need to handle B-factors for experimental methods
-            // where they are undefined
             DescriptiveStatistics stats = new DescriptiveStatistics();
             for (int i = 0; i < getNumAtoms(); i++) {
                 if (! (types[i].equals("WAT"))) {
@@ -55,8 +55,12 @@ public class ColumnarStructureX extends ColumnarStructure {
             double mean = stats.getMean();
             double stddev = stats.getStandardDeviation();
 
-            for (int i = 0; i < getNumAtoms(); i++) {
-                normalizedbFactors[i] = (float) ((bFactors[i] - mean) / stddev);
+            if (stddev > EPSILON) {
+                for (int i = 0; i < getNumAtoms(); i++) {
+                    normalizedbFactors[i] = (float) ((bFactors[i] - mean) / stddev);
+                }
+            } else {
+                Arrays.fill(normalizedbFactors, Float.MAX_VALUE);
             }
         }
 
