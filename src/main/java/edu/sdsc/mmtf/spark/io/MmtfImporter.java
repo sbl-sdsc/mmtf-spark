@@ -107,37 +107,43 @@ public class MmtfImporter implements Serializable {
      * @return structure data as keyword/value pairs
      */
     public static JavaPairRDD<String, StructureDataInterface> importMmcifFiles(String path, JavaSparkContext sc) {
-        return sc.parallelize(getFiles(path)).mapToPair(new PairFunction<File, String, StructureDataInterface>() {
+//        return sc.parallelize(getFiles(path)).mapToPair(new PairFunction<File, String, StructureDataInterface>() {
+    	// TODO
+        return sc.parallelize(getFiles(path)).sample(false, 0.05).mapToPair(new PairFunction<File, String, StructureDataInterface>() {
             private static final long serialVersionUID = -7815663658405168429L;
 
             public Tuple2<String, StructureDataInterface> call(File f) throws Exception {
                 InputStream is = null;
 
                 String path = f.getName();
+                // TODO debugging
+                System.out.println(path);
                 if (path.endsWith(".cif") || path.endsWith((".cif.gz"))) {
 
-                    try {
-                        is = new FileInputStream(f);
-                        if (path.endsWith(".cif.gz")) {
-                            is = new GZIPInputStream(is);
-                        }
-                    } catch (Exception e) {
-                        return null;
-                    }
+                	try {
+                		is = new FileInputStream(f);
+                		if (path.endsWith(".cif.gz")) {
+                			is = new GZIPInputStream(is);
+                		}
 
-                    // parse .cif file
-                    MMCIFFileReader mmcifReader = new MMCIFFileReader();
-                    Structure struc = mmcifReader.getStructure(is);
-                    is.close();
+                		// parse .cif file
+                		MMCIFFileReader mmcifReader = new MMCIFFileReader();
+                		Structure struc = mmcifReader.getStructure(is);
+                		is.close();
 
-                    // convert to mmtf
-                    AdapterToStructureData writerToEncoder = new AdapterToStructureData();
-                    new MmtfStructureWriter(struc, writerToEncoder);
+                		// convert to mmtf
+                		AdapterToStructureData writerToEncoder = new AdapterToStructureData();
+                		new MmtfStructureWriter(struc, writerToEncoder);
 
-                    return new Tuple2<String, StructureDataInterface>(
-                            path.substring(0, path.indexOf(".cif")), writerToEncoder);
+                		return new Tuple2<String, StructureDataInterface>(
+                				path.substring(0, path.indexOf(".cif")), writerToEncoder);
+
+                	} catch (Exception e) {
+                		System.out.println("WARNING: cannot parse: " + path + ". Skipping this entry!");
+                		return null;
+                	}
                 } else {
-                    return null;
+                	return null;
                 }
             }
         }).filter(t -> t != null);
@@ -616,7 +622,7 @@ public class MmtfImporter implements Serializable {
             } else {
                 String filePath = f.getName();
                 if (filePath.endsWith(".gz")) {
-                    filePath = filePath.substring(0, filePath.length() - 4);
+                    filePath = filePath.substring(0, filePath.length() - 3);
                 }
                 if (filePath.endsWith(".pdb") || filePath.endsWith(".ent") || filePath.endsWith(".cif")) {
                     fileList.add(f);
