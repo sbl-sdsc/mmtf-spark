@@ -1,5 +1,6 @@
 package edu.sdsc.mmtf.spark.io;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -40,14 +41,14 @@ public class MmtfImporterTest {
 		Path p = Paths.get("./src/main/resources/files/");
 	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfImporter.importPdbFiles(p.toString(), sc);
 	    
-	    assertTrue(pdb.count() == 2);
+	    assertEquals(3, pdb.count());
 	}
 	@Test
 	public void test2() throws IOException {
 		Path p = Paths.get("./src/main/resources/files/");
 	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfImporter.importMmcifFiles(p.toString(), sc);
 	    
-	    assertTrue(pdb.count() == 1);
+	    assertEquals(2, pdb.count());
 	}
 	
 	@Test
@@ -56,7 +57,7 @@ public class MmtfImporterTest {
 	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfImporter.importPdbFiles(p.toString(), sc);
 	    assertTrue(pdb.count() == 1);
 	    pdb = pdb.flatMapToPair(new StructureToPolymerChains());
-	    assertTrue(pdb.count() == 8);
+	    assertEquals(8, pdb.count());
 	}
 
 	@Test
@@ -65,6 +66,6 @@ public class MmtfImporterTest {
 	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfImporter.importMmcifFiles(p.toString(), sc);
 	    assertTrue(pdb.count() == 1);
 	    pdb = pdb.flatMapToPair(new StructureToPolymerChains());
-	    assertTrue(pdb.count() == 8);
+	    assertEquals(8, pdb.count());
 	}
 }

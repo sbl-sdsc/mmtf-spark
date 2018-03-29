@@ -107,9 +107,7 @@ public class MmtfImporter implements Serializable {
      * @return structure data as keyword/value pairs
      */
     public static JavaPairRDD<String, StructureDataInterface> importMmcifFiles(String path, JavaSparkContext sc) {
-//        return sc.parallelize(getFiles(path)).mapToPair(new PairFunction<File, String, StructureDataInterface>() {
-    	// TODO
-        return sc.parallelize(getFiles(path)).sample(false, 0.05).mapToPair(new PairFunction<File, String, StructureDataInterface>() {
+        return sc.parallelize(getFiles(path)).mapToPair(new PairFunction<File, String, StructureDataInterface>() {
             private static final long serialVersionUID = -7815663658405168429L;
 
             public Tuple2<String, StructureDataInterface> call(File f) throws Exception {
