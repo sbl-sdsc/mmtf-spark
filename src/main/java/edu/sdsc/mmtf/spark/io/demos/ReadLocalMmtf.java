@@ -20,7 +20,7 @@ public class ReadLocalMmtf {
 	public static void main(String[] args) {  
 		
 		if (args.length != 1) {
-			System.err.println("Usage: " + ReadLocalMmtf.class.getSimpleName() + " <outputFilePath>");
+			System.err.println("Usage: " + ReadLocalMmtf.class.getSimpleName() + " <inputFilePath>");
 			System.exit(1);
 		}
 	    
