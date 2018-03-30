@@ -33,20 +33,19 @@ public class TraverseStructureHierarchy {
 		//	    List<String> pdbIds = Arrays.asList("2NBK"); // single protein chain
 		JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.downloadFullMmtfFiles(pdbIds, sc).cache(); 
 
-		pdb.foreach(t -> TraverseStructureHierarchy.demo(t._2));      
+		pdb.foreach(t -> TraverseStructureHierarchy.printAll(t._2));      
 	}
 
-	/*
-	 * Demonstrates how to access information from Structure DataInterface
-	 * and how to traverse the data hierarchy.
+	/**
+	 * Prints various data categories stored in MMTF
 	 * 
 	 * @param structure structure to be traversed
 	 */
-	public static void demo(StructureDataInterface structure) {
+	public static void printAll(StructureDataInterface structure) {
 		printMmtfInfo(structure);
 		printMetadata(structure);
 		printCrystallographicData(structure);
-		traverse(structure);
+		printStructureData(structure);
 		printChainInfo(structure);
 //		printChainGroupInfo(structure);
 		printChainEntityGroupAtomInfo(structure);
@@ -61,8 +60,8 @@ public class TraverseStructureHierarchy {
 	 * 
 	 * @param structure structure to be traversed
 	 */
-	private static void printMmtfInfo(StructureDataInterface structure) {
-		System.out.println("*** MMMTF INFO ***");
+	public static void printMmtfInfo(StructureDataInterface structure) {
+		System.out.println("*** MMTF INFO ***");
 		System.out.println("MmtfProducer    : " + structure.getMmtfProducer());
 		System.out.println("MmtfVersion     : " + structure.getMmtfVersion());
 		System.out.println();
@@ -73,7 +72,7 @@ public class TraverseStructureHierarchy {
 	 * 
 	 * @param structure structure to be traversed
 	 */
-	private static void printMetadata(StructureDataInterface structure) {
+	public static void printMetadata(StructureDataInterface structure) {
 		System.out.println("*** METADATA ***");
 		System.out.println("StructureId           : " + structure.getStructureId());
 		System.out.println("Title                 : " + structure.getTitle());
@@ -91,7 +90,7 @@ public class TraverseStructureHierarchy {
 	 * 
 	 * @param structure structure to be traversed
 	 */
-	private static void printCrystallographicData(StructureDataInterface structure) {
+	public static void printCrystallographicData(StructureDataInterface structure) {
 		System.out.println("*** CRYSTALLOGRAPHIC DATA ***");
 		System.out.println("Space group           : " + structure.getSpaceGroup());
 		System.out.println("Unit cell dimensions  : " + Arrays.toString(structure.getUnitCell()));	
@@ -114,6 +113,22 @@ public class TraverseStructureHierarchy {
 		}
 	}
 
+	/**
+	 * Print the basic data hierarchy.
+	 * 
+	 * @param structure structure to be traversed
+	 */
+	public static void printStructureData(StructureDataInterface structure) {
+
+		System.out.println("*** STRUCTURE DATA ***");
+		System.out.println("Number of models: " + structure.getNumModels());
+		System.out.println("Number of chains: " + structure.getNumChains());
+		System.out.println("Number of groups: " + structure.getNumGroups());
+		System.out.println("Number of atoms : " + structure.getNumAtoms());
+		System.out.println("Number of bonds : " + structure.getNumBonds());
+
+		System.out.println();
+	}
 	/**
 	 * Traverses the basic data hierarchy.
 	 * 
