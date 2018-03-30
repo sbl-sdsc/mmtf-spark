@@ -32,7 +32,7 @@ public class ReadLocalMmtf {
 	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.readMmtfFiles(args[0], sc);
 	    
 	    // print structural details
-	    pdb.foreach(t -> TraverseStructureHierarchy.demo(t._2));
+	    pdb.foreach(t -> TraverseStructureHierarchy.printStructureData(t._2));
 	    System.out.println("# structures: " + pdb.count());
 	    
 	    // close Spark
