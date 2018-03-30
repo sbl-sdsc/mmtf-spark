@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.vecmath.Matrix4d;
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Point3f;
 
@@ -57,7 +58,7 @@ public class StructureToBioassembly2 implements PairFlatMapFunction<Tuple2<Strin
 					totChains += bioChainList[ii].length;
 					chainsPerModel[j] += bioChainList[ii].length;
 					
-					System.out.println(bioChainList[ii].length + " "  + Arrays.toString(bioChainList[ii]));
+//					System.out.println(bioChainList[ii].length + " "  + Arrays.toString(bioChainList[ii]));
 					for (int k = 0, groupCounter = 0; k < structure.getChainsPerModel()[j]; k++)
 					{
 						boolean adding = false;
@@ -139,8 +140,9 @@ public class StructureToBioassembly2 implements PairFlatMapFunction<Tuple2<Strin
 						float[] xCoords = structure.getxCoords();
 						float[] yCoords = structure.getyCoords();
 						float[] zCoords = structure.getzCoords();
-						float[] floatMatrix = Floats.toArray(Doubles.asList(currMatrix));
-						Matrix4f m = new Matrix4f(floatMatrix);
+//						float[] floatMatrix = Floats.toArray(Doubles.asList(currMatrix));
+//						Matrix4f m = new Matrix4f(floatMatrix);
+						Matrix4d md = new Matrix4d(currMatrix);
 						
 						if(addThisChain){	
 							int entityToChainIndex = chainToEntityIndex[chainIndex];
@@ -174,7 +176,8 @@ public class StructureToBioassembly2 implements PairFlatMapFunction<Tuple2<Strin
 								if(addThisChain)
 								{
 									Point3f p1 = new Point3f(xCoords[atomIndex], yCoords[atomIndex], zCoords[atomIndex]);
-									m.transform(p1);
+//									m.transform(p1);
+									md.transform(p1);
 									//System.out.println(kk + " " + currgroup);
 									bioAssembly.setAtomInfo(structure.getGroupAtomNames(currgroup)[kk], structure.getAtomIds()[atomIndex], 
 											structure.getAltLocIds()[atomIndex],p1.x, p1.y, p1.z, 
