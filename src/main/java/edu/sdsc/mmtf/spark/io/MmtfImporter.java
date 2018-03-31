@@ -23,6 +23,7 @@ import org.biojava.nbio.structure.Chain;
 import org.biojava.nbio.structure.EntityInfo;
 import org.biojava.nbio.structure.EntityType;
 import org.biojava.nbio.structure.Structure;
+import org.biojava.nbio.structure.io.FileParsingParameters;
 import org.biojava.nbio.structure.io.MMCIFFileReader;
 import org.biojava.nbio.structure.io.PDBFileParser;
 import org.biojava.nbio.structure.io.mmtf.MmtfStructureWriter;
@@ -107,6 +108,9 @@ public class MmtfImporter implements Serializable {
      * @return structure data as keyword/value pairs
      */
     public static JavaPairRDD<String, StructureDataInterface> importMmcifFiles(String path, JavaSparkContext sc) {
+        FileParsingParameters params = new FileParsingParameters();
+        params.setCreateAtomBonds(true);
+        
         return sc.parallelize(getFiles(path)).mapToPair(new PairFunction<File, String, StructureDataInterface>() {
             private static final long serialVersionUID = -7815663658405168429L;
 
@@ -126,6 +130,7 @@ public class MmtfImporter implements Serializable {
 
                 		// parse .cif file
                 		MMCIFFileReader mmcifReader = new MMCIFFileReader();
+                		mmcifReader.setFileParsingParameters(params);
                 		Structure struc = mmcifReader.getStructure(is);
                 		is.close();
 
@@ -358,6 +363,9 @@ public class MmtfImporter implements Serializable {
      * @throws IOException
      */
     private static AdapterToStructureData getFromMmcifUrl(String url, String structureId) throws IOException {
+        FileParsingParameters params = new FileParsingParameters();
+        params.setCreateAtomBonds(true);
+
         URL u = new URL(url);
         InputStream is = null;
         try {
@@ -374,16 +382,22 @@ public class MmtfImporter implements Serializable {
             return null;
         }
 
-        // parse .cif file
-        MMCIFFileReader mmcifReader = new MMCIFFileReader();
-        Structure struc = mmcifReader.getStructure(is);
-        is.close();
+        try {
+            // parse .cif file
+            MMCIFFileReader mmcifReader = new MMCIFFileReader();
+            mmcifReader.setFileParsingParameters(params);
+            Structure struc = mmcifReader.getStructure(is);
+            is.close();
 
-        // convert to mmtf
-        AdapterToStructureData writerToEncoder = new AdapterToStructureData();
-        new MmtfStructureWriter(struc, writerToEncoder);
+            // convert to mmtf
+            AdapterToStructureData writerToEncoder = new AdapterToStructureData();
+            new MmtfStructureWriter(struc, writerToEncoder);
+            return writerToEncoder;
 
-        return writerToEncoder;
+        } catch (Exception e) {
+            System.out.println("WARNING: cannot parse: " + url + ". Skipping this entry!");
+            return null;
+        }
     }
 
     /**
