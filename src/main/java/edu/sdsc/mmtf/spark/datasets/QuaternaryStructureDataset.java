@@ -123,7 +123,7 @@ public class QuaternaryStructureDataset {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < coefficients.size(); i++) {
             int coefficient = coefficients.get(i);
-            sb.append(ALPHABETH.charAt(i));
+            sb.append(ALPHABETH.charAt(i % ALPHABETH.length()));
             if (coefficient > 1) {
                 sb.append(coefficient);
             }
