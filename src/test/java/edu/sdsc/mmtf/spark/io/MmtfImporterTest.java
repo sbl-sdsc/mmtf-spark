@@ -6,6 +6,8 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
 
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
@@ -67,5 +69,14 @@ public class MmtfImporterTest {
 	    assertTrue(pdb.count() == 1);
 	    pdb = pdb.flatMapToPair(new StructureToPolymerChains());
 	    assertEquals(8, pdb.count());
+	}
+	
+	@Test
+	public void test5() throws IOException {
+	    List<String> pdbIds = Arrays.asList("3SP5");
+	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfImporter.downloadPdbRedo(pdbIds, sc);
+	    assertEquals(1, pdb.count());
+	    pdb = pdb.flatMapToPair(new StructureToPolymerChains());
+	    assertEquals(2, pdb.count());
 	}
 }

@@ -110,7 +110,7 @@ public class MmtfImporter implements Serializable {
     public static JavaPairRDD<String, StructureDataInterface> importMmcifFiles(String path, JavaSparkContext sc) {
         FileParsingParameters params = new FileParsingParameters();
         params.setCreateAtomBonds(true);
-        
+
         return sc.parallelize(getFiles(path)).mapToPair(new PairFunction<File, String, StructureDataInterface>() {
             private static final long serialVersionUID = -7815663658405168429L;
 
@@ -118,35 +118,33 @@ public class MmtfImporter implements Serializable {
                 InputStream is = null;
 
                 String path = f.getName();
-                // TODO debugging
-                System.out.println(path);
                 if (path.endsWith(".cif") || path.endsWith((".cif.gz"))) {
 
-                	try {
-                		is = new FileInputStream(f);
-                		if (path.endsWith(".cif.gz")) {
-                			is = new GZIPInputStream(is);
-                		}
+                    try {
+                        is = new FileInputStream(f);
+                        if (path.endsWith(".cif.gz")) {
+                            is = new GZIPInputStream(is);
+                        }
 
-                		// parse .cif file
-                		MMCIFFileReader mmcifReader = new MMCIFFileReader();
-                		mmcifReader.setFileParsingParameters(params);
-                		Structure struc = mmcifReader.getStructure(is);
-                		is.close();
+                        // parse .cif file
+                        MMCIFFileReader mmcifReader = new MMCIFFileReader();
+                        mmcifReader.setFileParsingParameters(params);
+                        Structure struc = mmcifReader.getStructure(is);
+                        is.close();
 
-                		// convert to mmtf
-                		AdapterToStructureData writerToEncoder = new AdapterToStructureData();
-                		new MmtfStructureWriter(struc, writerToEncoder);
+                        // convert to mmtf
+                        AdapterToStructureData writerToEncoder = new AdapterToStructureData();
+                        new MmtfStructureWriter(struc, writerToEncoder);
 
-                		return new Tuple2<String, StructureDataInterface>(
-                				path.substring(0, path.indexOf(".cif")), writerToEncoder);
+                        return new Tuple2<String, StructureDataInterface>(
+                                path.substring(0, path.indexOf(".cif")), writerToEncoder);
 
-                	} catch (Exception e) {
-                		System.out.println("WARNING: cannot parse: " + path + ". Skipping this entry!");
-                		return null;
-                	}
+                    } catch (Exception e) {
+                        System.out.println("WARNING: could not parse: " + path + ". Skipping this entry!");
+                        return null;
+                    }
                 } else {
-                	return null;
+                    return null;
                 }
             }
         }).filter(t -> t != null);
@@ -367,23 +365,15 @@ public class MmtfImporter implements Serializable {
         params.setCreateAtomBonds(true);
 
         URL u = new URL(url);
-        InputStream is = null;
-        try {
-            is = u.openStream();
-        } catch (IOException e) {
-            return null;
-        }
 
         try {
+            InputStream is = u.openStream();
+
             if (url.endsWith(".gz")) {
                 is = new GZIPInputStream(is);
             }
-        } catch (Exception e) {
-            return null;
-        }
 
-        try {
-            // parse .cif file
+            // parse mmcif file
             MMCIFFileReader mmcifReader = new MMCIFFileReader();
             mmcifReader.setFileParsingParameters(params);
             Structure struc = mmcifReader.getStructure(is);
@@ -395,7 +385,8 @@ public class MmtfImporter implements Serializable {
             return writerToEncoder;
 
         } catch (Exception e) {
-            System.out.println("WARNING: cannot parse: " + url + ". Skipping this entry!");
+            System.out.println("WARNING: could not parse: " + url + ". Skipping this entry!");
+            e.printStackTrace();
             return null;
         }
     }
