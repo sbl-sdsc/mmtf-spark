@@ -28,19 +28,21 @@ public class MapToBioAssembly2 {
 
 	public static void main(String[] args) throws FileNotFoundException, IOException {
 
-		SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(CustomReportDemo.class.getSimpleName());
+		// TODO set to 1 core for debugging !!!!
+		SparkConf conf = new SparkConf().setMaster("local[1]").setAppName(CustomReportDemo.class.getSimpleName());
 		JavaSparkContext sc = new JavaSparkContext(conf);
 		
 		long start = System.nanoTime();
 
 //		List<String> pdbIds = Arrays.asList("1HV4");
 //		List<String> pdbIds = Arrays.asList("2HHB");
-//		JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader
-//				.downloadFullMmtfFiles(pdbIds, sc);
-		
+		List<String> pdbIds = Arrays.asList("2ICY");
 		JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader
-				.readFullSequenceFile(sc)
-				.filter(new Pisces(20, 3.0));
+				.downloadFullMmtfFiles(pdbIds, sc);
+		
+//		JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader
+//				.readFullSequenceFile(sc)
+//				.filter(new Pisces(20, 3.0));
 
 		
 //		System.out.println("**** AU ****");
