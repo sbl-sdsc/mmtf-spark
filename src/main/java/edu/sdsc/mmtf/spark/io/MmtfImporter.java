@@ -45,6 +45,8 @@ import scala.Tuple2;
  * <ul>
  * <li>import directory of PDB files (.pdb,, pdb.gz, .ent, .ent.gz)
  * <li>import directory of mmCIF files (.cif, .cif.gz)
+ * <li>import PDB-REDO distribution (local copy of *_final.cif files)
+ * <li>download structures from PDB-REDO by PDB Ids
  * <li>import homology models from SWISS-MODEL repository (local copy)
  * <li>download homology models from SWISS-MODEL by UniProtIds
  * <li>download homology models from SWISS-MODEL by Urls
@@ -190,6 +192,37 @@ public class MmtfImporter implements Serializable {
                 t,
                 getFromMmcifUrl(PDB_REDO_REST_URL + t + "/" + t.toLowerCase() + "_final.cif", t)))
                 .filter(t -> t._2 != null);
+    }
+    
+    /**
+     * Imports optimized versions of PDB entries from a local copy of the 
+     * PDB-REDO distributions. To create a local copy of PDB-REDO, run
+     * the following rsync command:
+     * <pre>
+     * rsync -av --include='*_final.cif' --exclude='{@literal *}' rsync://rsync.pdb-redo.eu/pdb-redo/{@literal *}/{@literal *}/ pdb-redo/
+     * </pre>
+     * 
+     * <p>
+     * "The <a href="https://pdb-redo.eu">PDB-REDO</a> databank contains optimized 
+     * versions of existing PDB entries with electron density maps, a description 
+     * of model changes, and a wealth of model validation data. All entries are 
+     * treated with a consistent protocol that reduces the effects of differences
+     * in age, software, and depositors. This makes PDB-REDO an excellent dataset 
+     * for large scale structure analysis studies."
+     * 
+     * <p>Reference<p>
+     * Joosten RP, Long F, Murshudov GN, Perrakis A (2014) The PDB_REDO server for 
+     * macromolecular structure model optimization. IUCrJ May 30 1(Pt 4), 213-20
+     * <a href="http://dx.doi.org/10.1107/S2052252514009324">doi:10.1107/S2052252514009324</a>
+     * @param path
+     *            Path to PDB-REDO directory
+     * @param sc
+     *            Spark context
+     * @return structure data  key = PdbId, value = structure
+     */
+    public static JavaPairRDD<String, StructureDataInterface> importPdbRedo(String path, JavaSparkContext sc) {
+        return importMmcifFiles(path, sc)
+        .mapToPair(t -> new Tuple2<String, StructureDataInterface>(t._1.substring(0, 4).toUpperCase(), t._2));
     }
     
     /**
