@@ -129,13 +129,30 @@ public class TraverseStructureHierarchy {
 
 		System.out.println();
 	}
+	
+	/**
+     * Prints information about unique entities (molecules) in a structure.
+     * 
+     * @param structure structure to be traversed
+     */
+    public static void printEntityInfo(StructureDataInterface structure) {
+        System.out.println("*** ENTITY DATA ***");
+
+        for (int i = 0; i < structure.getNumEntities(); i++) {
+            System.out.println("entity type          : " + i + " " + structure.getEntityType(i));
+            System.out.println("entity description   : " + i + " " + structure.getEntityDescription(i));
+            System.out.println("entity sequence      : " + i + " " + structure.getEntitySequence(i));
+        }
+
+        System.out.println();
+    }
 	/**
 	 * Traverses the basic data hierarchy.
 	 * 
 	 * @param structure structure to be traversed
 	 */
 	public static void traverse(StructureDataInterface structure) {
-
+	    
 		System.out.println("*** STRUCTURE DATA ***");
 		System.out.println("Number of models: " + structure.getNumModels());
 		System.out.println("Number of chains: " + structure.getNumChains());
