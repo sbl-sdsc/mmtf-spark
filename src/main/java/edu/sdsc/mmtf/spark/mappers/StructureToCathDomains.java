@@ -1,10 +1,16 @@
 package edu.sdsc.mmtf.spark.mappers;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.GZIPInputStream;
 
 import org.apache.spark.api.java.function.PairFlatMapFunction;
 import org.rcsb.mmtf.api.StructureDataInterface;
@@ -21,6 +27,41 @@ public class StructureToCathDomains implements PairFlatMapFunction<Tuple2<String
 
 	private static final long serialVersionUID = -474199780109818259L;
 	private HashMap<String, ArrayList<String>> hmap;
+	
+	public static HashMap<String, ArrayList<String>> getMap(String url) throws IOException
+	{
+		
+		HashMap<String, ArrayList<String>> hmap = new HashMap<String, ArrayList<String>>();
+	    
+		URL u = new URL(url);
+	    InputStream in = u.openStream();
+		BufferedReader rd = new BufferedReader(new InputStreamReader(new GZIPInputStream(in)));
+
+		String key, value, line;
+
+		while ((line = rd.readLine()) != null) {
+
+//			System.out.println(line);
+			key = line.substring(0,5).toUpperCase();
+			value = line.substring(8).split(" ")[2];
+//			System.out.println(key+"\n"+value);
+			if(!hmap.containsKey(key))
+			{
+				ArrayList<String> tmp = new ArrayList<String>();
+				tmp.add(value);
+				hmap.put(key, tmp);
+			}
+			else{
+				ArrayList<String> tmp = hmap.get(key);
+				tmp.add(value);
+				hmap.replace(key, tmp);
+				
+			}
+	    
+		}
+		return hmap;
+	}
+	
 
 	/**
 	 * COMMENT TODO
@@ -47,7 +88,7 @@ public class StructureToCathDomains implements PairFlatMapFunction<Tuple2<String
 		
 		List<Tuple2<String, StructureDataInterface>> chainList = new ArrayList<>();
 
-		System.out.println(numChains);
+//		System.out.println(numChains);
 		for (int i = 0, atomCounter = 0, groupCounter = 0; i < numChains; i++){	
 			AdapterToStructureData cathDomain = new AdapterToStructureData();
 			
@@ -57,7 +98,7 @@ public class StructureToCathDomains implements PairFlatMapFunction<Tuple2<String
 
 			if(newChain)
 			{
-				System.out.println(key);
+//				System.out.println(key);
 				ArrayList<String> values = hmap.get(key);
 				for(int valueNum = 0; valueNum < values.size(); valueNum++)
 				{
@@ -97,11 +138,11 @@ public class StructureToCathDomains implements PairFlatMapFunction<Tuple2<String
 						
 						boolean inBound = false;
 						
-//						System.out.println(groupBounds.length);
+						int groupId = structure.getGroupIds()[tmpGroupCounter];
 						for(int boundIndex = 0; boundIndex < groupBounds.length; boundIndex++)
 						{
 //							System.out.println(j);
-							if(j+1 >= groupBounds[boundIndex][0] && j+1 <= groupBounds[boundIndex][1])
+							if(groupId >= groupBounds[boundIndex][0] && groupId <= groupBounds[boundIndex][1])
 							{
 //								System.out.println(groupBounds[boundIndex][0] + " " + (j+1) + " " +groupBounds[boundIndex][1]);
 								inBound = true;
@@ -157,8 +198,8 @@ public class StructureToCathDomains implements PairFlatMapFunction<Tuple2<String
 					cathDomain.finalizeStructure();
 				
 					String chId = structure.getChainNames()[i];
-
-					chainList.add(new Tuple2<String, StructureDataInterface>(structure.getStructureId() + "." + chId, cathDomain));
+					String cathId = Integer.toString(valueNum);
+					chainList.add(new Tuple2<String, StructureDataInterface>(structure.getStructureId() + "." + chId + cathId, cathDomain));
 				
 					if(valueNum == values.size()-1)
 					{
@@ -187,7 +228,7 @@ public class StructureToCathDomains implements PairFlatMapFunction<Tuple2<String
 		int[][] groupBound = new int [tmp.length][2];
 		for(int i = 0; i < tmp.length; i++)
 		{
-			System.out.println(tmp[i]);
+//			System.out.println(tmp[i]);
 			String[] bounds = tmp[i].split(":")[0].split("-");
 			groupBound[i][0] = Integer.parseInt(bounds[0]);
 			groupBound[i][1] = Integer.parseInt(bounds[1]);
