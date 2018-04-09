@@ -1,8 +1,8 @@
 package edu.sdsc.mmtf.spark.datasets;
 
 import static org.apache.spark.sql.functions.col;
-import static org.apache.spark.sql.functions.upper;
 import static org.apache.spark.sql.functions.explode;
+import static org.apache.spark.sql.functions.upper;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,8 +23,20 @@ import org.apache.spark.sql.SparkSession;
  * This class maps human genetic variation positions to PDB structure positions. 
  * Genomic positions must be specified for the hgvs-grch37 reference genome using the 
  * <a href="http://varnomen.hgvs.org/">HGVS sequence variant nomenclature</a>.
+* <p>
+ * Example:
  * <pre>
- * Example: chr7:g.140449103A>C
+ * {@code
+ * List<String> variantIds = Arrays.asList("chr7:g.140449098T>C", "chr7:g.140449100T>C");
+ * Dataset<Row> ds = G2SDataset.getPositionDataset(variantIds, "3TV4", "A");
+ * ds.show()
+ * +-----------+-------+-----------+------------+-----------+-------------------+
+ * |structureId|chainId|pdbPosition|pdbAminoAcid|  refGenome|        variationId|
+ * +-----------+-------+-----------+------------+-----------+-------------------+
+ * |       3TV4|      A|        661|           N|hgvs-grch37|chr7:g.140449098T>C|
+ * |       3TV4|      A|        660|           N|hgvs-grch37|chr7:g.140449100T>C|
+ * +-----------+-------+-----------+------------+-----------+-------------------+
+ * }
  * </pre>
  * 
  * <p>
@@ -46,20 +58,53 @@ public class G2SDataset {
     private static final String REFERENCE_GENOME = "hgvs-grch37";
     private static final String G2S_REST_URL = "https://g2s.genomenexus.org/api/alignments/"+REFERENCE_GENOME+"/";
 
+    /**
+     * Downloads PDB residue mappings for a list of genomic variations.
+     * @param variationIds genomic variation ids (e.g., chr7:g.140449103A>C)
+     * @return dataset with PDB mapping information
+     * @throws IOException
+     */
     public static Dataset<Row> getPositionDataset(List<String> variationIds) throws IOException {
         return getPositionDataset(variationIds, null, null);
     }
     
-    public static Dataset<Row> getPositionDataset(List<String> variationIds , String pdbId, String chainId) throws IOException {
-        return getDataset(variationIds, pdbId, chainId).select("structureId","chainId","pdbPosition");
+    /**
+     * Downloads PDB residue mappings for a list of genomic variations.
+     * @param variationIds genomic variation ids (e.g., chr7:g.140449103A>C)
+     * @param structureId specific PDB structure used for mapping
+     * @param chainId specific chain used for mapping
+     * @return dataset with PDB mapping information
+     * @throws IOException
+     */
+    public static Dataset<Row> getPositionDataset(List<String> variationIds , String structureId, String chainId) throws IOException {
+        Dataset<Row> dataset = getDataset(variationIds, structureId, chainId);
+        if (dataset == null) return null;
+
+        return dataset
+                .select("structureId","chainId","pdbPosition","pdbAminoAcid","refGenome","variationId")
+                .distinct();
     }
     
+    /**
+     * Downloads PDB residue mappings and alignment information for a list of genomic variations.
+     * @param variationIds genomic variation ids (e.g., chr7:g.140449103A>C)
+     * @return dataset with PDB mapping information
+     * @throws IOException
+     */
     public static Dataset<Row> getFullDataset(List<String> variationIds) throws IOException {
         return getFullDataset(variationIds, null, null);
     }
     
-    public static Dataset<Row> getFullDataset(List<String> variationIds, String pdbId, String chainId) throws IOException {
-        return getDataset(variationIds, pdbId, chainId);
+    /**
+     * Downloads PDB residue mappings and alignment information for a list of genomic variations.
+     * @param variationIds genomic variation ids (e.g., chr7:g.140449103A>C)
+     * @param structureId specific PDB structure used for mapping
+     * @param chainId specific chain used for mapping
+     * @return dataset with PDB mapping information
+     * @throws IOException
+     */
+    public static Dataset<Row> getFullDataset(List<String> variationIds, String structureId, String chainId) throws IOException {
+        return getDataset(variationIds, structureId, chainId);
     }
     
     /**
@@ -70,34 +115,41 @@ public class G2SDataset {
      * @return dataset with PDB mapping information
      * @throws IOException
      */
-    private static Dataset<Row> getDataset(List<String> variationIds, String pdbId, String chainId) throws IOException {
+    private static Dataset<Row> getDataset(List<String> variationIds, String structureId, String chainId) throws IOException {
         // get a spark context
         SparkSession spark = SparkSession.builder().getOrCreate();    
         @SuppressWarnings("resource") // sc will be closed elsewhere
         JavaSparkContext sc = new JavaSparkContext(spark.sparkContext());
 
         // download data in parallel
-        JavaRDD<String> data = sc.parallelize(variationIds).flatMap(m -> getData(m, pdbId, chainId));
+        JavaRDD<String> data = sc.parallelize(variationIds).flatMap(m -> getData(m, structureId, chainId));
 
         // convert from JavaRDD to Dataset
         Dataset<String> jsonData = spark.createDataset(JavaRDD.toRDD(data), Encoders.STRING()); 
-       
+
         // parse json strings and return as a dataset
-        Dataset<Row> dataset = spark.read().json(jsonData);
+        Dataset<Row> dataset = spark.read().json(jsonData); 
+        
+        // return null if dataset is empty
+        if (dataset.columns().length == 0) {
+            System.out.println("G2SDataset: no matches found");
+            return null;
+        }   
+           
         dataset = processColumns(dataset);
         
         return flattenDataset(dataset);
     }
 
-    private static Iterator<String> getData(String variationId, String pdbId, String chainId) throws IOException {
+    private static Iterator<String> getData(String variationId, String structureId, String chainId) throws IOException {
         List<String> data = new ArrayList<>();
 
         InputStream is = null;
         URL u = null;
-        if (pdbId == null) {
+        if (structureId == null) {
             u = new URL(G2S_REST_URL + variationId + "/residueMapping");
         } else {
-            u = new URL(G2S_REST_URL + variationId + "/pdb/" + pdbId + "_" + chainId + "/residueMapping");
+            u = new URL(G2S_REST_URL + variationId + "/pdb/" + structureId + "_" + chainId + "/residueMapping");
         }
         try {
             is = u.openStream();
@@ -144,6 +196,12 @@ public class G2SDataset {
         }  
     }
     
+    /**
+     * Converts dataset to common naming standard.
+     * 
+     * @param ds
+     * @return
+     */
     private static Dataset<Row> processColumns(Dataset<Row> ds) {
         return ds.withColumn("structureId", upper(col("pdbId")))
         .withColumnRenamed("chain", "chainId");
