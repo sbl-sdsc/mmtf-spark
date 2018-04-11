@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -46,7 +47,7 @@ import org.apache.spark.sql.SparkSession;
  * ds.show()
  * }
  * +-------------------+---------+
- * |                 id|uniprotId|
+ * |        variationId|uniprotId|
  * +-------------------+---------+
  * |chr7:g.140454006G>T|   P15056|
  * |chr7:g.140453153A>T|   P15056|
@@ -110,8 +111,8 @@ public class MyVariantDataset {
         // parse json strings and return as a dataset
         Dataset<Row> dataset = spark.read().json(jsonData);
 
-        // return null if dataset is empty
-        if (dataset.columns().length != 2) {
+        // return null if dataset contains no results
+        if (!Arrays.asList(dataset.columns()).contains("hits")) {
             System.out.println("MyVariantDataset: no matches found");
             return null;
         }
@@ -131,6 +132,7 @@ public class MyVariantDataset {
         url = url.replaceAll(" ", "%20");
         URL u = new URL(url);
 
+        // open input stream
         InputStream is = null;
         try {
             is = u.openStream();
@@ -141,7 +143,7 @@ public class MyVariantDataset {
 
         // read results
         // A maximum of 1000 records are returned per request.
-        // Additional records are retrieved using the scrollId.
+        // Additional records are retrieved iteratively using the scrollId.
         String results = readResults(is);
         is.close();
 
@@ -164,6 +166,7 @@ public class MyVariantDataset {
                 is.close();
 
                 if (gotHits(results)) {
+                    results = addUniprotId(results, uniprotId);
                     data.add(results);
                     scrollId = getScrollId(results);
                 } else {
