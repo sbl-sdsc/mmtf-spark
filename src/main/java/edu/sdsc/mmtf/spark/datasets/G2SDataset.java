@@ -23,7 +23,7 @@ import org.apache.spark.sql.SparkSession;
  * This class maps human genetic variation positions to PDB structure positions. 
  * Genomic positions must be specified for the hgvs-grch37 reference genome using the 
  * <a href="http://varnomen.hgvs.org/">HGVS sequence variant nomenclature</a>.
-* <p>
+ * <p>
  * Example:
  * <pre>
  * {@code
