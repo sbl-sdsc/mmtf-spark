@@ -37,7 +37,7 @@ public class StructureToCathDomainsTest {
 
 		List<String> pdbIds = Arrays.asList("1HV4");
 //		List<String> pdbIds = Arrays.asList("1STP","4HHB","1JLP","5X6H","5L2G","2MK1");
-	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.downloadMmtfFiles(pdbIds, sc);
+	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.downloadFullMmtfFiles(pdbIds, sc);
 
 	    String baseUrl = "ftp://orengoftp.biochem.ucl.ac.uk/cath/releases/daily-release/newest/cath-b-newest-all.gz";
 	    HashMap<String, ArrayList<String>> hmap = StructureToCathDomains.getMap(baseUrl);
@@ -63,7 +63,7 @@ public class StructureToCathDomainsTest {
 
 		List<String> pdbIds = Arrays.asList("1STP");
 //		List<String> pdbIds = Arrays.asList("1STP","4HHB","1JLP","5X6H","5L2G","2MK1");
-	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.downloadMmtfFiles(pdbIds, sc);
+	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.downloadFullMmtfFiles(pdbIds, sc);
 
 	    String baseUrl = "ftp://orengoftp.biochem.ucl.ac.uk/cath/releases/daily-release/newest/cath-b-newest-all.gz";
 	    HashMap<String, ArrayList<String>> hmap = StructureToCathDomains.getMap(baseUrl);

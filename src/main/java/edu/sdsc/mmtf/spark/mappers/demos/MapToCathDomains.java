@@ -18,7 +18,7 @@ import edu.sdsc.mmtf.spark.mappers.StructureToCathDomains;
  * COMMENT TODO
  * 
  * @author Yue Yu
- * @since 0.1.0
+ * @since 0.2.0
  *
  */
 public class MapToCathDomains {
@@ -32,7 +32,7 @@ public class MapToCathDomains {
 	    JavaSparkContext sc = new JavaSparkContext(conf);
 
 	    List<String> pdbIds = Arrays.asList("1HV4"); // single protein chain 5IBZ -> D2
-	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.downloadMmtfFiles(pdbIds, sc);
+	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.downloadFullMmtfFiles(pdbIds, sc);
 	    String baseUrl = "ftp://orengoftp.biochem.ucl.ac.uk/cath/releases/daily-release/newest/cath-b-newest-all.gz";
 	    HashMap<String, ArrayList<String>> hmap = StructureToCathDomains.getMap(baseUrl);
 	   
