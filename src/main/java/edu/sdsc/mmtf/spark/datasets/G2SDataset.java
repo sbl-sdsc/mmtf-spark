@@ -129,6 +129,7 @@ public class G2SDataset {
 
         // parse json strings and return as a dataset
         Dataset<Row> dataset = spark.read().json(jsonData); 
+        dataset.show();
         
         // return null if dataset is empty
         if (dataset.columns().length == 0) {
@@ -136,7 +137,7 @@ public class G2SDataset {
             return null;
         }   
            
-        dataset = processColumns(dataset);
+        dataset = standardizeData(dataset);
         
         return flattenDataset(dataset);
     }
@@ -144,6 +145,7 @@ public class G2SDataset {
     private static Iterator<String> getData(String variationId, String structureId, String chainId) throws IOException {
         List<String> data = new ArrayList<>();
 
+        // open input stream
         InputStream is = null;
         URL u = null;
         if (structureId == null) {
@@ -151,19 +153,19 @@ public class G2SDataset {
         } else {
             u = new URL(G2S_REST_URL + variationId + "/pdb/" + structureId + "_" + chainId + "/residueMapping");
         }
+
         try {
             is = u.openStream();
-            if (is == null) {
-                System.err.println("WARNING: Could not load data for: " + variationId);
-                return data.iterator();
-            }
         } catch (IOException e) {
+        	e.printStackTrace();
             System.err.println("WARNING: Could not load data for: " + variationId);
             return data.iterator();
         }
 
+        // read data
         List<String> results = IOUtils.readLines(is, "UTF-8");
 
+        // annotate and save data
         if (results != null &&  results.get(0).length() > 100) {
             addVariantId(results, REFERENCE_GENOME, variationId);
             data.addAll(results);
@@ -197,18 +199,19 @@ public class G2SDataset {
     }
     
     /**
-     * Converts dataset to common naming standard.
+     * Standardized data and column names to be consistent
+     * with other datasets.
      * 
      * @param ds
      * @return
      */
-    private static Dataset<Row> processColumns(Dataset<Row> ds) {
+    private static Dataset<Row> standardizeData(Dataset<Row> ds) {
         return ds.withColumn("structureId", upper(col("pdbId")))
-        .withColumnRenamed("chain", "chainId");
+                 .withColumnRenamed("chain", "chainId");
     }
     
     private static Dataset<Row> flattenDataset(Dataset<Row> ds) {
         return ds.withColumn("pdbPosition", explode(col("residueMapping.pdbPosition")))
-                .withColumn("pdbAminoAcid", explode(col("residueMapping.pdbAminoAcid")));
+                 .withColumn("pdbAminoAcid", explode(col("residueMapping.pdbAminoAcid")));
     }
 }
