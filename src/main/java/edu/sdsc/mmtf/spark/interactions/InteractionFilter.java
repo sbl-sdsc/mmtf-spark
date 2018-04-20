@@ -28,12 +28,16 @@ public class InteractionFilter implements Serializable {
     // query criteria
     private Set<String> queryGroups;
     private boolean includeQueryGroups;
+    private Set<String> queryAtomNames;
+    private boolean includeQueryAtomNames;
     private Set<String> queryElements;
     private boolean includeQueryElements;
  
     // target criteria
     private Set<String> targetGroups;
     private boolean includeTargetGroups;
+    private Set<String> targetAtomNames;
+    private boolean includeTargetAtomNames;
     private Set<String> targetElements;
     private boolean includeTargetElements;
     private Set<String> prohibitedTargetGroups;
@@ -285,7 +289,7 @@ public class InteractionFilter implements Serializable {
         this.targetGroups = new HashSet<>(groups.length);
         Collections.addAll(this.targetGroups, groups);
     }
-
+    
     /**
      * Sets groups to either be included or excluded in the target. Group names
      * must to upper case (e.g., "ZN" for Zinc).
@@ -317,6 +321,72 @@ public class InteractionFilter implements Serializable {
         }
         this.includeTargetGroups = include;
         this.targetGroups = groups;
+    }
+    
+    /**
+     * Sets atom names to either be included or excluded in the query.
+     * 
+     * <p>
+     * Example: Find interaction with with C-alpha and C-beta atoms.
+     * 
+     * <pre>{@code
+     * InteractionFilter filter = new InteractionFilter();
+     * filter.setQueryAtomNames(true, "CA", ,"CB");
+     * }</pre>
+     * <p>
+     * Example: Exclude backbone atoms, but consider
+     * all other atom names, e.g., amino acid side chains.
+     * 
+     * <pre>{@code
+     * filter.setQueryAtomNames(false, "N","CA","C","O");
+     * }</pre>
+     * 
+     * @param include
+     *            if true, uses set of atom names in the query, if false, ignores
+     *            atoms with the specified names and uses all other atoms
+     * @param groups
+     *            to be included or excluded in the query
+     */
+    public void setQueryAtomNames(boolean include, String... atomNames) {
+        if (this.queryAtomNames != null) {
+            throw new IllegalArgumentException("ERROR: QueryAtomNames have already been set.");
+        }
+        this.includeQueryAtomNames = include;
+        this.queryAtomNames = new HashSet<>(atomNames.length);
+        Collections.addAll(this.queryAtomNames, atomNames);
+    }
+
+    /**
+     * Sets atom names to either be included or excluded in the target.
+     * 
+     * <p>
+     * Example: Find interaction with with C-alpha and C-beta atoms.
+     * 
+     * <pre>{@code
+     * InteractionFilter filter = new InteractionFilter();
+     * filter.setTargetAtomNames(true, "CA", ,"CB");
+     * }</pre>
+     * <p>
+     * Example: Exclude backbone atoms, but consider
+     * all other atom names, e.g., amino acid side chains.
+     * 
+     * <pre>{@code
+     * filter.setTargetAtomNames(false, "N","CA","C","O");
+     * }</pre>
+     * 
+     * @param include
+     *            if true, uses set of atom names in the target, if false, ignores
+     *            atoms with the specified names and uses all other atoms
+     * @param groups
+     *            to be included or excluded in the target
+     */
+    public void setTargetAtomNames(boolean include, String... atomNames) {
+        if (this.targetAtomNames != null) {
+            throw new IllegalArgumentException("ERROR: TargetAtomNames have already been set.");
+        }
+        this.includeTargetAtomNames = include;
+        this.targetAtomNames = new HashSet<>(atomNames.length);
+        Collections.addAll(this.targetAtomNames, atomNames);
     }
 
     /**
@@ -432,6 +502,41 @@ public class InteractionFilter implements Serializable {
             return targetGroups.contains(group);
         } else {
             return !targetGroups.contains(group);
+        }
+    }
+    /**
+     * Returns true if the specified atom name matches the query conditions.
+     * 
+     * @param atomName
+     *            the atom name to be checked
+     * @return returns true if atom name matches query conditions
+     */
+    public boolean isQueryAtomName(String atomName) {
+        if (queryAtomNames == null) {
+            return true;
+        }
+        if (includeQueryAtomNames) {
+            return queryAtomNames.contains(atomName);
+        } else {
+            return !queryAtomNames.contains(atomName);
+        }
+    }
+
+    /**
+     * Returns true if the specified atom names matches the target conditions.
+     * 
+     * @param atomName
+     *            the atomName to be checked
+     * @return returns true if atomName matches target conditions
+     */
+    public boolean isTargetAtomName(String atomName) {
+        if (targetAtomNames == null) {
+            return true;
+        }
+        if (includeTargetAtomNames) {
+            return targetAtomNames.contains(atomName);
+        } else {
+            return !targetAtomNames.contains(atomName);
         }
     }
 

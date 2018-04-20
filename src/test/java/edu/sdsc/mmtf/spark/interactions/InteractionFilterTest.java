@@ -95,4 +95,26 @@ public class InteractionFilterTest {
 		assertEquals(false, filter.isTargetElement("O"));
 		assertEquals(true, filter.isTargetElement("S"));
 	}
+	
+    @Test
+    public void test10() {
+        InteractionFilter filter = new InteractionFilter();
+        filter.setQueryAtomNames(true, "CA", "CB");
+        
+        assertEquals(false, filter.isQueryAtomName("C"));
+        assertEquals(false, filter.isQueryAtomName("CG"));
+        assertEquals(true, filter.isQueryAtomName("CA"));
+        assertEquals(true, filter.isQueryAtomName("CB"));
+    }
+
+    @Test
+    public void test11() {
+        InteractionFilter filter = new InteractionFilter();
+        filter.setTargetAtomNames(true, "CA", "CB");
+
+        assertEquals(false, filter.isTargetAtomName("C"));
+        assertEquals(false, filter.isTargetAtomName("CG"));
+        assertEquals(true, filter.isTargetAtomName("CA"));
+        assertEquals(true, filter.isTargetAtomName("CB"));
+    }
 }
