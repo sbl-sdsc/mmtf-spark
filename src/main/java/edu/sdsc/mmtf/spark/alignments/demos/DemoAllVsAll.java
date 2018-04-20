@@ -57,10 +57,10 @@ public class DemoAllVsAll {
 		Dataset<Row> alignments = StructureAligner.getAllVsAllAlignments(pdb, algorithmName).cache();
 		
 		// show results
-	    int count = (int)alignments.count();		
+		int count = (int)alignments.count();		
 		alignments.show(count);
 		
-        System.out.println("Pairs: " + count);
+		System.out.println("Pairs: " + count);
 		
 		long end = System.nanoTime();
 		
