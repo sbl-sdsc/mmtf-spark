@@ -55,7 +55,7 @@ public class ProteinSequenceEncoder implements Serializable {
 		properties.put('W', new double[]{3.21,0.41,8.08,2.25,5.94,0.32,0.42});
 		properties.put('T', new double[]{3.03,0.11,2.60,0.26,5.60,0.21,0.36});
 		properties.put('S', new double[]{1.31,0.06,1.60,-0.04,5.70,0.20,0.28});
-		properties.put('A', new double[]{2.34,0.29,6.13,-1.01,10.74,0.36,0.25});
+		properties.put('R', new double[]{2.34,0.29,6.13,-1.01,10.74,0.36,0.25});
 		properties.put('K', new double[]{1.89,0.22,4.77,-0.99,9.99,0.32,0.27});
 		properties.put('H', new double[]{2.99,0.23,4.66,0.13,7.69,0.27,0.30});
 		properties.put('D', new double[]{1.60,0.11,2.78,-0.77,2.95,0.25,0.20});
