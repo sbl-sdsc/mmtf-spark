@@ -13,20 +13,19 @@ import edu.sdsc.mmtf.spark.mappers.StructureToPolymerChains;
 import edu.sdsc.mmtf.spark.webfilters.SequenceSimilarity;
 
 /**
+ * This demo filters PDB chains by sequence similarity using
+ * RCSB PDB webservices.
+ * 
  * @author Peter Rose
+ * @since 0.2.0
  *
  */
 public class SequenceSimilarityDemo {
 
 	/**
-	 * @param args
 	 * @throws IOException 
 	 */
 	public static void main(String[] args) throws IOException {
-
-		String path = MmtfReader.getMmtfReducedPath();
-	    
-	    long start = System.nanoTime();
 	    
 	    SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(SequenceSimilarityDemo.class.getSimpleName());
 	    JavaSparkContext sc = new JavaSparkContext(conf);
@@ -36,16 +35,14 @@ public class SequenceSimilarityDemo {
 	    int sequenceIdentityCutoff = 40;
 	    boolean maskLowComplexity = true;
 	    
+		// read PDB in MMTF format, split into polymer chains,
+	    // search by sequence similarity, and print sequences found
 	    MmtfReader
-	    		.readSequenceFile(path, sc)
+	    		.readReducedSequenceFile(sc)
 	    		.flatMapToPair(new StructureToPolymerChains(false, true))
 	    		.filter(new SequenceSimilarity(sequence, SequenceSimilarity.BLAST, eValueCutoff, sequenceIdentityCutoff, maskLowComplexity))
 	    		.foreach(t -> System.out.println(t._1 + ": " + t._2.getEntitySequence(0)));
 	    		
-	    long end = System.nanoTime();
-	    
-	    System.out.println("Time: " + (end-start)/1E9 + "sec.");
-	    
 	    sc.close();
 	}
 }

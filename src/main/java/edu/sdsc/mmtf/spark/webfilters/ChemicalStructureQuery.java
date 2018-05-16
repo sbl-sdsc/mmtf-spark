@@ -13,6 +13,19 @@ import scala.Tuple2;
  * For details see 
  * <a href="https://www.rcsb.org/pdb/staticHelp.do?p=help/advancedsearch/chemSmiles.html">Chemical Structure Search</a>.
  * 
+ * <p>Example 1: find structures that contain a substructure
+ * <pre><code>
+ *   pdb = pdb.filter(new ChemicalStructureQuery("OC(=O)CCCC[C@@H]1SC[C@@H]2NC(=O)N[C@H]12”,
+ *                                               ChemicalStructureQuery.SUBSTRUCTURE, 0));
+ *</pre></code>
+ *
+ * <p>Example 2: find structures that are >= 70% similar to a query structure
+ * <pre><code>
+ *   int similarity = 70;
+ *   pdb = pdb.filter(new ChemicalStructureQuery("OC(=O)CCCC[C@@H]1SC[C@@H]2NC(=O)N[C@H]12”,                 
+ *                                               ChemicalStructureQuery.SIMILAR, similarity));
+ *</pre></code>
+ * 
  * @author Peter Rose
  * @since 0.1.0
  *
@@ -29,7 +42,7 @@ public class ChemicalStructureQuery implements Function<Tuple2<String, Structure
 	/**
 	 * Default constructor to setup filter that matches any entry with at least one chemical component
 	 * that is a substructure of the specified SMILES string. For details see 
-     * <a href="http://www.rcsb.org/pdb/staticHelp.do?p=help/advancedsearch/chemSmiles.html">Chemical Structure Search</a>.
+     * <a href="https://www.rcsb.org/pdb/staticHelp.do?p=help/advancedsearch/chemSmiles.html">Chemical Structure Search</a>.
 	 * 
 	 * @throws IOException 
 	 */
@@ -41,7 +54,7 @@ public class ChemicalStructureQuery implements Function<Tuple2<String, Structure
 	/**
 	 *  Constructor to setup filter that matches any entry with at least one chemical component
 	 *  that matches the specified SMILES string using the specified query type. For details see 
-     *  <a href="http://www.rcsb.org/pdb/staticHelp.do?p=help/advancedsearch/chemSmiles.html">Chemical Structure Search</a>.
+     *  <a href="https://www.rcsb.org/pdb/staticHelp.do?p=help/advancedsearch/chemSmiles.html">Chemical Structure Search</a>.
 	 *  
 	 * @param smiles SMILES string representing chemical structure
 	 * @param queryType one of the four supported query types:

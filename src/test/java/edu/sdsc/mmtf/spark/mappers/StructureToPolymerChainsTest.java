@@ -32,7 +32,7 @@ public class StructureToPolymerChainsTest {
 	@Test
 	public void test() {
 	    List<String> pdbIds = Arrays.asList("1STP","4HHB","1JLP","5X6H","5L2G","2MK1");
-	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.downloadMmtfFiles(pdbIds, sc);
+	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.downloadFullMmtfFiles(pdbIds, sc);
 
 	    // 1STP: 1 L-protein chain:
 	    // 4HHB: 4 polymer chains

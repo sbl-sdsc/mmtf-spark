@@ -35,7 +35,7 @@ public class MmtfWriterTest {
 	@Test
 	public void test1() throws IOException {
 	    List<String> pdbIds = Arrays.asList("1STP","4HHB","1JLP","5X6H","5L2G","2MK1");
-	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.downloadMmtfFiles(pdbIds, sc);
+	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.downloadFullMmtfFiles(pdbIds, sc);
 	  
 	    File tempFile = folder.getRoot();
 		MmtfWriter.writeMmtfFiles(tempFile.toString(), sc, pdb);

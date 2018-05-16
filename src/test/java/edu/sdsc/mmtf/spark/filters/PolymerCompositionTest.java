@@ -35,7 +35,7 @@ public class PolymerCompositionTest {
 	    // 1AA6: contains SEC, selenocysteine (21st amino acid)
 	    // 1NTH: contains PYL, pyrrolysine (22nd amino acid)
 	    List<String> pdbIds = Arrays.asList("2ONX","1JLP","5X6H","5L2G","2MK1","5UZT","1AA6","1NTH");
-	    pdb = MmtfReader.downloadMmtfFiles(pdbIds, sc);
+	    pdb = MmtfReader.downloadReducedMmtfFiles(pdbIds, sc);
 	}
 
 	@After

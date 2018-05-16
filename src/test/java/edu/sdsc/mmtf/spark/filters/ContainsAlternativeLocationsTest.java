@@ -28,7 +28,7 @@ public class ContainsAlternativeLocationsTest {
 	    // 4QXX: has alternative location ids
 	    // 2ONX: has no alternative location ids
 	    List<String> pdbIds = Arrays.asList("4QXX","2ONX");
-	    pdb = MmtfReader.downloadMmtfFiles(pdbIds, sc);
+	    pdb = MmtfReader.downloadFullMmtfFiles(pdbIds, sc);
 	}
 
 	@After

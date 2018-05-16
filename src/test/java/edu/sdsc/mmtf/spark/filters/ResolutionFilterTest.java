@@ -30,7 +30,7 @@ public class ResolutionFilterTest {
 	    // 3REC: n/a NMR structure
 	    // 1LU3: 16.8 A EM resolution
 	    List<String> pdbIds = Arrays.asList("2ONX","2OLX","3REC","1LU3");
-	    pdb = MmtfReader.downloadMmtfFiles(pdbIds, sc);
+	    pdb = MmtfReader.downloadReducedMmtfFiles(pdbIds, sc);
 	}
 
 	@After

@@ -1,4 +1,4 @@
-package edu.sdsc.mmtf.spark.analysis;
+package edu.sdsc.mmtf.spark.io.demos;
 
 import java.util.Arrays;
 import java.util.List;
@@ -9,7 +9,6 @@ import org.apache.spark.api.java.JavaSparkContext;
 import org.rcsb.mmtf.api.StructureDataInterface;
 
 import edu.sdsc.mmtf.spark.io.MmtfReader;
-import edu.sdsc.mmtf.spark.io.demos.ReadMmtfReduced;
 import edu.sdsc.mmtf.spark.utils.DsspSecondaryStructure;
 
 /**
@@ -32,24 +31,23 @@ public class TraverseStructureHierarchy {
 		//      List<String> pdbIds = Arrays.asList("1STP"); // single protein chain
 		List<String> pdbIds = Arrays.asList("1HV4"); // structure with 2 bioassemblies
 		//	    List<String> pdbIds = Arrays.asList("2NBK"); // single protein chain
-		JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.downloadMmtfFiles(pdbIds, sc).cache(); 
+		JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.downloadFullMmtfFiles(pdbIds, sc).cache(); 
 
-		pdb.foreach(t -> TraverseStructureHierarchy.demo(t._2));      
+		pdb.foreach(t -> TraverseStructureHierarchy.printAll(t._2));      
 	}
 
-	/*
-	 * Demonstrates how to access information from Structure DataInterface
-	 * and how to traverse the data hierarchy.
+	/**
+	 * Prints various data categories stored in MMTF
 	 * 
 	 * @param structure structure to be traversed
 	 */
-	public static void demo(StructureDataInterface structure) {
+	public static void printAll(StructureDataInterface structure) {
 		printMmtfInfo(structure);
 		printMetadata(structure);
 		printCrystallographicData(structure);
-		traverse(structure);
+		printStructureData(structure);
 		printChainInfo(structure);
-		printChainGroupInfo(structure);
+//		printChainGroupInfo(structure);
 		printChainEntityGroupAtomInfo(structure);
 		printBioAssemblyData(structure);
 		// other data not printed here include:
@@ -62,8 +60,8 @@ public class TraverseStructureHierarchy {
 	 * 
 	 * @param structure structure to be traversed
 	 */
-	private static void printMmtfInfo(StructureDataInterface structure) {
-		System.out.println("*** MMMTF INFO ***");
+	public static void printMmtfInfo(StructureDataInterface structure) {
+		System.out.println("*** MMTF INFO ***");
 		System.out.println("MmtfProducer    : " + structure.getMmtfProducer());
 		System.out.println("MmtfVersion     : " + structure.getMmtfVersion());
 		System.out.println();
@@ -74,7 +72,7 @@ public class TraverseStructureHierarchy {
 	 * 
 	 * @param structure structure to be traversed
 	 */
-	private static void printMetadata(StructureDataInterface structure) {
+	public static void printMetadata(StructureDataInterface structure) {
 		System.out.println("*** METADATA ***");
 		System.out.println("StructureId           : " + structure.getStructureId());
 		System.out.println("Title                 : " + structure.getTitle());
@@ -92,7 +90,7 @@ public class TraverseStructureHierarchy {
 	 * 
 	 * @param structure structure to be traversed
 	 */
-	private static void printCrystallographicData(StructureDataInterface structure) {
+	public static void printCrystallographicData(StructureDataInterface structure) {
 		System.out.println("*** CRYSTALLOGRAPHIC DATA ***");
 		System.out.println("Space group           : " + structure.getSpaceGroup());
 		System.out.println("Unit cell dimensions  : " + Arrays.toString(structure.getUnitCell()));	
@@ -116,12 +114,45 @@ public class TraverseStructureHierarchy {
 	}
 
 	/**
+	 * Print the basic data hierarchy.
+	 * 
+	 * @param structure structure to be traversed
+	 */
+	public static void printStructureData(StructureDataInterface structure) {
+
+		System.out.println("*** STRUCTURE DATA ***");
+		System.out.println("Number of models: " + structure.getNumModels());
+		System.out.println("Number of chains: " + structure.getNumChains());
+		System.out.println("Number of groups: " + structure.getNumGroups());
+		System.out.println("Number of atoms : " + structure.getNumAtoms());
+		System.out.println("Number of bonds : " + structure.getNumBonds());
+
+		System.out.println();
+	}
+	
+	/**
+     * Prints information about unique entities (molecules) in a structure.
+     * 
+     * @param structure structure to be traversed
+     */
+    public static void printEntityInfo(StructureDataInterface structure) {
+        System.out.println("*** ENTITY DATA ***");
+
+        for (int i = 0; i < structure.getNumEntities(); i++) {
+            System.out.println("entity type          : " + i + " " + structure.getEntityType(i));
+            System.out.println("entity description   : " + i + " " + structure.getEntityDescription(i));
+            System.out.println("entity sequence      : " + i + " " + structure.getEntitySequence(i));
+        }
+
+        System.out.println();
+    }
+	/**
 	 * Traverses the basic data hierarchy.
 	 * 
 	 * @param structure structure to be traversed
 	 */
 	public static void traverse(StructureDataInterface structure) {
-
+	    
 		System.out.println("*** STRUCTURE DATA ***");
 		System.out.println("Number of models: " + structure.getNumModels());
 		System.out.println("Number of chains: " + structure.getNumChains());

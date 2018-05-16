@@ -11,14 +11,14 @@ import org.apache.spark.sql.Row;
 import org.rcsb.mmtf.api.StructureDataInterface;
 
 import edu.sdsc.mmtf.spark.datasets.PolymerSequenceExtractor;
-import edu.sdsc.mmtf.spark.filters.ContainsLProteinChain;
 import edu.sdsc.mmtf.spark.io.MmtfReader;
 import edu.sdsc.mmtf.spark.mappers.StructureToPolymerChains;
 import edu.sdsc.mmtf.spark.ml.ProteinSequenceEncoder;
+import edu.sdsc.mmtf.spark.webfilters.Pisces;
 
 /**
  * This class generates Word2Vector models from protein sequences
- * in the PDB using an overlapping n-grams.
+ * in the PDB using a overlapping n-grams.
  * 
  * @author Peter Rose
  * @since 0.1.0
@@ -30,7 +30,7 @@ public class PdbSequenceToWord2Vec {
 		String path = MmtfReader.getMmtfReducedPath();
 	    
 		if (args.length != 1) {
-			System.err.println("Usage: " + SecondaryStructureWord2VecEncoder.class.getSimpleName() + " <outputFileName>");
+			System.err.println("Usage: " + PdbSequenceToWord2Vec.class.getSimpleName() + " <outputFileName>");
 			System.exit(1);
 		}
 
@@ -41,14 +41,16 @@ public class PdbSequenceToWord2Vec {
 				.setAppName(SecondaryStructureWord2VecEncoder.class.getSimpleName());
 		JavaSparkContext sc = new JavaSparkContext(conf);
 		
-		double fraction = 1.0;
-		long seed = 123;
+		
+		// read MMTF Hadoop sequence file and create a non-redundant Pisces 
+		// subset set (<=40% seq. identity) of L-protein chains
+		int sequenceIdentity = 40;
+		double resolution = 3.0;
 		
 		JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader
 				.readSequenceFile(path, sc)
-				.flatMapToPair(new StructureToPolymerChains(false,true))
-				.filter(new ContainsLProteinChain()) // filter out for example D-proteins
-                .sample(false, fraction, seed);
+				.flatMapToPair(new StructureToPolymerChains())
+                .filter(new Pisces(sequenceIdentity, resolution));
 			
 		Dataset<Row> data = PolymerSequenceExtractor.getDataset(pdb);
 		data.show(10,false);

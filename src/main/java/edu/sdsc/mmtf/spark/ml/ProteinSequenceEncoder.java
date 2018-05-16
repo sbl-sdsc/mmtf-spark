@@ -1,7 +1,11 @@
 package edu.sdsc.mmtf.spark.ml;
 
+import static org.apache.spark.sql.functions.col;
+import static org.apache.spark.sql.functions.length;
+
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +17,7 @@ import org.apache.spark.ml.linalg.Vector;
 import org.apache.spark.ml.linalg.VectorUDT;
 import org.apache.spark.ml.linalg.Vectors;
 import org.apache.spark.sql.Dataset;
+import org.apache.spark.sql.Encoders;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
 import org.apache.spark.sql.api.java.UDF1;
@@ -50,7 +55,7 @@ public class ProteinSequenceEncoder implements Serializable {
 		properties.put('W', new double[]{3.21,0.41,8.08,2.25,5.94,0.32,0.42});
 		properties.put('T', new double[]{3.03,0.11,2.60,0.26,5.60,0.21,0.36});
 		properties.put('S', new double[]{1.31,0.06,1.60,-0.04,5.70,0.20,0.28});
-		properties.put('A', new double[]{2.34,0.29,6.13,-1.01,10.74,0.36,0.25});
+		properties.put('R', new double[]{2.34,0.29,6.13,-1.01,10.74,0.36,0.25});
 		properties.put('K', new double[]{1.89,0.22,4.77,-0.99,9.99,0.32,0.27});
 		properties.put('H', new double[]{2.99,0.23,4.66,0.13,7.69,0.27,0.30});
 		properties.put('D', new double[]{1.60,0.11,2.78,-0.77,2.95,0.25,0.20});
@@ -109,6 +114,7 @@ public class ProteinSequenceEncoder implements Serializable {
 	 */
 	public Dataset<Row> oneHotEncode() {
 		SparkSession session = data.sparkSession();
+		int maxLength = getMaxSequenceLength(data);
 
 		session.udf().register("encoder", new UDF1<String, Vector>() {
 			private static final long serialVersionUID = -6095318836772114908L;
@@ -116,8 +122,7 @@ public class ProteinSequenceEncoder implements Serializable {
 			@Override
 			public Vector call(String s) throws Exception {
 				int len = AMINO_ACIDS21.size();
-
-				double[] values = new double[len * s.length()];
+                double[] values = new double[len * maxLength];
 				char[] seq = s.toCharArray();
 				for (int i = 0; i < seq.length; i++) {
 					int index = AMINO_ACIDS21.indexOf(seq[i]);
@@ -152,13 +157,14 @@ public class ProteinSequenceEncoder implements Serializable {
 	 */
 	public Dataset<Row> propertyEncode() {
 		SparkSession session = data.sparkSession();
+	    int maxLength = getMaxSequenceLength(data);
 
 		session.udf().register("encoder", new UDF1<String, Vector>(){
 			private static final long serialVersionUID = 1L;
 
 			@Override
 			public Vector call(String s) throws Exception {
-				double[] values = new double[7*s.length()];
+                double[] values = new double[7*maxLength];
 				for (int i = 0, k = 0; i < s.length(); i++) {
 					double[] property = properties.get(s.charAt(i));
 					if (property != null) {
@@ -189,13 +195,14 @@ public class ProteinSequenceEncoder implements Serializable {
 	 */
 	public Dataset<Row> blosum62Encode() {
 		SparkSession session = data.sparkSession();
+	    int maxLength = getMaxSequenceLength(data);
 
 		session.udf().register("encoder", new UDF1<String, Vector>(){
 			private static final long serialVersionUID = 1L;
 
 			@Override
 			public Vector call(String s) throws Exception {
-				double[] values = new double[20*s.length()];
+				double[] values = new double[20*maxLength];
 				for (int i = 0, k = 0; i < s.length(); i++) {
 					double[] property = blosum62.get(s.charAt(i));
 					if (property != null) {
@@ -419,5 +426,17 @@ public class ProteinSequenceEncoder implements Serializable {
 		data.createOrReplaceTempView("table");
 		// append new feature column with average values
 		return session.sql("SELECT *, averager(features0,features1,features2) AS " + outputCol + " from table");
+	}
+	
+	/**
+	 * Returns the maximum sequence length in a dataset
+	 * 
+	 * @param data
+	 * @return maximum sequence length
+	 */
+	private static int getMaxSequenceLength(Dataset<Row> data) {
+	    Dataset<Row> tmp = data.withColumn("seqlength", length(col("sequence")));
+	    List<Integer> seqlength = tmp.select("seqlength").as(Encoders.INT()).collectAsList();
+	    return Collections.max(seqlength);
 	}
 }

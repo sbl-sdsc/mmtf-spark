@@ -27,7 +27,7 @@ public class ExperimentalMethodsTest {
 	    sc = new JavaSparkContext(conf);
 	    
 	    List<String> pdbIds = Arrays.asList("2ONX","5VLN","5VAI","5JXV","5K7N","3PDM","5MNX","5I1R","5MON","5LCB","3J07");
-	    pdb = MmtfReader.downloadMmtfFiles(pdbIds, sc);
+	    pdb = MmtfReader.downloadReducedMmtfFiles(pdbIds, sc);
 	}
 
 	@After
@@ -50,7 +50,7 @@ public class ExperimentalMethodsTest {
 	    assertFalse(results.contains("3PDM"));
 	    assertFalse(results.contains("5MNX"));
 	    assertFalse(results.contains("5I1R"));
-	    assertFalse(results.contains("5MON"));
+	    assertTrue(results.contains("5MON"));
 	    assertFalse(results.contains("5LCB"));
 	    assertFalse(results.contains("3J07"));
 	}
@@ -81,7 +81,7 @@ public class ExperimentalMethodsTest {
 	    assertFalse(results.contains("5K7N"));
 	    assertFalse(results.contains("3PDM"));
 	    assertFalse(results.contains("5MNX"));
-	    assertFalse(results.contains("5I1R"));
+	    assertTrue(results.contains("5I1R"));
 	    assertFalse(results.contains("5MON"));
 	    assertFalse(results.contains("5LCB"));
 	    assertFalse(results.contains("3J07"));
@@ -103,8 +103,8 @@ public class ExperimentalMethodsTest {
 	    assertFalse(results.contains("5MNX"));
 	    assertFalse(results.contains("5I1R"));
 	    assertFalse(results.contains("5MON"));
-	    assertFalse(results.contains("5LCB"));
-	    assertFalse(results.contains("3J07"));
+	    assertTrue(results.contains("5LCB"));
+	    assertTrue(results.contains("3J07"));
 	}
 	
 	@Test
@@ -123,8 +123,8 @@ public class ExperimentalMethodsTest {
 	    assertFalse(results.contains("5MNX"));
 	    assertFalse(results.contains("5I1R"));
 	    assertFalse(results.contains("5MON"));
-	    assertFalse(results.contains("5LCB"));
-	    assertFalse(results.contains("3J07"));
+	    assertTrue(results.contains("5LCB"));
+	    assertTrue(results.contains("3J07"));
 	}
 	
 	@Test
@@ -182,7 +182,7 @@ public class ExperimentalMethodsTest {
 	    assertFalse(results.contains("3PDM"));
 	    assertTrue(results.contains("5MNX"));
 	    assertFalse(results.contains("5I1R"));
-	    assertFalse(results.contains("5MON"));
+	    assertTrue(results.contains("5MON"));
 	    assertFalse(results.contains("5LCB"));
 	    assertFalse(results.contains("3J07"));
 	}
@@ -190,7 +190,8 @@ public class ExperimentalMethodsTest {
 	@Test
 	public void test8() {
 		 List<String> results = pdb
-				 .filter(new ExperimentalMethods(ExperimentalMethods.SOLUTION_SCATTERING, ExperimentalMethods.SOLUTION_NMR))
+				 .filter(new ExperimentalMethods(ExperimentalMethods.SOLUTION_SCATTERING))
+				 .filter(new ExperimentalMethods(ExperimentalMethods.SOLUTION_NMR))
 				 .keys()
 				 .collect();
  
@@ -210,7 +211,8 @@ public class ExperimentalMethodsTest {
 	@Test
 	public void test9() {
 		 List<String> results = pdb
-				 .filter(new ExperimentalMethods(ExperimentalMethods.SOLUTION_NMR, ExperimentalMethods.SOLUTION_SCATTERING))
+		         .filter(new ExperimentalMethods(ExperimentalMethods.SOLUTION_NMR))
+				 .filter(new ExperimentalMethods(ExperimentalMethods.SOLUTION_SCATTERING))
 				 .keys()
 				 .collect();
  
@@ -230,7 +232,9 @@ public class ExperimentalMethodsTest {
 	@Test
 	public void test10() {
 		 List<String> results = pdb
-				 .filter(new ExperimentalMethods(ExperimentalMethods.SOLID_STATE_NMR, ExperimentalMethods.ELECTRON_MICROSCOPY, ExperimentalMethods.SOLUTION_SCATTERING))
+				 .filter(new ExperimentalMethods(ExperimentalMethods.SOLID_STATE_NMR))
+				 .filter(new ExperimentalMethods(ExperimentalMethods.ELECTRON_MICROSCOPY))
+				 .filter(new ExperimentalMethods(ExperimentalMethods.SOLUTION_SCATTERING))
 				 .keys()
 				 .collect();
  

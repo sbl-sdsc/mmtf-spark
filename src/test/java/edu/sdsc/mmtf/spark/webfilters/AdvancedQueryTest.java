@@ -35,7 +35,7 @@ public class AdvancedQueryTest {
 		// 5KHU many chains, chain Q is EC 2.7.11.1
 		// 1F3M entity 1: chains A,B, entity 2: chains B,C, all chains are EC 2.7.11.1
 		List<String> pdbIds = Arrays.asList("1PEN","1OCZ","2ONX","5L6W","5KHU","1F3M");
-		pdb = MmtfReader.downloadMmtfFiles(pdbIds, sc);
+		pdb = MmtfReader.downloadReducedMmtfFiles(pdbIds, sc);
 	}
 
 	@After
@@ -43,7 +43,8 @@ public class AdvancedQueryTest {
 		sc.close();
 	}
 
-	@Test
+	// TODO the wildtype query web service is currently broken
+//	@Test
 	/**
 	 * This test runs a chain level query and compares the results at the PDB entry level
 	 * @throws IOException

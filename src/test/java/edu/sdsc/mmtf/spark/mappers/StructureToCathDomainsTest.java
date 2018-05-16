@@ -5,8 +5,8 @@ import static org.junit.Assert.assertEquals;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
@@ -32,19 +32,21 @@ public class StructureToCathDomainsTest {
 		sc.close();
 	}
 
-	@Test
+//	@Test
 	public void test1() throws IOException {
 
 		List<String> pdbIds = Arrays.asList("1HV4");
 //		List<String> pdbIds = Arrays.asList("1STP","4HHB","1JLP","5X6H","5L2G","2MK1");
-	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.downloadMmtfFiles(pdbIds, sc);
+	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.downloadFullMmtfFiles(pdbIds, sc);
 
 	    String baseUrl = "ftp://orengoftp.biochem.ucl.ac.uk/cath/releases/daily-release/newest/cath-b-newest-all.gz";
-	    HashMap<String, ArrayList<String>> hmap = StructureToCathDomains.getMap(baseUrl);
+
 	    
 //	    System.out.println(hmap.get("1HV4A"));
 	      
-	    JavaPairRDD<String, StructureDataInterface> cathDomains = pdb.flatMapToPair(new StructureToCathDomains(hmap));
+	    JavaPairRDD<String, StructureDataInterface> cathDomains = pdb.flatMapToPair(new StructureToCathDomains(baseUrl));
+	    
+	    Map<String, ArrayList<String>> hmap = StructureToCathDomains.loadCathDomains(baseUrl);
         String[] bound = hmap.get("1HV4A").get(0).split(":")[0].split("-");
 
         int[] cath = cathDomains.first()._2.getGroupIds();       
@@ -58,19 +60,21 @@ public class StructureToCathDomainsTest {
         assertEquals(8, cathDomains.count());
 	}
 	
-	@Test
+//	@Test
 	public void test2() throws IOException {
 
 		List<String> pdbIds = Arrays.asList("1STP");
 //		List<String> pdbIds = Arrays.asList("1STP","4HHB","1JLP","5X6H","5L2G","2MK1");
-	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.downloadMmtfFiles(pdbIds, sc);
+	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.downloadFullMmtfFiles(pdbIds, sc);
 
 	    String baseUrl = "ftp://orengoftp.biochem.ucl.ac.uk/cath/releases/daily-release/newest/cath-b-newest-all.gz";
-	    HashMap<String, ArrayList<String>> hmap = StructureToCathDomains.getMap(baseUrl);
+
 	    
 //	    System.out.println(hmap.get("1STPA"));
 	      
-	    JavaPairRDD<String, StructureDataInterface> cathDomains = pdb.flatMapToPair(new StructureToCathDomains(hmap));
+	    JavaPairRDD<String, StructureDataInterface> cathDomains = pdb.flatMapToPair(new StructureToCathDomains(baseUrl));
+	    
+	    Map<String, ArrayList<String>> hmap = StructureToCathDomains.loadCathDomains(baseUrl);
         String[] bound = hmap.get("1STPA").get(0).split(":")[0].split("-");
 
         int[] cath = cathDomains.first()._2.getGroupIds();       

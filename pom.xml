@@ -15,7 +15,9 @@
 		<project.build.targetEncoding>UTF-8</project.build.targetEncoding>
 		<junit.version>4.12</junit.version>
 		<mmtf.version>1.0.7</mmtf.version>
-		<biojava.version>5.0.0-alpha13</biojava.version>
+<!-- 		<biojava.version>5.0.0-alpha13</biojava.version> -->
+<!-- 		<biojava.version>5.0.0</biojava.version> -->
+		<biojava.version>5.0.1-SNAPSHOT</biojava.version>
 		<spark.version>2.2.1</spark.version>
 	</properties>
 
@@ -93,12 +95,12 @@
 			<version>${spark.version}</version>
 			<scope>provided</scope>
 		</dependency>
-		<dependency>
+<!-- 		<dependency>
 			<groupId>com.github.fommil.netlib</groupId>
 			<artifactId>all</artifactId>
 			<version>1.1.2</version>
 			<type>pom</type>
-		</dependency>
+		</dependency> -->
 		<dependency>
 			<groupId>com.squareup.okhttp3</groupId>
 			<artifactId>okhttp</artifactId>
@@ -118,14 +120,17 @@
 					<forkCount>2</forkCount>
 
 					<excludes>
-						<!-- we exclude by default the long running tests, they will only be 
-							executed if explicitly called -->
+						<!-- we exclude by default long running tests, 
+						     they will only be executed if explicitly called -->
+						<exclude>**/ContainsDSaccharideChainTest.java</exclude>
+						<exclude>**/OrFilterTest.java</exclude>
 						<exclude>**/AdvancedQueryTest.java</exclude>
 						<exclude>**/BlastClustersTest.java</exclude>
 						<exclude>**/ChemicalStructureQueryTest.java</exclude>
 						<exclude>**/CustomReportQueryTest.java</exclude>
 						<exclude>**/WildTypeTest.java</exclude>
 						<exclude>**/CustomReportServiceTest.java</exclude>
+						<exclude>**/PdbjMineDatasetTest.java</exclude>
 					</excludes>
 				</configuration>
 			</plugin>

@@ -17,6 +17,14 @@ import edu.sdsc.mmtf.spark.ml.JavaRDDToDataset;
  * sequence segment and the DSSP Q8 and DSSP Q3 secondary structure
  * annotation of the center residue. Therefore, the segment length
  * must be an odd number.
+ * <p>Example
+ * <pre>
+ * +----------------+-------------------------+-------+-------+
+ * |structureChainId|sequence                 |labelQ8|labelQ3|
+ * +----------------+-------------------------+-------+-------+
+ * |1STP.A          |DPSKDSKAQVSAAEAGITGTWYNQL|C      |C      |
+ * |1STP.A          |PSKDSKAQVSAAEAGITGTWYNQLG|H      |H      |
+ * </PRE>
  * 
  * @author Yue Yu
  * @since 0.1.0
@@ -27,6 +35,7 @@ public class SecondaryStructureSegmentExtractor {
 	/**
 	 * Returns a dataset of sequence segments of the specified length and 
 	 * the DSSP Q8 and DSSP Q3 code of the center residue in a segment.
+	 * 
 	 * @param structureRDD structure
 	 * @param length segment length, must be an odd number
 	 * @return dataset of segments

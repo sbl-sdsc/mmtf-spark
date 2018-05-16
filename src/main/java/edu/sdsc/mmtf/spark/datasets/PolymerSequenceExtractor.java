@@ -15,15 +15,13 @@ import edu.sdsc.mmtf.spark.ml.JavaRDDToDataset;
  * used in the experiment (i.e., the "SEQRES" record in PDB files). 
  * 
  * <p>Example: get dataset of sequences of L-proteins
- * <pre>
- * {@code
+ * <pre><code>
  * pdb.flatMapToPair(new StructureToPolymerChains())
  *    .filter(new ContainsLProteinChain());
  *    
  * Dataset<Row> protSeq = PolymerSequenceExtractor.getDataset(pdb);
  * protSeq.show(10);
- * }
- * </pre>
+ * </pre></code>
  * 
  * @author Peter Rose
  * @since 0.1.0

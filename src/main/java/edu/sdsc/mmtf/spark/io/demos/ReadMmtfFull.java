@@ -20,9 +20,6 @@ import edu.sdsc.mmtf.spark.io.MmtfReader;
 public class ReadMmtfFull {
 
 	public static void main(String[] args) throws FileNotFoundException {  
-		
-		String path = MmtfReader.getMmtfFullPath();
-	    
 	    long start = System.nanoTime();
 	    
 	    // instantiate Spark. Each Spark application needs these two lines of code.
@@ -30,8 +27,8 @@ public class ReadMmtfFull {
 	    JavaSparkContext sc = new JavaSparkContext(conf);
 		 
 	    // read all PDB entries from a local Hadoop sequence file
-	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.readSequenceFile(path, sc);
-	    
+	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.readFullSequenceFile(sc);
+
 	    System.out.println("# structures: " + pdb.count());
 	    
 	    // close Spark

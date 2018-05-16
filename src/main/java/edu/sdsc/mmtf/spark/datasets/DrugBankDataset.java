@@ -62,6 +62,20 @@ public class DrugBankDataset {
      * used freely in your application or project (including commercial use). It
      * is released under a Creative Common’s CC0 International License.
      * 
+     * <p>Example: Get DrugBank open dataset
+     * <pre><code>
+     * Dataset<Row> openDrugLinks = DrugBankDataset.getOpenDrugLinks();
+     * openDrugLinks.show();
+     * </pre></code>
+     * 
+     * <pre>
+     * +----------+--------------------+-----------+--------------------+
+     * |DrugBankID|          Commonname|        CAS|    StandardInChIKey|
+     * +----------+--------------------+-----------+--------------------+
+     * |   DB00006|         Bivalirudin|128270-60-0|OIRCOABEOLEUMC-GE...|
+     * |   DB00014|           Goserelin| 65807-02-5|BLCLNMBMMGCOAS-UR...|
+     * </pre>
+     * 
      * @return DrugBank dataset
      * @throws IOException
      */
@@ -94,12 +108,12 @@ public class DrugBankDataset {
      * <p>
      * Example: Get dataset of external links and identifiers of approved drugs
      * 
-     * <pre>{@code
+     * <pre><code>
      * String username = args[0];
      * String password = args[1];
      * Dataset<Row> drugLinks = getDrugLinks(DrugGroup.APPROVED, username, password);
      * drugLinks.show();
-     * }</pre>
+     * </pre></code>
      * 
      * @param drugGroup
      *            specific dataset to be downloaded
@@ -137,12 +151,12 @@ public class DrugBankDataset {
      * Example: Get dataset of drug target external links and identifiers of all
      * drugs in DrugBank
      * 
-     * <pre>{@code 
+     * <pre><code>
      * String username = args[0];
      * String password = args[1];
      * Dataset<Row> drugTargetLinks = getDrugTargetLinks(DrugGroup.ALL, username, password);
      * drugTargetLinks.show();
-     * }</pre>
+     * </pre></code>
      * 
      * @param drugGroup
      *            specific dataset to be downloaded
@@ -180,12 +194,12 @@ public class DrugBankDataset {
      * Example: Get dataset of drug target external links and identifiers of
      * small-molecule drugs in DrugBank
      * 
-     * <pre>{@code
+     * <pre><code>
      * String username = args[0];
      * String password = args[1];
      * Dataset<Row> drugTargetLinks = getDrugTargetLinks(DrugType.SMALL_MOLECULE, username, password);
      * drugTargetLinks.show();
-     * }</pre>
+     * </pre><code>
      * 
      * @param drugType
      *            specific dataset to be downloaded
@@ -264,7 +278,7 @@ public class DrugBankDataset {
 
     /**
      * Returns an input stream for a given URL using authentication. This method
-     * follow redirected URLs.
+     * follows redirected URLs.
      * 
      * @param url
      * @param username

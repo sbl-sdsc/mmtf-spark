@@ -32,7 +32,7 @@ public class ContainsLProteinChainTest {
 	    // 5L2G: DNA chain
 	    // 2MK1: D-saccharide
 	    List<String> pdbIds = Arrays.asList("2ONX","1JLP","5X6H","5L2G","2MK1");
-	    pdb = MmtfReader.downloadMmtfFiles(pdbIds, sc);
+	    pdb = MmtfReader.downloadReducedMmtfFiles(pdbIds, sc);
 	}
 
 	@After

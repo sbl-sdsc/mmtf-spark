@@ -30,7 +30,7 @@ public class DepositionDateFilterTest {
 	    // 3VCO: deposited on 2012-01-04
 	    // 5N0Y: deposited on 2017-02-03
 	    List<String> pdbIds = Arrays.asList("4MYA","1O6Y","3VCO","5N0Y");
-	    pdb = MmtfReader.downloadMmtfFiles(pdbIds, sc);
+	    pdb = MmtfReader.downloadReducedMmtfFiles(pdbIds, sc);
 	}
 
 	@After

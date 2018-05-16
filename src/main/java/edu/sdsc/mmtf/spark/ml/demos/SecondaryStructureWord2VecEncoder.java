@@ -15,7 +15,6 @@ import org.biojava.nbio.structure.StructureException;
 import org.rcsb.mmtf.api.StructureDataInterface;
 
 import edu.sdsc.mmtf.spark.datasets.SecondaryStructureSegmentExtractor;
-import edu.sdsc.mmtf.spark.filters.ContainsLProteinChain;
 import edu.sdsc.mmtf.spark.io.MmtfReader;
 import edu.sdsc.mmtf.spark.mappers.StructureToPolymerChains;
 import edu.sdsc.mmtf.spark.ml.ProteinSequenceEncoder;
@@ -54,19 +53,15 @@ public class SecondaryStructureWord2VecEncoder {
 				.setAppName(SecondaryStructureWord2VecEncoder.class.getSimpleName());
 		JavaSparkContext sc = new JavaSparkContext(conf);
 		
-		// read MMTF Hadoop sequence file and create a non-redundant set (<=20% seq. identity)
-		// of L-protein chains
+		// read MMTF Hadoop sequence file and create a non-redundant Pisces 
+		// subset set (<=20% seq. identity) of L-protein chains
 		int sequenceIdentity = 20;
-		double resolution = 2.0;
-		double fraction = 0.1;
-		long seed = 123;
+		double resolution = 3.0;
 		
 		JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader
 				.readSequenceFile(path, sc)
 				.flatMapToPair(new StructureToPolymerChains())
-				.filter(new Pisces(sequenceIdentity, resolution)) // The pisces filter
-				.filter(new ContainsLProteinChain()) // filter out for example D-proteins
-                .sample(false,  fraction, seed);
+                .filter(new Pisces(sequenceIdentity, resolution));
 		
 		// get content
 		int segmentLength = 11; 

@@ -50,7 +50,7 @@ sudo cp -r ./spark-2.2.1-bin-hadoop2.7 /opt
 # Install mmtf-spark
 Clone the mmtf-spark repository and build the project using Maven.
 ```
-cd INSTALL_DIRECTORY
+cd INSTALL_PATH
 git clone https://github.com/sbl-sdsc/mmtf-spark.git
 ```
 
@@ -93,8 +93,42 @@ echo $SPARK_HOME
 # Build mmtf-spark
 Run maven to build the mmtf-spark project and run the unit tests.
 ```
-cd INSTALL_DIRECTORY\mmtf-spark
+cd INSTALL_PATH\mmtf-spark
 mvn install
 ```
 
 If installation and testing are successful, a *Build Success* message will be printed.
+
+# Download the PDB archive as Hadoop Sequence Files
+MMTF-Hadoop Sequence files are available in two 
+[representations](https://mmtf.rcsb.org/download.html):
+
+* [![Download MMTF](http://img.shields.io/badge/download-MMTF_full-orange.svg?style=flat)](https://mmtf.rcsb.org/v1.0/hadoopfiles/full.tar) all-atom representation with 0.001Å coordinate precision, 0.01 B-factor and occupancy precision 
+
+* [![Download MMTF Reduced](http://img.shields.io/badge/download-MMTF_reduced-orange.svg?style=flat)](https://mmtf.rcsb.org/v1.0/hadoopfiles/reduced.tar)  C-alpha atoms only for polypeptides, P-backbone atoms only for polynucleotides, all-atom representation for all other residue types, 
+0.1Å coordinate precision, 0.1 B-factor and occupancy precision.
+
+Extract the content from the .tar files by double clicking the file name.
+
+Alternatively, the following command line tools can be used to download and extract the data:
+
+```
+curl -O https://mmtf.rcsb.org/v1.0/hadoopfiles/full.tar
+tar -xvf full.tar
+curl -O https://mmtf.rcsb.org/v1.0/hadoopfiles/reduced.tar
+tar -xvf reduced.tar
+```
+or
+```
+wget https://mmtf.rcsb.org/v1.0/hadoopfiles/full.tar
+tar -xvf full.tar
+wget https://mmtf.rcsb.org/v1.0/hadoopfiles/reduced.tar
+tar -xvf reduced.tar
+```
+
+Add the following lines in your .bash_profile:
+
+```
+export MMTF_FULL=INSTALL_PATH/full
+export MMTF_REDUCED=INSTALL_PATH/reduced
+```

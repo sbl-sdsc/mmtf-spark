@@ -32,7 +32,7 @@ public class ContainsDSaccharideChainTest {
 	    // 2MK1: As of V5 of PDBx/mmCIF, saccharides seem to be represented as monomers,
 	    //       instead of polysaccharides, so none of these tests returns true anymore.
 	    List<String> pdbIds = Arrays.asList("2ONX","1JLP","5X6H","5L2G","2MK1");
-	    pdb = MmtfReader.downloadMmtfFiles(pdbIds, sc);
+	    pdb = MmtfReader.downloadReducedMmtfFiles(pdbIds, sc);
 	}
 
 	@After

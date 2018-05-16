@@ -18,21 +18,16 @@ import org.apache.hadoop.io.Text;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.PairFunction;
-import org.biojava.nbio.structure.Structure;
-import org.biojava.nbio.structure.io.MMCIFFileReader;
-import org.biojava.nbio.structure.io.PDBFileReader;
-import org.biojava.nbio.structure.io.mmtf.MmtfStructureWriter;
 import org.rcsb.mmtf.api.StructureDataInterface;
 import org.rcsb.mmtf.dataholders.MmtfStructure;
 import org.rcsb.mmtf.decoder.GenericDecoder;
 import org.rcsb.mmtf.decoder.ReaderUtils;
-import org.rcsb.mmtf.encoder.AdapterToStructureData;
 import org.rcsb.mmtf.serialization.MessagePackSerialization;
 
 import scala.Tuple2;
 
 /**
- * Methods for reading macromolecular structure in MMTF, mmCIF, and PDB file formats. 
+ * Methods for reading and downloading macromolecular structures in MMTF file formats. 
  * The data are returned as a JavaPairRDD with the structure id (e.g. PDB ID) as 
  * the key and the structural data as the value.
  * 
@@ -41,17 +36,43 @@ import scala.Tuple2;
  * <li> read directory of MMTF-Hadoop Sequence files in full and reduced representation
  * <li> download MMTF full and reduced representations using web services (mmtf.rcsb.org)
  * <li> read directory of MMTF files (.mmtf, mmtf.gz)
- * <li> read directory of mmCIF files (.cif, .cif.gz)
- * <li> read directory of PDB files (.pdb, .ent)
  * </ul>
  * 
  * @author Peter Rose
  * @author Yue Yu
  * @since 0.1.0
- *
+ * @see   MmtfImporter
  */
 public class MmtfReader {
 
+	/**
+	 * Reads a full MMTF-Hadoop Sequence file using the default file location.
+	 * The default file location is determined by {@link MmtfReader.getMmtfFullPath()}.
+	 * 
+	 * See <a href="https://mmtf.rcsb.org/download.html"> for file download information</a>
+	 * 
+	 * @param sc Spark context
+	 * @return structure data as keyword/value pairs
+	 * @throws FileNotFoundException 
+	 */
+	public static JavaPairRDD<String, StructureDataInterface> readFullSequenceFile(JavaSparkContext sc) throws FileNotFoundException {
+		return readSequenceFile(getMmtfFullPath(), sc);
+	}
+	
+	/**
+	 * Reads a reduced MMTF-Hadoop Sequence file using the default file location.
+	 * The default file location is determined by {@link MmtfReader.getMmtfReducedPath()}.
+	 * 
+	 * See <a href="https://mmtf.rcsb.org/download.html"> for file download information</a>
+	 * 
+	 * @param sc Spark context
+	 * @return structure data as keyword/value pairs
+	 * @throws FileNotFoundException 
+	 */
+	public static JavaPairRDD<String, StructureDataInterface> readReducedSequenceFile(JavaSparkContext sc) throws FileNotFoundException {
+		return readSequenceFile(getMmtfReducedPath(), sc);
+	}
+	
 	/**
 	 * Reads an MMTF-Hadoop Sequence file. The Hadoop Sequence file may contain
 	 * either gzip compressed or uncompressed values.
@@ -208,100 +229,6 @@ public class MmtfReader {
 				.filter(t -> t != null);
 	}
 	
-	
-	/**
-     * Reads uncompressed PDB files recursively from a given directory path. 
-     * This methods reads files with the .pdb or .ent extension.
-	 * 
-	 * Missing data: bond info, bioAssembly info
-	 * Different data : atom serial number, entity description
-	 * 
-	 * @param path Path to PDB files
-	 * @param sc Spark context
-	 * @return structure data as keyword/value pairs
-	 */
-	public static JavaPairRDD<String, StructureDataInterface> readPdbFiles(String path, JavaSparkContext sc) {
-		return sc
-				.parallelize(getFiles(path))
-				.mapToPair(new PairFunction<File,String, StructureDataInterface>() {
-
-					private static final long serialVersionUID = -5612212642803414037L;
-
-					public Tuple2<String, StructureDataInterface> call(File f) throws Exception {
-						try{
-							if(f.toString().contains(".pdb"))
-							{
-								PDBFileReader pdbreader = new PDBFileReader();
-								Structure struc = pdbreader.getStructure(f.toString()); 
-								AdapterToStructureData writerToEncoder = new AdapterToStructureData();
-								new MmtfStructureWriter(struc, writerToEncoder);
-								return new Tuple2<String, StructureDataInterface>(f.getName().substring(0, f.getName().indexOf(".pdb")), writerToEncoder);
-							}
-							else if(f.toString().contains(".ent"))
-							{
-								PDBFileReader pdbreader = new PDBFileReader();
-								Structure struc = pdbreader.getStructure(f.toString()); 
-								AdapterToStructureData writerToEncoder = new AdapterToStructureData();
-								new MmtfStructureWriter(struc, writerToEncoder);
-								return new Tuple2<String, StructureDataInterface>(f.getName().substring(0, f.getName().indexOf(".ent")), writerToEncoder);
-							}
-							else return null;
-						}catch(Exception e)
-						{
-							return null;
-						}
-					}
-				})
-				.filter(t -> t != null);
-	}
-	
-	/**
-     * Reads uncompressed and compressed mmCIF files recursively from a given directory path. 
-     * This methods reads files with the .cif or .cif.gz extension.
-	 * 
-	 * 
-	 * @param path Path to .cif files
-	 * @param sc Spark context
-	 * @return structure data as keyword/value pairs
-	 */
-	public static JavaPairRDD<String, StructureDataInterface> readMmcifFiles(String path, JavaSparkContext sc) {
-		return sc
-				.parallelize(getFiles(path))
-				.mapToPair(new PairFunction<File,String, StructureDataInterface>() {
-
-					private static final long serialVersionUID = -7815663658405168429L;
-
-					public Tuple2<String, StructureDataInterface> call(File f) throws Exception {
-						try{
-							if(f.toString().contains(".cif.gz"))
-							{
-								InputStream in = new FileInputStream(f);
-								MMCIFFileReader mmcifReader = new MMCIFFileReader();
-								Structure struc = mmcifReader.getStructure(new GZIPInputStream(in)); 
-								AdapterToStructureData writerToEncoder = new AdapterToStructureData();
-								new MmtfStructureWriter(struc, writerToEncoder);
-								return new Tuple2<String, StructureDataInterface>(f.getName().substring(0, f.getName().indexOf(".cif")), writerToEncoder);
-							}
-							else if(f.toString().contains(".cif"))
-							{
-								InputStream in = new FileInputStream(f);
-								MMCIFFileReader mmcifReader = new MMCIFFileReader();
-								Structure struc = mmcifReader.getStructure(in); 
-								AdapterToStructureData writerToEncoder = new AdapterToStructureData();
-								new MmtfStructureWriter(struc, writerToEncoder);
-								return new Tuple2<String, StructureDataInterface>(f.getName().substring(0, f.getName().indexOf(".cif")), writerToEncoder);
-							}
-							else return null;
-						}catch(Exception e)
-						{
-							return null;
-						}
-					}
-				})
-				.filter(t -> t != null);
-	}
-	
-	
 	/**
 	 * Downloads and reads the specified PDB entries in the full MMTF representation
 	 * using MMTF web services.
@@ -309,33 +236,31 @@ public class MmtfReader {
 	 * @param pdbIds List of PDB IDs (upper case)
 	 * @param sc Spark context
 	 * @return structure data as keyword/value pairs
-	 * @see <a href="http://mmtf.rcsb.org/download.html">MMTF web services</a>.
+	 * @see <a href="https://mmtf.rcsb.org/download.html">MMTF web services</a>.
 	 */
-	public static JavaPairRDD<String, StructureDataInterface> downloadMmtfFiles(List<String> pdbIds, JavaSparkContext sc) {
+	public static JavaPairRDD<String, StructureDataInterface> downloadFullMmtfFiles(List<String> pdbIds, JavaSparkContext sc) {
 		return sc
 				.parallelize(pdbIds)
 				.mapToPair(t -> new Tuple2<String, StructureDataInterface>(t, getStructure(t, true, false)));
 	}
 	
 	/**
-	 * Downloads and reads the specified PDB entries using <a href="http://mmtf.rcsb.org/download.html">MMTF web services</a>.
+	 * Downloads and reads the specified PDB entries in the reduced MMTF representation (C-alpha, P-backbone, all ligand atoms)
+	 * using MMTF web services.
 	 * 
 	 * @param pdbIds List of PDB IDs (upper case)
-	 * @param https if true, used https instead of http
-	 * @param reduced if true, downloads a reduced representation (C-alpha, P-backbone, all ligand atoms)
 	 * @param sc Spark context
 	 * @return structure data as keyword/value pairs
+	 * @see <a href="https://mmtf.rcsb.org/download.html">MMTF web services</a>.
 	 */
-	public static JavaPairRDD<String, StructureDataInterface> downloadMmtfFiles(List<String> pdbIds, boolean https, boolean reduced, JavaSparkContext sc) {
+	public static JavaPairRDD<String, StructureDataInterface> downloadReducedMmtfFiles(List<String> pdbIds, JavaSparkContext sc) {
 		return sc
 				.parallelize(pdbIds)
-				.mapToPair(t -> new Tuple2<String, StructureDataInterface>(t, getStructure(t, https, reduced)));
+				.mapToPair(t -> new Tuple2<String, StructureDataInterface>(t, getStructure(t, true, true)));
 	}
 	
-	private static StructureDataInterface getStructure(String pdbId, boolean https, boolean reduced) throws IOException {
-// TODO use with new version		
+	private static StructureDataInterface getStructure(String pdbId, boolean https, boolean reduced) throws IOException {		
 	    return new GenericDecoder(ReaderUtils.getDataFromUrl(pdbId, https, reduced));
-//		return new GenericDecoder(ReaderUtils.getDataFromUrl(pdbId));
 	}
 
 	/**

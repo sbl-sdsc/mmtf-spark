@@ -46,6 +46,17 @@ cd C:\Users\USER_NAME
 gzip -d spark-2.2.1-bin-hadoop2.7.tgz
 tar -xvf spark-2.2.1-bin-hadoop2.7.tar
 ```
+By default, SPARK logs at the INFO level, which leads to excessive log messages. Change the log level from INFO to FATAL.
+
+```
+cd spark-2.2.1-bin-hadoop2.7\conf
+cp log4j.properties.template log4j.properties
+```
+
+Then edit the log4j.properties file and change the level from INFO to FATAL:
+
+`log4j.rootCategory=INFO, console` to `log4j.rootCategory=FATAL, console`
+
 
 ### Install Hadoop winutils
 Download winutils.exe using the curl command in a Command Prompt window.
@@ -80,6 +91,7 @@ git clone https://github.com/sbl-sdsc/mmtf-spark.git
 | Variable      | Value                                        |
 | ------------- |----------------------------------------------|
 | SPARK_HOME    | C:\Users\USER_NAME\spark-2.2.1-bin-hadoop2.7 |
+| HADOOP_HOME   | C:\Users\USER_NAME\spark-2.2.1-bin-hadoop2.7 |
 | JAVA_HOME     | C:\Program Files\Java\jdk1.8.0_162           |
 
 
@@ -105,3 +117,30 @@ mvn install
 ```
 
 If installation and testing are successful, a *Build Success* message will be printed.
+
+# Download the PDB archive as Hadoop Sequence Files
+MMTF-Hadoop Sequence files are available in two 
+[representations](https://mmtf.rcsb.org/download.html):
+
+* [![Download MMTF](http://img.shields.io/badge/download-MMTF_full-orange.svg?style=flat)](https://mmtf.rcsb.org/v1.0/hadoopfiles/full.tar) all-atom representation with 0.001Å coordinate precision, 0.01 B-factor and occupancy precision 
+
+* [![Download MMTF Reduced](http://img.shields.io/badge/download-MMTF_reduced-orange.svg?style=flat)](https://mmtf.rcsb.org/v1.0/hadoopfiles/reduced.tar)  C-alpha atoms only for polypeptides, P-backbone atoms only for polynucleotides, all-atom representation for all other residue types, 
+0.1Å coordinate precision, 0.1 B-factor and occupancy precision.
+
+
+Weekly updated MMTF-Hadoop Sequence files can also be downloaded and extracted using the
+following commands:
+
+```
+curl -k -O https://mmtf.rcsb.org/v1.0/hadoopfiles/full.tar
+tar -xvf full.tar
+curl -k -O https://mmtf.rcsb.org/v1.0/hadoopfiles/reduced.tar
+tar -xvf reduced.tar
+```
+
+Set the following new User environment variables:
+
+| Variable      | Value                     |
+| ------------- |---------------------------|
+| MMTF_FULL     | C:\Users\USER_NAME\full   |
+| MMTF_REDUCED  |C:\Users\USER_NAME\reduced |

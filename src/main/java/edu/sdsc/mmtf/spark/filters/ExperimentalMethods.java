@@ -1,8 +1,8 @@
 package edu.sdsc.mmtf.spark.filters;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
-import java.util.TreeSet;
 
 import org.apache.spark.api.java.function.Function;
 import org.rcsb.mmtf.api.StructureDataInterface;
@@ -10,7 +10,7 @@ import org.rcsb.mmtf.api.StructureDataInterface;
 import scala.Tuple2;
 
 /**
- * This filter returns true if all the specified experimental methods match a PDB entry.
+ * This filter returns true if any of the specified experimental methods match a PDB entry.
  * 
  * <p>The current list of supported experimental method types can be found
  * <a href="http://mmcif.wwpdb.org/dictionaries/mmcif_pdbx_v40.dic/Items/_exptl.method.html">here</a>
@@ -59,20 +59,14 @@ public class ExperimentalMethods implements Function<Tuple2<String, StructureDat
 	 * 
 	 */
 	public ExperimentalMethods(String... experimentalMethods) {
-		// order the input experimental method types alphabetically
-		this.experimentalMethods = new TreeSet<>(Arrays.asList(experimentalMethods));	
+		this.experimentalMethods = new HashSet<>(Arrays.asList(experimentalMethods));	
 	}
 
 	@Override
 	public Boolean call(Tuple2<String, StructureDataInterface> t) throws Exception {
 		StructureDataInterface structure = t._2;
 
-		if (structure.getExperimentalMethods().length != this.experimentalMethods.size()) {
-			return false;
-		}
-
-		// order experimental methods alphabetically to enable equals comparison of sets
-		Set<String> methods = new TreeSet<>(Arrays.asList(structure.getExperimentalMethods()));
+		Set<String> methods = new HashSet<>(Arrays.asList(structure.getExperimentalMethods()));
 		methods.retainAll(experimentalMethods);
 		return !methods.isEmpty();
 	}

@@ -31,7 +31,7 @@ public class WildTypeTest {
 		// 1OCZ two entities wildtype query 100 matches: 1OCZ:1, 1OCZ:2
 		// 2ONX structure result for author query
 		List<String> pdbIds = Arrays.asList("1PEN","1OCZ","2ONX");
-	    pdb = MmtfReader.downloadMmtfFiles(pdbIds, sc);
+	    pdb = MmtfReader.downloadReducedMmtfFiles(pdbIds, sc);
 	}
 
 	@After
@@ -39,7 +39,8 @@ public class WildTypeTest {
 		sc.close();
 	}
 
-	@Test
+//  TODO the wildtype webservice of RCSB PDB is currently broken
+// 	@Test
 	public void test1() throws IOException {
 	    pdb = pdb.filter(new WildType(true, 100));    
 	    List<String> results = pdb.keys().collect();
