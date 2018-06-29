@@ -145,4 +145,16 @@ public class ColumnarStructureX extends ColumnarStructure {
         }
         return caIndices;
     }
+    
+    public boolean[] isGroupWithAlternateLocations() {
+        boolean[] hasAltLocs = new boolean[getNumGroups()];
+        int[] indices = getAtomToGroupIndices();    
+        char[] altLocs = getAltLocIds();
+        
+        for (int i = 0; i < altLocs.length; i++) {
+            hasAltLocs[indices[i]] = altLocs[i] != '\0';
+        }
+
+        return hasAltLocs;
+    }
 }

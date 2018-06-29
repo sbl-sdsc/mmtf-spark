@@ -17,15 +17,12 @@ import edu.sdsc.mmtf.spark.io.MmtfReader;
 
 public class ColumnarStructureXTest {
     private JavaSparkContext sc;
-    private JavaPairRDD<String, StructureDataInterface> pdb;
 
     @Before
     public void setUp() throws Exception {
         SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(ColumnarStructureTest.class.getSimpleName());
         sc = new JavaSparkContext(conf);
 
-        List<String> pdbIds = Arrays.asList("5NVB");
-        pdb = MmtfReader.downloadFullMmtfFiles(pdbIds, sc);
     }
 
     @After
@@ -35,8 +32,19 @@ public class ColumnarStructureXTest {
 
     @Test
     public void test1() {
+        List<String> pdbIds = Arrays.asList("5NVB");
+        JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.downloadFullMmtfFiles(pdbIds, sc);
         StructureDataInterface s = pdb.values().first();
         ColumnarStructureX cs = new ColumnarStructureX(s, true);
         assertEquals(cs.getNormalizedbFactors()[0], Float.MAX_VALUE, 0.000001);
+    }
+    
+    @Test
+    public void test2() {
+        List<String> pdbIds = Arrays.asList("4QXX");
+        JavaPairRDD<String, StructureDataInterface> pdb = MmtfReader.downloadFullMmtfFiles(pdbIds, sc);
+        StructureDataInterface s = pdb.values().first();
+        ColumnarStructureX cs = new ColumnarStructureX(s, true);
+        assertTrue(cs.isGroupWithAlternateLocations()[6]);
     }
 }
