@@ -26,7 +26,7 @@ public class QuaternaryStructureDatasetTest {
         SparkConf conf = new SparkConf().setMaster("local[*]").setAppName(PolymerSequenceExtractorTest.class.getSimpleName());
         sc = new JavaSparkContext(conf);
 
-        List<String> pdbIds = Arrays.asList("1STP","4HHB","1HV4","5NAO","5OR7","1A34","5W34");
+        List<String> pdbIds = Arrays.asList("1STP","4HHB","5W34","3G9Y");
         pdb = MmtfReader.downloadReducedMmtfFiles(pdbIds, sc);
     }
 
@@ -37,8 +37,11 @@ public class QuaternaryStructureDatasetTest {
 
     @Test
     public void test1() {
-        Dataset<Row> dataset = QuaternaryStructureDataset.getDataset(pdb);
-        assertEquals(13,  dataset.count());
+        Dataset<Row> dataset = QuaternaryStructureDataset.getDataset(pdb).cache();
+        assertEquals(4,  dataset.count());
+        assertEquals(1, dataset.filter("structureId = '1STP' AND proteinStoichiometry = 'A4'").count());
+        assertEquals(1, dataset.filter("structureId = '5W34' AND proteinStoichiometry = 'A2' AND dnaStoichiometry = 'AB'").count());
+        assertEquals(1, dataset.filter("structureId = '3G9Y' AND rnaStoichiometry = 'A'").count());
         dataset.show();
     }
 }

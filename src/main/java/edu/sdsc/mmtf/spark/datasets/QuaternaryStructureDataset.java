@@ -13,25 +13,35 @@ import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.RowFactory;
+import org.apache.spark.sql.SparkSession;
+import org.apache.spark.sql.types.DataTypes;
+import org.apache.spark.sql.types.Metadata;
+import org.apache.spark.sql.types.StructField;
+import org.apache.spark.sql.types.StructType;
 import org.rcsb.mmtf.api.StructureDataInterface;
 
-import edu.sdsc.mmtf.spark.ml.JavaRDDToDataset;
+import edu.sdsc.mmtf.spark.utils.ColumnarStructure;
 import scala.Tuple2;
 
 /**
- * Creates a dataset of macromolecular stoichiometry for
+ * Creates a dataset of macromolecular stoichiometry (protein, DNA, RNA) for
  * the biological assemblies.
  * 
  * <p>
- * Example: get dataset for protein complexes
- * 
+ * Example:
  * <pre>
  * <code>
- * boolean exclusive = true;
- * JavaPairRDD<String, StructureDataInterface> proteinComplexes = pdb.filter(new ContainsLProteinChain(exclusive));
- * Dataset<Row> dataset = QuaternaryStructureDataset.getDataset(proteinComplexes);
+ * pdb = ...
+ * Dataset<Row> dataset = QuaternaryStructureDataset.getDataset(pdb);
  * dataset.show();
  * </code>
+ * +-----------+-------------+--------------------+----------------+----------------+
+ * |structureId|bioAssemblyId|proteinStoichiometry|dnaStoichiometry|rnaStoichiometry|
+ * +-----------+-------------+--------------------+----------------+----------------+
+ * |       1STP|            1|                  A4|            null|            null|
+ * |       4HHB|            1|                A2B2|            null|            null|
+ * |       5W34|            1|                  A2|              AB|            null|
+ * |       3G9Y|            1|                   A|            null|               A|
  * </pre>
  * 
  * @author Peter Rose
@@ -47,56 +57,60 @@ public class QuaternaryStructureDataset {
 	 * @param structure 
 	 * @return dataset quaternary structure info
 	 */
-	public static Dataset<Row> getDataset(JavaPairRDD<String, StructureDataInterface> structure) {
-		JavaRDD<Row> rows = structure.flatMap(t -> getQuaternaryStructure(t));
-		return JavaRDDToDataset.getDataset(rows, "structureId", "bioAssemblyId", "stoichiometry");
-	}
+    public static Dataset<Row> getDataset(JavaPairRDD<String, StructureDataInterface> structure) {
+        JavaRDD<Row> rows = structure.flatMap(t -> getQuaternaryStructure(t));
+        
+        StructType schema = new StructType(new StructField[]{
+                new StructField("structureId", DataTypes.StringType, false, Metadata.empty()),
+                new StructField("bioAssemblyId", DataTypes.StringType, false, Metadata.empty()),
+                new StructField("proteinStoichiometry", DataTypes.StringType, true, Metadata.empty()),
+                new StructField("dnaStoichiometry", DataTypes.StringType, true, Metadata.empty()),
+                new StructField("rnaStoichiometry", DataTypes.StringType, true, Metadata.empty()),
+        });
+        
+        SparkSession spark = SparkSession.builder().getOrCreate();
+        return spark.createDataFrame(rows, schema);
+    }
 
 	private static Iterator<Row> getQuaternaryStructure(Tuple2<String, StructureDataInterface> t) throws Exception {
 		List<Row> rows = new ArrayList<>();
 	    String key = t._1;
 		StructureDataInterface structure = t._2;
+		ColumnarStructure cs = new ColumnarStructure(structure, true);
+		String[] chainEntityTypes = cs.getChainEntityTypes();
+		int[] chainToEntityIndex = cs.getChainToEntityIndices();
 		
-		int[] chainToEntityIndex = getChainToEntityIndex(structure);
-
 		for (int i = 0; i < structure.getNumBioassemblies(); i++) {
-		    List<Integer> entityIndices = new ArrayList<>();
+		    List<Integer> proteinIndices = new ArrayList<>();
+		    List<Integer> dnaIndices = new ArrayList<>();
+		    List<Integer> rnaIndices = new ArrayList<>();
 		   
 		    for (int j = 0; j < structure.getNumTransInBioassembly(i); j++) {
 		        for (int chainIndex : structure.getChainIndexListForTransform(i, j)) {
 		            int entityIndex = chainToEntityIndex[chainIndex];
-		            if (structure.getEntityType(entityIndex).equals("polymer")) {
-		                entityIndices.add(chainToEntityIndex[chainIndex]);
+		            String type = chainEntityTypes[chainIndex];
+		            if (type.equals("PRO")) {
+		                proteinIndices.add(entityIndex);
+		            } else if (type.equals("DNA")) {
+		                dnaIndices.add(entityIndex);
+		            } else if (type.equals("RNA")) {
+		                rnaIndices.add(entityIndex);
 		            }
 		        }
 		    }
 		    
-		    String stoichiometry = stoichiometry(coefficients(entityIndices));
-		    rows.add(RowFactory.create(key, structure.getBioassemblyName(i), stoichiometry));
+		    String proStoich = stoichiometry(coefficients(proteinIndices));
+	        String dnaStoich = stoichiometry(coefficients(dnaIndices));
+	        String rnaStoich = stoichiometry(coefficients(rnaIndices));
+		    rows.add(RowFactory.create(key, structure.getBioassemblyName(i), proStoich, dnaStoich, rnaStoich));
 		}
 
 		return rows.iterator();
 	}
 
     /**
-     * Returns an array that maps a chain index to an entity index.
-     * @param structureDataInterface
-     * @return
-     */
-    private static int[] getChainToEntityIndex(StructureDataInterface structure) {
-        int[] entityChainIndex = new int[structure.getNumChains()];
-
-        for (int i = 0; i < structure.getNumEntities(); i++) {
-            for (int j: structure.getEntityChainIndexList(i)) {
-                entityChainIndex[j] = i;
-            }
-        }
-        return entityChainIndex;
-    }
-    
-    /**
      * Returns a list of coefficients for the unique polymer entities
-     * (give by entity indices) in a bioassembly.
+     * (given by entity indices) in a bioassembly.
      * 
      * @param entityIndices
      * @return
@@ -120,6 +134,9 @@ public class QuaternaryStructureDataset {
      * @return stoichiometry string
      */
     private static String stoichiometry(List<Integer> coefficients) {
+        if (coefficients.isEmpty()) {
+            return null;
+        }
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < coefficients.size(); i++) {
             int coefficient = coefficients.get(i);
