@@ -1,7 +1,12 @@
 package edu.sdsc.mmtf.spark.utils;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.rcsb.mmtf.api.StructureDataInterface;
 
@@ -30,6 +35,7 @@ public class ColumnarStructure implements Serializable {
 	private String[] entityTypes;
 	private String[] groupNames;
 	private String[] groupNumbers;
+	private String[] chainEntityTypes;
 	private int[] sequencePositions;
 	private int[] atomToGroupIndices;
 	private int[] atomToChainIndices;
@@ -37,6 +43,7 @@ public class ColumnarStructure implements Serializable {
 	private int[] chainToAtomIndices;
 	private int[] chainToGroupIndices;
 	private int[] entityIndices;
+
 
 	/**
 	 * 
@@ -101,6 +108,7 @@ public class ColumnarStructure implements Serializable {
 
 	public int[] getAtomToGroupIndices() {
 		if (atomToGroupIndices == null) {
+		    getIndices();
 			atomToGroupIndices = new int[getNumAtoms()];
 
 			for (int i = 0; i < getNumGroups(); i++) {
@@ -114,6 +122,7 @@ public class ColumnarStructure implements Serializable {
 
 	public String[] getChemCompTypes() {
 		if (chemCompTypes == null) {
+		    getIndices();
 			chemCompTypes = new String[getNumAtoms()];
 			int[] indices = structure.getGroupTypeIndices();
 
@@ -129,6 +138,7 @@ public class ColumnarStructure implements Serializable {
 
 	public String[] getElements() {
 		if (elements == null) {
+		    getIndices();
 			elements = new String[getNumAtoms()];
 			int[] indices = structure.getGroupTypeIndices();
 
@@ -143,6 +153,7 @@ public class ColumnarStructure implements Serializable {
 
 	public String[] getAtomNames() {
 		if (atomNames == null) {
+		    getIndices();
 			atomNames = new String[getNumAtoms()];
 			int[] indices = structure.getGroupTypeIndices();
 
@@ -156,8 +167,33 @@ public class ColumnarStructure implements Serializable {
 		return atomNames;
 	}
 
+	public String[] getChainEntityTypes() {
+	    if (chainEntityTypes == null) {
+	        getIndices();
+	        chainEntityTypes = new String[getNumChains()];
+	        String[] entityTypes = getEntityTypes();
+
+	        for (int i = 0; i < getNumChains(); i++) {
+	            int start = chainToGroupIndices[i];
+	            int end = chainToGroupIndices[i+1];
+	            List<String> groupEntityTypes = new ArrayList<>();
+	            for (int j = start; j < end; j++) {
+	                String entityType = entityTypes[groupToAtomIndices[j]];
+	                groupEntityTypes.add(entityType);
+	            }
+	            if (! groupEntityTypes.isEmpty()) {
+	               chainEntityTypes[i] = mode(groupEntityTypes);
+	            } else {
+	               chainEntityTypes[i] = "";
+	            }
+	        }
+	    }
+	    return chainEntityTypes;
+	}
+	
 	public String[] getEntityTypes() {
 		if (entityTypes == null) {
+		    getIndices();
 			entityTypes = new String[getNumAtoms()];
 
 			// instantiate required data
@@ -222,6 +258,7 @@ public class ColumnarStructure implements Serializable {
 
 	public String[] getGroupNames() {
 		if (groupNames == null) {
+		    getIndices();
 			groupNames = new String[getNumAtoms()];
 			int[] indices = structure.getGroupTypeIndices();
 
@@ -237,6 +274,7 @@ public class ColumnarStructure implements Serializable {
 
 	public String[] getGroupNumbers() {
 		if (groupNumbers == null) {
+		    getIndices();
 			groupNumbers = new String[getNumAtoms()];
 
 			for (int i = 0; i < getNumGroups(); i++) {
@@ -255,6 +293,7 @@ public class ColumnarStructure implements Serializable {
 
 	public String[] getChainIds() {
 		if (chainIds == null) {
+		    getIndices();
 			chainIds = new String[getNumAtoms()];
 			String[] cIds = structure.getChainIds();
 
@@ -269,6 +308,7 @@ public class ColumnarStructure implements Serializable {
 
 	public String[] getChainNames() {
 		if (chainNames == null) {
+		    getIndices();
 			chainNames = new String[getNumAtoms()];
 			String[] cIds = structure.getChainNames();
 			for (int i = 0; i < getNumChains(); i++) {
@@ -282,8 +322,9 @@ public class ColumnarStructure implements Serializable {
 
 	public boolean[] isPolymer() {
 		if (polymer == null) {
+		    getIndices();
 			polymer = new boolean[getNumAtoms()];
-			int[] entityChainIndex = getChainToEntityIndex();
+			int[] entityChainIndex = getChainToEntityIndices();
 
 			for (int i = 0; i < getNumChains(); i++) {
 				int start = chainToAtomIndices[i];
@@ -297,8 +338,9 @@ public class ColumnarStructure implements Serializable {
 	
 	public int[] getEntityIndices() {
 		if (entityIndices == null) {
+		    getIndices();
 			entityIndices = new int[getNumAtoms()];
-			int[] entityChainIndex = getChainToEntityIndex();
+			int[] entityChainIndex = getChainToEntityIndices();
 
 			for (int i = 0; i < getNumChains(); i++) {
 				int start = chainToAtomIndices[i];
@@ -311,6 +353,7 @@ public class ColumnarStructure implements Serializable {
 
 	public int[] getAtomToChainIndices() {
 		if (atomToChainIndices == null) {
+		    getIndices();
 			atomToChainIndices = new int[getNumAtoms()];
 
 			for (int i = 0; i < getNumChains(); i++) {
@@ -326,9 +369,20 @@ public class ColumnarStructure implements Serializable {
 		getIndices();
 		return groupToAtomIndices;
 	}
+	
+	public int[] getChainToAtomIndices() {
+	     getIndices();
+	     return chainToAtomIndices;
+	}
+	
+	public int[] getChainToGroupIndices() {
+	     getIndices();
+	     return chainToGroupIndices;
+	}
 
 	public int[] getSequencePositions() {
 		if (sequencePositions == null) {
+		    getIndices();
 			int[] groupSequenceIndices = structure.getGroupSequenceIndices();
 			sequencePositions = new int[getNumAtoms()];
 
@@ -394,7 +448,7 @@ public class ColumnarStructure implements Serializable {
 	 *            structure to be traversed
 	 * @return index that maps a chain index to an entity index
 	 */
-	private int[] getChainToEntityIndex() {
+	public int[] getChainToEntityIndices() {
 		int[] entityChainIndex = new int[structure.getNumChains()];
 
 		for (int i = 0; i < structure.getNumEntities(); i++) {
@@ -403,5 +457,23 @@ public class ColumnarStructure implements Serializable {
 			}
 		}
 		return entityChainIndex;
+	}
+	
+	private static <T> T mode(List<T> list) {
+	    Map<T, Integer> map = new HashMap<>();
+
+	    for (T t : list) {
+	        Integer val = map.get(t);
+	        map.put(t, val == null ? 1 : val + 1);
+	    }
+
+	    Entry<T, Integer> max = null;
+
+	    for (Entry<T, Integer> e : map.entrySet()) {
+	        if (max == null || e.getValue() > max.getValue())
+	            max = e;
+	    }
+
+	    return max.getKey();
 	}
 }
