@@ -27,7 +27,7 @@ public class AdvancedQueryService {
 	 * @param xml
 	 * @return a list of PDB ids.
 	 */
-	public List<String> postQuery(String xml) throws IOException{
+	public static List<String> postQuery(String xml) throws IOException{
 		URL u = new URL(SERVICELOCATION);
 
 		String encodedXML = URLEncoder.encode(xml,"UTF-8");

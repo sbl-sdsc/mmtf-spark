@@ -44,8 +44,7 @@ public class AdvancedQuery implements Function<Tuple2<String, StructureDataInter
 	 * @throws IOException
 	 */
 	public AdvancedQuery(String xmlQuery) throws IOException {		
-		AdvancedQueryService service = new AdvancedQueryService();
-		List<String> results = service.postQuery(xmlQuery);
+		List<String> results = AdvancedQueryService.postQuery(xmlQuery);
 		
 		entityLevel = results.size() > 0 && results.get(0).contains(":");
 		structureIds = new HashSet<String>(results);
