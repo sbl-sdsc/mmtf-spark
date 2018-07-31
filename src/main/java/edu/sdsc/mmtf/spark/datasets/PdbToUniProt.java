@@ -57,7 +57,7 @@ import org.apache.spark.sql.types.StructType;
  * structureChainId - pdbId.chainId
  * pdbResNum - PDB residue number in ATOM records
  * pdbSeqNum - PDB residue number in the sequence record (index start at 1)
- * uniprotIf - UniProt id (accession number)
+ * uniprotId - UniProt id (accession number)
  * uniprotNum - UniProt residue number (index starts at 1)
  * 
  * +----------------+---------+---------+---------+----------+
@@ -78,14 +78,14 @@ import org.apache.spark.sql.types.StructType;
  * @since 0.2.0
  */
 public class PdbToUniProt {
-    // location of cached dataset
-    private static final String CACHED_FILE_URL = "https://raw.githubusercontent.com/sbl-sdsc/mmtf-data/master/pdb2uniprot.lzo.orc";
+    // location of cached dataset (temporary location until we find a better site to host these data)
+    private static final String CACHED_FILE_URL = "https://github.com/sbl-sdsc/mmtf-data/blob/master/data/pdb2uniprot_residues.orc.lzo";
     private static final String FILENAME = "pdb2uniprot.lzo.orc";
     // location of SIFTS data
     private static final String UNIPROT_MAPPING_URL = "http://ftp.ebi.ac.uk/pub/databases/msd/sifts/flatfiles/csv/pdb_chain_uniprot.csv.gz";
     private static final String UNIPROT_FILE = "pdb_chain_uniprot.csv.gz";
     private static final String SIFTS_URL = "http://ftp.ebi.ac.uk/pub/databases/msd/sifts/split_xml/";
-
+  
     /**
      * Returns an up-to-date dataset of PDB to UniProt
      * chain-level mappings using SIFTS data.
@@ -220,6 +220,29 @@ public class PdbToUniProt {
      * Returns an up-to-date dataset of PDB to UniProt residue-level mappings.
      * This method reads a cached file and downloads updates.
      * 
+     * <p> Example of residue-level mappings
+     * <pre>
+     * Columns:
+     * structureChainId - pdbId.chainId
+     * pdbResNum - PDB residue number in ATOM records
+     * pdbSeqNum - PDB residue number in the sequence record (index start at 1)
+     * uniprotId - UniProt id (accession number)
+     * uniprotNum - UniProt residue number (index starts at 1)
+     * 
+     * +----------------+---------+---------+---------+----------+
+     * |structureChainId|pdbResNum|pdbSeqNum|uniprotId|uniprotNum|
+     * +----------------+---------+---------+---------+----------+
+     * |          1STP.A|     null|        1|   P22629|        25|
+     * |          1STP.A|     null|        2|   P22629|        26|
+     * |          1STP.A|     null|        3|   P22629|        27|
+     * |          1STP.A|     null|       12|   P22629|        36|
+     * ...
+     * |          1STP.A|       13|       13|   P22629|        37|
+     * |          1STP.A|       14|       14|   P22629|        38|
+     * |          1STP.A|       15|       15|   P22629|        39|
+     * ...
+     *</pre>
+     *
      * @return dataset of PDB to UniProt residue-level mappings
      * @throws IOException
      */
@@ -243,7 +266,6 @@ public class PdbToUniProt {
 
         return spark.read().format("orc").load(SparkFiles.get(FILENAME));
     }
-
 
     /**
      * Builds a new PDB to UniProt residue mapping file using data from
@@ -285,17 +307,18 @@ public class PdbToUniProt {
 
     /**
      * Downloads PDB to UniProt residue-level mappings.
-     * @param ds dataset with the first column being a PDB Id
+     * 
+     * @param ds dataset with the first column being a PDB Id in upper case.
      * @return dataset with mappings
      * @throws IOException
      */
-    private static Dataset<Row> downloadData(Dataset<Row> ds) throws IOException {       
+    public static Dataset<Row> downloadData(Dataset<Row> ds) throws IOException {       
         StructType structType = new StructType();
         structType = structType.add("structureChainId", DataTypes.StringType, false);
         structType = structType.add("pdbResNum", DataTypes.StringType, true);
-        structType = structType.add("pdbSeqNum", DataTypes.StringType, true);
+        structType = structType.add("pdbSeqNum", DataTypes.IntegerType, false);
         structType = structType.add("uniprotId", DataTypes.StringType, true);
-        structType = structType.add("uniprotNum", DataTypes.StringType, true);
+        structType = structType.add("uniprotNum", DataTypes.IntegerType, true);
         ExpressionEncoder<Row> encoder = RowEncoder.apply(structType);
 
         Dataset<Row> output = ds.flatMap(new FlatMapFunction<Row, Row>() {
@@ -304,7 +327,7 @@ public class PdbToUniProt {
             @Override
             public Iterator<Row> call(Row row) throws IOException {
                 List<Row> rows = new ArrayList<Row>();
-                String pdbId = row.getString(0);
+                String pdbId = row.getString(0); // first column must be an upper case PDB ID!!!
                 System.out.println(pdbId);
 
                 String id = pdbId.toLowerCase();
@@ -329,23 +352,24 @@ public class PdbToUniProt {
                         break;
                 }
 
-                String[] mapping = null;
+                Object[] mapping = null;
 
                 // extract info from file
+                // TODO replace this code with an xml file parser
                 if (rd != null) {
                     String line;
                     try {
                         while ((line = rd.readLine()) != null) {
                             line = line.trim();
                             if (line.startsWith("<residue ")) {
-                                mapping = new String[5];
-                                mapping[2] = getAttributeValue("dbResNum", line);
+                                mapping = new Object[5];
+                                mapping[2] = getIntAttributeValue("dbResNum", line);
                             } else if (line.startsWith("<crossRefDb dbSource=\"PDB")) {
                                 mapping[0] = getAttributeValue("dbAccessionId", line).toUpperCase() + "." + getAttributeValue("dbChainId", line);
                                 mapping[1] = getAttributeValue("dbResNum", line);
                             } else if (line.startsWith("<crossRefDb dbSource=\"UniProt")) {
                                 mapping[3] = getAttributeValue("dbAccessionId", line);
-                                mapping[4] = getAttributeValue("dbResNum", line);
+                                mapping[4] = getIntAttributeValue("dbResNum", line);
                             }
                             if (line.equals("</residue>")) {
                                 if (mapping[0] != null) {
@@ -366,7 +390,17 @@ public class PdbToUniProt {
         
         return output;
     }
-
+    /**
+     * Retrieve an XML integer attribute from a line of XML.
+     * @param attribute
+     * @param line
+     * @return
+     */
+    private static Integer getIntAttributeValue(String attribute, String line) {
+        String value =  getAttributeValue(attribute, line);
+        return Integer.parseInt(value);
+    }
+    
     /**
      * Retrieve an XML attribute from a line of XML.
      * @param attribute

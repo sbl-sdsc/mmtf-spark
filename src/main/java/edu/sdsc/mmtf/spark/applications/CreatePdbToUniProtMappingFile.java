@@ -16,8 +16,6 @@ import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
 
-import com.google.common.io.Files;
-
 import edu.sdsc.mmtf.spark.datasets.PdbToUniProt;
 
 /**
@@ -55,70 +53,39 @@ public class CreatePdbToUniProtMappingFile {
                 .appName(CreatePdbToUniProtMappingFile.class.getSimpleName())
                 .getOrCreate();
         
-        
-        String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date());
+        String timeStamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
 
         long t1 = System.nanoTime();
         
-        String dirname = outputFile + "_" + timeStamp + "_tmp";
-        String filename = outputFile + "_" + timeStamp + "." + compressionCodec + "." + fileFormat;
+        String dirName = outputFile + "_" + timeStamp + "_tmp";
+        String fileName = outputFile + "_" + timeStamp + "." + fileFormat + "." + compressionCodec;
         
         if (build) {
             // create a new mapping file from scratch
-            PdbToUniProt.buildDataset(dirname, fileFormat, compressionCodec);
+            PdbToUniProt.buildDataset(dirName, "orc", "lzo");
         } else if (update) {
             // create an updated mapping file from the cached version
-            PdbToUniProt.updateDataset(dirname, fileFormat, compressionCodec);
+            PdbToUniProt.updateDataset(dirName, "orc", "lzo");
         }
 
         long t2 = System.nanoTime();
         System.out.println("Time to build/update dataset: " + (t2-t1)/1E9 + " sec.");
+               
+        // By default, spark creates a directory of files. 
+        // For convenience, coalesce the data into a single file.
+        Dataset<Row> ds = spark.read().orc(dirName);
+        long count = ds.count();
         
-        // by default, spark creates a directory of files. For convenience,
-        // coalesce the data into a single file.
-        long count = coalesceToSingleFile(dirname, filename, fileFormat, compressionCodec);
+        int partitions = 1;
+        DatasetFileConverter.saveDataset(ds, partitions, fileFormat, compressionCodec, fileName);
+        FileUtils.deleteDirectory(new File(dirName));
         
-        System.out.println(count + " records saved to: " + filename);
+        System.out.println(count + " records saved to: " + fileName);
         
         long t3 = System.nanoTime();
         System.out.println("Time to reformat data: " + (t3-t2)/1E9 + " sec.");
 
         spark.stop();
-    }
-    
-    private static long coalesceToSingleFile(String dirname, String filename, String fileFormat, String compressionCodec) throws IOException {
-        SparkSession spark = SparkSession.builder().getOrCreate();
-        if (compressionCodec.equals("orc")) {
-            spark.conf().set("spark.sql.orc.impl", "native");
-        }
-        Dataset<Row> ds = spark.read().format(fileFormat).load(dirname);
-        long records = ds.count();
-        ds.coalesce(1).write().mode("overwrite").option("compression", compressionCodec).format(fileFormat).save(dirname + "_single");
-        
-        moveToSingleFile(dirname + "_single", filename);
-        FileUtils.deleteDirectory(new File(dirname));
-
-        return records;
-    }
-    
-    private static void moveToSingleFile(String dirname, String filename) throws IOException {
-        File part = getPartsFile(dirname);
-        if (part != null) {
-            File singleFile = new File(filename);
-            Files.move(part, singleFile);
-            FileUtils.deleteDirectory(new File(dirname));
-        }
-    }
-    
-    private static File getPartsFile(String dirname) {
-        File folder = new File(dirname);
-
-        for (File file: folder.listFiles()) {
-            if (file.isFile() && file.getName().startsWith("part")) {
-                return file;
-            }
-        }
-        return null;
     }
     
     private static CommandLine getCommandLine(String[] args) {
