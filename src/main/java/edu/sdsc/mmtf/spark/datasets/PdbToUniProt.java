@@ -79,8 +79,8 @@ import org.apache.spark.sql.types.StructType;
  */
 public class PdbToUniProt {
     // location of cached dataset (temporary location until we find a better site to host these data)
-    private static final String CACHED_FILE_URL = "https://github.com/sbl-sdsc/mmtf-data/blob/master/data/pdb2uniprot_residues.orc.lzo";
-    private static final String FILENAME = "pdb2uniprot.lzo.orc";
+    private static final String CACHED_FILE_URL = "https://github.com/sbl-sdsc/sifts-columnar/raw/master/data/pdb2uniprot_residues.orc.lzo";
+    private static final String FILENAME = "pdb2uniprot_residues.orc.lzo";
     // location of SIFTS data
     private static final String UNIPROT_MAPPING_URL = "http://ftp.ebi.ac.uk/pub/databases/msd/sifts/flatfiles/csv/pdb_chain_uniprot.csv.gz";
     private static final String UNIPROT_FILE = "pdb_chain_uniprot.csv.gz";
