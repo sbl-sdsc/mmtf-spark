@@ -5,6 +5,7 @@ import static org.apache.spark.sql.functions.concat_ws;
 import static org.apache.spark.sql.functions.upper;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -79,7 +80,8 @@ import org.apache.spark.sql.types.StructType;
  */
 public class PdbToUniProt {
     // location of cached dataset (temporary location until we find a better site to host these data)
-    private static final String CACHED_FILE_URL = "https://github.com/sbl-sdsc/sifts-columnar/raw/master/data/pdb2uniprot_residues.orc.lzo";
+//    private static final String CACHED_FILE_URL = "https://github.com/sbl-sdsc/sifts-columnar/raw/master/data/pdb2uniprot_residues.orc.lzo";
+    private static final String CACHED_FILE_URL = "https://github.com/sbl-sdsc/mmtf-data/raw/master/data/pdb2uniprot_residues.orc.lzo";
     private static final String FILENAME = "pdb2uniprot_residues.orc.lzo";
     // location of SIFTS data
     private static final String UNIPROT_MAPPING_URL = "http://ftp.ebi.ac.uk/pub/databases/msd/sifts/flatfiles/csv/pdb_chain_uniprot.csv.gz";
@@ -316,9 +318,11 @@ public class PdbToUniProt {
         StructType structType = new StructType();
         structType = structType.add("structureChainId", DataTypes.StringType, false);
         structType = structType.add("pdbResNum", DataTypes.StringType, true);
+        structType = structType.add("pdbResName", DataTypes.StringType, true);
         structType = structType.add("pdbSeqNum", DataTypes.IntegerType, false);
         structType = structType.add("uniprotId", DataTypes.StringType, true);
         structType = structType.add("uniprotNum", DataTypes.IntegerType, true);
+        structType = structType.add("uniprotName", DataTypes.StringType, true);
         ExpressionEncoder<Row> encoder = RowEncoder.apply(structType);
 
         Dataset<Row> output = ds.flatMap(new FlatMapFunction<Row, Row>() {
@@ -362,14 +366,108 @@ public class PdbToUniProt {
                         while ((line = rd.readLine()) != null) {
                             line = line.trim();
                             if (line.startsWith("<residue ")) {
-                                mapping = new Object[5];
+                                mapping = new Object[7];
                                 mapping[2] = getIntAttributeValue("dbResNum", line);
+                                mapping[3] = getAttributeValue("dbResName", line);
                             } else if (line.startsWith("<crossRefDb dbSource=\"PDB")) {
                                 mapping[0] = getAttributeValue("dbAccessionId", line).toUpperCase() + "." + getAttributeValue("dbChainId", line);
                                 mapping[1] = getAttributeValue("dbResNum", line);
                             } else if (line.startsWith("<crossRefDb dbSource=\"UniProt")) {
-                                mapping[3] = getAttributeValue("dbAccessionId", line);
-                                mapping[4] = getIntAttributeValue("dbResNum", line);
+                                mapping[4] = getAttributeValue("dbAccessionId", line);
+                                mapping[5] = getIntAttributeValue("dbResNum", line);
+                                mapping[6] = getAttributeValue("dbResName", line);
+                            }
+                            if (line.equals("</residue>")) {
+                                if (mapping[0] != null) {
+                                    rows.add(RowFactory.create((Object[]) mapping));
+                                }
+                            }
+                        }
+                    } catch (Exception e) {
+                        System.out.println("problem reading " + pdbId + " ... skipping.");
+                    }
+
+                    rd.close();
+                }
+            
+                return rows.iterator();
+            }
+        }, encoder);
+        
+        return output;
+    }
+    
+    /**
+     * Downloads PDB to UniProt residue-level mappings.
+     * 
+     * @param ds dataset with the first column being a PDB Id in upper case.
+     * @return dataset with mappings
+     * @throws IOException
+     */
+    public static Dataset<Row> readData(Dataset<Row> ds, String path) throws IOException {       
+        StructType structType = new StructType();
+        structType = structType.add("structureChainId", DataTypes.StringType, false);
+        structType = structType.add("pdbResNum", DataTypes.StringType, true);
+        structType = structType.add("pdbResName", DataTypes.StringType, true);
+        structType = structType.add("pdbSeqNum", DataTypes.IntegerType, false);
+        structType = structType.add("uniprotId", DataTypes.StringType, true);
+        structType = structType.add("uniprotNum", DataTypes.IntegerType, true);
+        structType = structType.add("uniprotName", DataTypes.StringType, true);
+        ExpressionEncoder<Row> encoder = RowEncoder.apply(structType);
+
+        Dataset<Row> output = ds.flatMap(new FlatMapFunction<Row, Row>() {
+            private static final long serialVersionUID = 7569478102816528384L;
+
+            @Override
+            public Iterator<Row> call(Row row) throws IOException {
+                List<Row> rows = new ArrayList<Row>();
+                String pdbId = row.getString(0); // first column must be an upper case PDB ID!!!
+                System.out.println(pdbId);
+
+                String id = pdbId.toLowerCase();
+                String fileName = path + "/" +  id.substring(1, 3) + "/" + id + ".xml.gz";
+                if (path.endsWith("/")) {
+                    fileName = path + id.substring(1, 3) + "/" + id + ".xml.gz";
+                }
+
+                BufferedReader rd = null;
+                
+                // downloads occasionally time out, make 3 trials
+                for (int trial = 0; trial < 3; trial++) {
+                    try {
+                        InputStream in = new FileInputStream(fileName);
+                        rd = new BufferedReader(new InputStreamReader(new GZIPInputStream(in)));
+                    } catch (IOException e) {
+                        System.out.println("retrying... " + pdbId);
+                        try {
+                            Thread.sleep(1000 * trial);
+                        } catch (InterruptedException e1) {
+                        }
+                    }
+                    if (rd != null)
+                        break;
+                }
+
+                Object[] mapping = null;
+
+                // extract info from file
+                // TODO replace this code with an xml file parser
+                if (rd != null) {
+                    String line;
+                    try {
+                        while ((line = rd.readLine()) != null) {
+                            line = line.trim();
+                            if (line.startsWith("<residue ")) {
+                                mapping = new Object[7];
+                                mapping[2] = getIntAttributeValue("dbResNum", line);
+                                mapping[3] = getAttributeValue("dbResName", line);
+                            } else if (line.startsWith("<crossRefDb dbSource=\"PDB")) {
+                                mapping[0] = getAttributeValue("dbAccessionId", line).toUpperCase() + "." + getAttributeValue("dbChainId", line);
+                                mapping[1] = getAttributeValue("dbResNum", line);
+                            } else if (line.startsWith("<crossRefDb dbSource=\"UniProt")) {
+                                mapping[4] = getAttributeValue("dbAccessionId", line);
+                                mapping[5] = getIntAttributeValue("dbResNum", line);
+                                mapping[6] = getAttributeValue("dbResName", line);
                             }
                             if (line.equals("</residue>")) {
                                 if (mapping[0] != null) {
