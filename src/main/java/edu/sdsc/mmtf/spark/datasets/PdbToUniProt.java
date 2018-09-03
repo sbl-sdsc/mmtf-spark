@@ -318,8 +318,8 @@ public class PdbToUniProt {
         StructType structType = new StructType();
         structType = structType.add("structureChainId", DataTypes.StringType, false);
         structType = structType.add("pdbResNum", DataTypes.StringType, true);
-        structType = structType.add("pdbResName", DataTypes.StringType, true);
         structType = structType.add("pdbSeqNum", DataTypes.IntegerType, false);
+        structType = structType.add("pdbResName", DataTypes.StringType, true);
         structType = structType.add("uniprotId", DataTypes.StringType, true);
         structType = structType.add("uniprotNum", DataTypes.IntegerType, true);
         structType = structType.add("uniprotName", DataTypes.StringType, true);
@@ -398,9 +398,11 @@ public class PdbToUniProt {
     }
     
     /**
-     * Downloads PDB to UniProt residue-level mappings.
+     * Reads PDB to UniProt residue-level mappings from local file system.
+     * 
      * 
      * @param ds dataset with the first column being a PDB Id in upper case.
+     * @path path to a local copy of the split_xml directory rsynced from EBI.
      * @return dataset with mappings
      * @throws IOException
      */
@@ -408,8 +410,8 @@ public class PdbToUniProt {
         StructType structType = new StructType();
         structType = structType.add("structureChainId", DataTypes.StringType, false);
         structType = structType.add("pdbResNum", DataTypes.StringType, true);
-        structType = structType.add("pdbResName", DataTypes.StringType, true);
         structType = structType.add("pdbSeqNum", DataTypes.IntegerType, false);
+        structType = structType.add("pdbResName", DataTypes.StringType, true);
         structType = structType.add("uniprotId", DataTypes.StringType, true);
         structType = structType.add("uniprotNum", DataTypes.IntegerType, true);
         structType = structType.add("uniprotName", DataTypes.StringType, true);
