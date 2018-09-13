@@ -1,20 +1,16 @@
 package edu.sdsc.mmtf.spark.mappers;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
 import javax.vecmath.Matrix4d;
-import javax.vecmath.Matrix4f;
 import javax.vecmath.Point3f;
 
 import org.apache.spark.api.java.function.PairFlatMapFunction;
 import org.rcsb.mmtf.api.StructureDataInterface;
 import org.rcsb.mmtf.decoder.DecoderUtils;
 import org.rcsb.mmtf.encoder.AdapterToStructureData;
-import org.spark_project.guava.primitives.Doubles;
-import org.spark_project.guava.primitives.Floats;
 
 import scala.Tuple2;
 /**
@@ -30,7 +26,7 @@ public class StructureToBioassembly2 implements PairFlatMapFunction<Tuple2<Strin
 		//Map<Integer, Integer> atomMap = new HashMap<>();
 		List<Tuple2<String, StructureDataInterface>> resList = new ArrayList<>();
 
-		System.out.println("Total number atoms in input structures: " + structure.getNumAtoms());
+//		System.out.println("Total number atoms in input structures: " + structure.getNumAtoms());
 		
 		//get the number of bioassemblies that the structure has.
 		//for each of them, create one structure.
@@ -41,8 +37,6 @@ public class StructureToBioassembly2 implements PairFlatMapFunction<Tuple2<Strin
 			AdapterToStructureData bioAssembly = new AdapterToStructureData();
 			//set the structureID.
 			String structureId = structure.getStructureId() + "-BioAssembly" + structure.getBioassemblyName(i);
-			
-			System.out.println(structureId);
 			
 			int totAtoms = 0, totBonds = 0, totGroups = 0, totChains = 0, totModels = 0;
 			int numTrans = structure.getNumTransInBioassembly(i);
@@ -86,9 +80,9 @@ public class StructureToBioassembly2 implements PairFlatMapFunction<Tuple2<Strin
 				}
 			}
 			//init
-						System.out.println("Initializing the structure with\n"
-							+ " totModel = " + totModels + ", totChains = " + totChains + ", totGroups = " + totGroups + ", totAtoms = " 
-							+ totAtoms + ", totBonds = " + totBonds + ", name : " + structureId);
+//						System.out.println("Initializing the structure with\n"
+//							+ " totModel = " + totModels + ", totChains = " + totChains + ", totGroups = " + totGroups + ", totAtoms = " 
+//							+ totAtoms + ", totBonds = " + totBonds + ", name : " + structureId);
 			bioAssembly.initStructure(totBonds, totAtoms, totGroups, totChains, totModels, structureId);
 			DecoderUtils.addXtalographicInfo(structure, bioAssembly);
 			DecoderUtils.addHeaderInfo(structure, bioAssembly);	
@@ -114,7 +108,7 @@ public class StructureToBioassembly2 implements PairFlatMapFunction<Tuple2<Strin
 				// this number is not correct if BA has fewer chains than the AU
 //				int numChainsPerModel = structure.getChainsPerModel()[modelIndex] * numTrans;	
 				int numChainsPerModel = chainsPerModel[ii];
-				System.out.println("numChainsPerModel: " + numChainsPerModel);
+//				System.out.println("numChainsPerModel: " + numChainsPerModel);
 				
 				bioAssembly.setModelInfo(modelIndex, numChainsPerModel);
 				int[] chainToEntityIndex = getChainToEntityIndex(structure);
@@ -183,7 +177,7 @@ public class StructureToBioassembly2 implements PairFlatMapFunction<Tuple2<Strin
 									md.transform(p1);
 									//System.out.println(kk + " " + currgroup);
 									// array index out of bounds in some instances in setAtomInfo
-									System.out.println("atom index: " + atomIndex);
+//									System.out.println("atom index: " + atomIndex);
 									if (atomIndex < structure.getNumAtoms()) { // TODO testing why index is sometimes out of bounds
 									bioAssembly.setAtomInfo(structure.getGroupAtomNames(currgroup)[kk], structure.getAtomIds()[atomIndex], 
 											structure.getAltLocIds()[atomIndex],p1.x, p1.y, p1.z, 
