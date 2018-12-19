@@ -71,7 +71,7 @@ public class MmtfImporterTest {
 	    assertEquals(8, pdb.count());
 	}
 	
-	@Test
+//	@Test
 	public void test5() throws IOException {
 	    List<String> pdbIds = Arrays.asList("3SP5");
 	    JavaPairRDD<String, StructureDataInterface> pdb = MmtfImporter.downloadPdbRedo(pdbIds, sc);
