@@ -35,6 +35,12 @@ Example of running a simple structural query
 ```
 spark-submit --class edu.sdsc.mmtf.spark.mappers.demos.PolyPeptideChainStatistics  INSTALL_DIRECTORY/mmtf-spark/target/mmtf-spark-0.2.0-SNAPSHOT.jar
 ```
+Example of running a structural alignment 
+[(see DemoQueryVsAll.java)](src/main/java/edu/sdsc/mmtf/spark/alignments/demos/DemoQueryVsAll.java).
+
+```
+spark-submit --class edu.sdsc.mmtf.spark.alignments.demos.DemoQueryVsAll  INSTALL_DIRECTORY/mmtf-spark/target/mmtf-spark-0.2.0-SNAPSHOT.jar
+```
 Example of retrieving PDB metadata
 [(see PdbMetadataDemo.java)](src/main/java/edu/sdsc/mmtf/spark/datasets/demos/PdbMetadataDemo.java).
 
