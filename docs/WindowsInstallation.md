@@ -22,34 +22,36 @@ The Git version control system is used to download repositories from Github.
 ### Install Maven
 The installation requires the [Maven](http://maven.apache.org/guides/getting-started/index.html#What_is_Maven) build tool. If you do not have Maven installed, follow the directions below.
 
-[Download Maven](http://maven.apache.org/download.cgi) (apache-maven-3.5.2-bin.tar.gz) or newer version
+[Download Maven](http://maven.apache.org/download.cgi) (apache-maven-3.6.0-bin.tar.gz) or newer version
 
 Move the downloaded file to your install location (C:\Users\USER_NAME) and expand it using
 gzip and tar in a Command Prompt window.
 
 ```
 cd C:\Users\USER_NAME
-gzip -d apache-maven-3.5.2-bin.tar.gz
-tar -xvf apache-maven-3.5.2-bin.tar
+gzip -d apache-maven-3.6.0-bin.tar.gz
+tar -xvf apache-maven-3.6.0-bin.tar
 ```
 
-This will create the directory C:\Users\USER_NAME\apache-maven-3.5.2.
+This will create the directory C:\Users\USER_NAME\apache-maven-3.6.0.
 
 ### Install Spark
-[Download Spark](http://spark.apache.org/downloads.html) (Pre-built for Apache Hadoop 2.7 and later)
+[Download Spark 2.3.2](http://spark.apache.org/downloads.html) (Pre-built for Apache Hadoop 2.7 and later)
+
+NOTE: Spark version 2.4.0 has a Windows specific bug and does not work on Windows. Use version 2.3.2 for now.
 
 Move the downloaded file to your install location (C:\Users\USER_NAME) and expand it using
 gzip and tar.
 
 ``` 
 cd C:\Users\USER_NAME
-gzip -d spark-2.2.1-bin-hadoop2.7.tgz
-tar -xvf spark-2.2.1-bin-hadoop2.7.tar
+gzip -d spark-2.3.2-bin-hadoop2.7.tgz
+tar -xvf spark-2.3.2-bin-hadoop2.7.tar
 ```
 By default, SPARK logs at the INFO level, which leads to excessive log messages. Change the log level from INFO to FATAL.
 
 ```
-cd spark-2.2.1-bin-hadoop2.7\conf
+cd spark-2.3.2-bin-hadoop2.7\conf
 cp log4j.properties.template log4j.properties
 ```
 
@@ -64,7 +66,7 @@ Download winutils.exe using the curl command in a Command Prompt window.
 curl -k -L -o winutils.exe https://github.com/steveloughran/winutils/blob/master/hadoop-2.7.1/bin/winutils.exe?raw=true
 ```
 
-Move wintutils.exe to the C:\Users\USER_NAME\spark-2.2.1-bin-hadoop2.7\bin directory.
+Move wintutils.exe to the C:\Users\USER_NAME\spark-2.3.2-bin-hadoop2.7\bin directory.
 
 
 # Install mmtf-spark
@@ -83,15 +85,15 @@ git clone https://github.com/sbl-sdsc/mmtf-spark.git
 | Variable      | Value                                            |
 | ------------- |--------------------------------------------------|
 | PATH          | C:\Program Files\Java\jdk1.8.0_162\bin           |
-| PATH          | C:\Users\USER_NAME\apache-maven-3.5.2\bin        |
-| PATH          | C:\Users\USER_NAME\spark-2.2.1-bin-hadoop2.7\bin |
+| PATH          | C:\Users\USER_NAME\apache-maven-3.6.0\bin        |
+| PATH          | C:\Users\USER_NAME\spark-2.3.2-bin-hadoop2.7\bin |
 
 5. Create the following new User variables.
 
 | Variable      | Value                                        |
 | ------------- |----------------------------------------------|
-| SPARK_HOME    | C:\Users\USER_NAME\spark-2.2.1-bin-hadoop2.7 |
-| HADOOP_HOME   | C:\Users\USER_NAME\spark-2.2.1-bin-hadoop2.7 |
+| SPARK_HOME    | C:\Users\USER_NAME\spark-2.3.2-bin-hadoop2.7 |
+| HADOOP_HOME   | C:\Users\USER_NAME\spark-2.3.2-bin-hadoop2.7 |
 | JAVA_HOME     | C:\Program Files\Java\jdk1.8.0_162           |
 
 

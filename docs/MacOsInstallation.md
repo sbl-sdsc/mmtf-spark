@@ -18,10 +18,10 @@ The installation requires the [Maven](http://maven.apache.org/guides/getting-sta
 
 [Download Maven](http://maven.apache.org/download.cgi) (apache-maven-3.5.2-bin.tar.gz) or newer version
 
-Expand the tar.gz file and copy it to the /opt directory. If you are not an administrator on your computer, copy the file to different install location.
+Expand the tar.gz file and move it to the /opt directory. If you are not an administrator on your computer, move the file to different install location.
 
 ```
-sudo cp -r ./apache-maven-3.5.2 /opt
+sudo mv apache-maven-3.6.0 /opt
 ```
 
 ### Install Spark
@@ -32,7 +32,7 @@ Expand the tar.gz file by double clicking on the file.
 By default, SPARK logs at the INFO level, which leads to excessive log messages. Change the log level from INFO to ERROR
 
 ```
-cd ./spark-2.2.1-bin-hadoop2.7/conf
+cd ./spark-2.4.0-bin-hadoop2.7/conf
 cp log4j.properties.template log4j.properties
 ```
 
@@ -41,10 +41,10 @@ Then edit the log4j.properties file and change the level from INFO to ERROR:
 `log4j.rootCategory=INFO, console` to `log4j.rootCategory=ERROR, console`
 
 
-Then copy spark-2.2.1-bin-hadoop2.7 to the /opt directory. If you are not an administrator on your computer, copy the file to different install location.
+Then copy spark-2.4.0-bin-hadoop2.7 to the /opt directory. If you are not an administrator on your computer, move the file to different install location.
 
 ``` 
-sudo cp -r ./spark-2.2.1-bin-hadoop2.7 /opt
+sudo mv spark-2.4.0-bin-hadoop2.7 /opt
 ```
 
 # Install mmtf-spark
@@ -68,9 +68,9 @@ nano .bash_profile
 Add the following lines in your .bash_profile (adjust version numbers and locations as necessary):
 
 ```
-export PATH=/opt/apache-maven-3.5.2/bin:$PATH
+export PATH=/opt/apache-maven-3.6.0/bin:/opt/spark-2.4.0-bin-hadoop2.7/bin:$PATH
 export JAVA_HOME=`/usr/libexec/java_home`
-export SPARK_HOME=/opt/spark-2.2.1-bin-hadoop2.7
+export SPARK_HOME=/opt/spark-2.4.0-bin-hadoop2.7
 
 ```
 
@@ -131,4 +131,13 @@ Add the following lines in your .bash_profile:
 ```
 export MMTF_FULL=INSTALL_PATH/full
 export MMTF_REDUCED=INSTALL_PATH/reduced
+```
+
+# Increase Spark Driver Memory
+If Spark throws an out of heap space error, increase the Spark driver memory (default 1G)
+
+Add the following line in your .bash_profile and type: source .bash_profile
+
+```
+export SPARK_DRIVER_MEMORY=6G
 ```
