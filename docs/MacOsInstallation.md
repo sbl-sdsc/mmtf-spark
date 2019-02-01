@@ -16,7 +16,7 @@ The Git version control system is used to download repositories from Github.
 ### Install Maven
 The installation requires the [Maven](http://maven.apache.org/guides/getting-started/index.html#What_is_Maven) build tool. If you do not have Maven installed, follow the directions below.
 
-[Download Maven](http://maven.apache.org/download.cgi) (apache-maven-3.5.2-bin.tar.gz) or newer version
+[Download Maven](http://maven.apache.org/download.cgi) (apache-maven-3.6.0-bin.tar.gz) or newer version
 
 Expand the tar.gz file and move it to the /opt directory. If you are not an administrator on your computer, move the file to different install location.
 
